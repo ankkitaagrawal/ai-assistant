@@ -5,7 +5,9 @@
   "scripts": {
     "build": "tsc",
     "start": "node dist/server.js",
-    "dev": "ts-node-dev src/server.ts"
+    "dev": "ts-node-dev src/server.ts",
+    "test": "jest",
+    "test:watch": "jest --watch"
   },
   "keywords": [],
   "author": "",
@@ -14,8 +16,11 @@
   "devDependencies": {
     "@types/amqplib": "^0.10.5",
     "@types/express": "^5.0.0",
+    "@types/jest": "^29.5.14",
     "@types/luxon": "^3.4.2",
     "@types/node": "^22.9.0",
+    "jest": "^29.7.0",
+    "ts-jest": "^29.2.5",
     "ts-node-dev": "^2.0.0",
     "typescript": "^5.6.3"
   },
@@ -24,6 +29,7 @@
     "dotenv": "^16.4.5",
     "express": "^4.21.1",
     "luxon": "^3.5.0",
-    "winston": "^3.17.0"
+    "winston": "^3.17.0",
+    "zod": "^3.23.8"
   }
 }

@@ -8,6 +8,7 @@ COPY ["package.json", "package-lock.json*", "./"]
 RUN ls -a
 RUN npm install
 COPY . .
+RUN npm test
 RUN npm run build
 CMD [ "node", "dist/server.js" ]
 # To Start the Specific Consumer
