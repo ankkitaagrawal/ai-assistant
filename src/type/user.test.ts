@@ -8,6 +8,7 @@ describe("userSchema", () => {
             phone: "1234567890",
             gender: "male",
             name: "John Doe",
+            id :12223
         };
 
         expect(() => {
@@ -21,6 +22,7 @@ describe("userSchema", () => {
             phone: "1234567890",
             gender: "male",
             name: "John Doe",
+            id :12223
         };
 
         expect(() => {
@@ -34,6 +36,7 @@ describe("userSchema", () => {
             phone: "123",
             gender: "male",
             name: "John Doe",
+            id :12223
         };
 
         expect(() => {
@@ -47,6 +50,7 @@ describe("userSchema", () => {
             phone: "1234567890",
             gender: "invalid",
             name: "John Doe",
+            id :12223
         };
 
         expect(() => {
@@ -60,6 +64,21 @@ describe("userSchema", () => {
             phone: "1234567890",
             gender: "male",
             name: 123,
+            id :12223
+        };
+
+        expect(() => {
+            userSchema.parse(invalidUser);
+        }).toThrow(z.ZodError);
+    });
+
+    it("should throw an error for an invalid id", () => {
+        const invalidUser = {
+            email: "test@example.com",
+            phone: "1234567890",
+            gender: "male",
+            name: "John Doe",
+            id :"123"
         };
 
         expect(() => {
