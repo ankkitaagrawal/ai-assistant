@@ -5,7 +5,7 @@ const express = require('express');
 
 const routes = express.Router();
 
-routes.route('/getmessages').get(decodeToken,getMessages);
-routes.route('/sendmessage').post(decodeToken,sendMessageToAi);
+routes.route('/messages').get(decodeToken, getMessages);
+routes.route('/message').post(decodeToken, sendMessageToAi);
 
 export default routes;
