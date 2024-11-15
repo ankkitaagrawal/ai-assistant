@@ -7,7 +7,7 @@ export const sendMessage = async (usermessage: string, thread_id?: string): Prom
     'https://routes.msg91.com/api/proxy/1258584/29gjrmh24/api/v2/model/chat/completion',
     {
       user: usermessage,
-      variables: {},
+      variables: {user_id : thread_id},
       bridge_id: "6733097358507028fd81de16",
       thread_id: thread_id,
       RTLayer: false,
