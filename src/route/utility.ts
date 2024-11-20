@@ -1,10 +1,11 @@
-import { getCronDetailsOfUser, saveCronJobData } from "../controller/utility";
+import { deleteCron, getCronDetailsOfUser, saveCronJobData } from "../controller/utility";
 
 const express = require('express');
 
 const routes = express.Router();
 
-routes.route('/createcron').post(saveCronJobData);
-routes.route('/crondetails/user/:userId').get(getCronDetailsOfUser);
+routes.route('/cron').post(saveCronJobData);
+routes.route('/cron/user/:userId').get(getCronDetailsOfUser);
+routes.route('/cron/:id').delete(deleteCron);
 
 export default routes;

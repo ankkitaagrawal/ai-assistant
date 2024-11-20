@@ -17,6 +17,15 @@ import mongoose from 'mongoose';
     cronExpression :{
       type:String
     },
+    cronJobId :{
+      type:String
+    },
+    id :{
+      type :String
+    },
+    timezone :{
+      type :String
+    },
     updatedAt :{
     type: Date,
     default: Date.now,
