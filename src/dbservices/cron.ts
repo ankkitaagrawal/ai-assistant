@@ -13,5 +13,5 @@ export async function getCronDetailsByUserId(userId :String){
    return await CronModel.find({userId:userId})
 } 
 export async function deleteCronById(id :String){
-   return await CronModel.deleteOne({id :id})
+   return await CronModel.findOneAndDelete({id :id})
 } 
