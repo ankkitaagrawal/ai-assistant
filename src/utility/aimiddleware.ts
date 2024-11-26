@@ -11,6 +11,7 @@ export const sendMessage = async (usermessage: string, thread_id?: string): Prom
       bridge_id: "6733097358507028fd81de16",
       thread_id: thread_id,
       RTLayer: false,
+      is_text:true
     },
     {
       headers: {
