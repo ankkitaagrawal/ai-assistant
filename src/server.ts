@@ -1,11 +1,13 @@
 import express, { Request, Response } from 'express';
 import dotenv from 'dotenv';
 import chat from './route/chat';
+import utility from './route/utility';
 import cors from 'cors'; // Import the cors middleware
+import { connectDB } from './models';
 dotenv.config();
 const app = express();
 const port = process.env.PORT || 3000;
-
+connectDB();
 
 // Middleware to parse JSON
 app.use(express.json());
@@ -14,6 +16,7 @@ app.use(express.json());
 app.use(cors());
 
 app.use('/chat', chat);
+app.use('/utility', utility);
 
 // Define a route
 app.get('/', (req: Request, res: Response) => {
