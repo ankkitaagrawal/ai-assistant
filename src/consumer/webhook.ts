@@ -18,9 +18,8 @@ async function processMsg(message: any, channel: Channel) {
 
 }
 
-
-
 export default {
     queue: QUEUE_NAME,
-    processor: processMsg
+    processor: processMsg,
+    batch: 1
 }

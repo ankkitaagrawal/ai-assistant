@@ -18,7 +18,7 @@ app.use(cors());
 
 app.use('/chat', chat);
 app.use('/utility', utility);
-app.use('/callback', webhook);
+app.use('/webhook', webhook);
 
 // Define a route
 app.get('/', (req: Request, res: Response) => {

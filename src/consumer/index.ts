@@ -1,13 +1,18 @@
+import dotenv from "dotenv";
+dotenv.config();
 const args = require('args-parser')(process.argv);
 import { Connection, Channel } from "amqplib";
 import logger from "../service/logger";
 import rabbitmq from "../config/rabbitmq";
+import webhook from "./webhook";
 
 
 const CONSUMERS: IConsumer[] = [];
+console.log(args);
 switch (args?.consumer) {
-  case "notification":
+  case "webhook":
     // Add notification consumer to the consumers array
+    CONSUMERS.push(webhook);
     break;
   default:
     break;
