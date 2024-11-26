@@ -1,7 +1,7 @@
 const args = require('args-parser')(process.argv);
 import { Connection, Channel } from "amqplib";
 import logger from "../service/logger";
-import rabbitmq from "../db/rabbitmq";
+import rabbitmq from "../config/rabbitmq";
 
 
 const CONSUMERS: IConsumer[] = [];

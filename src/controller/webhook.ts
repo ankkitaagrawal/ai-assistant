@@ -1,5 +1,5 @@
 import { Request, Response } from "express";
-import producer from "../db/producer";
+import producer from "../config/producer";
 export const processWebhook = async (req: Request, res: Response) => {
 
     const { tool, event } = req.params;
