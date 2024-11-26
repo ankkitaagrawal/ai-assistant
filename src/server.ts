@@ -4,6 +4,7 @@ import chat from './route/chat';
 import utility from './route/utility';
 import cors from 'cors'; // Import the cors middleware
 import { connectDB } from './models';
+import webhook from './route/webhook';
 dotenv.config();
 const app = express();
 const port = process.env.PORT || 3000;
@@ -17,6 +18,7 @@ app.use(cors());
 
 app.use('/chat', chat);
 app.use('/utility', utility);
+app.use('/callback', webhook);
 
 // Define a route
 app.get('/', (req: Request, res: Response) => {
