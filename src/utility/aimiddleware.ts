@@ -2,12 +2,12 @@
 
 import axios, { AxiosResponse } from "axios"
 
-export const sendMessage = async (usermessage: string, thread_id?: string): Promise<AxiosResponse<any> | null> => {
+export const sendMessage = async (usermessage: string,  variables? : object |null , thread_id?: string) :Promise<string | null> => {
   const response: AxiosResponse<any> = await axios.post(
     'https://routes.msg91.com/api/proxy/1258584/29gjrmh24/api/v2/model/chat/completion',
     {
       user: usermessage,
-      variables: {user_id : thread_id},
+      variables: variables,
       bridge_id: "6733097358507028fd81de16",
       thread_id: thread_id,
       RTLayer: false,
@@ -19,7 +19,7 @@ export const sendMessage = async (usermessage: string, thread_id?: string): Prom
       },
     }
   );
-  return response.data?.response?.data?.content;
+  return response.data?.response?.data?.content || null;
 
 };
 
@@ -36,7 +36,7 @@ export const getPreviousMessage = async (thread_id?: string): Promise<AxiosRespo
   return response?.data;
 
 };
-export const createMessage = async (thread_id: string,  message :string): Promise<AxiosResponse<any> | null> => {
+export const createMessage = async (thread_id: string,  message :string): Promise<string | null> => {
   const response: AxiosResponse<any> = await axios.post(
     `https://proxy.viasocket.com/proxy/api/1258584/32nghul25/api/v1/config/threads/${thread_id}/6733097358507028fd81de16`,
     {

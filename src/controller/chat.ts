@@ -8,7 +8,7 @@ export const sendMessageToAi = async (req: Request, res: Response) => {
     try {
         const { message } = req.body
         const userId = req.tokenData?.user.id
-        const response = await sendMessage(message, userId?.toString());
+        const response = await sendMessage(message, {user_id :  userId?.toString()} ,userId?.toString() );
         console.log(response)
         return res.status(200).json({ success: true, data: { message: response } })
     } catch (err: any) {

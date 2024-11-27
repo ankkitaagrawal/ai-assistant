@@ -4,7 +4,8 @@ import mongoose from 'mongoose';
       type :Boolean
     },
     userId:{
-      type :String
+      type :String,
+      required :true
     },
     message :{
       type :String

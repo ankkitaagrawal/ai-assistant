@@ -5,7 +5,8 @@ import { Connection, Channel } from "amqplib";
 import logger from "../service/logger";
 import rabbitmq from "../config/rabbitmq";
 import webhook from "./webhook";
-
+import { connectDB } from "../models";
+connectDB();
 
 const CONSUMERS: IConsumer[] = [];
 console.log(args);
