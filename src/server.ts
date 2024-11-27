@@ -1,11 +1,11 @@
-import express, { Request, Response } from 'express';
 import dotenv from 'dotenv';
+dotenv.config();
+import express, { Request, Response } from 'express';
 import chat from './route/chat';
 import utility from './route/utility';
 import cors from 'cors'; // Import the cors middleware
 import { connectDB } from './models';
 import webhook from './route/webhook';
-dotenv.config();
 const app = express();
 const port = process.env.PORT || 3000;
 connectDB();
