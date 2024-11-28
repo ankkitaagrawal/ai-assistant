@@ -11,13 +11,14 @@ async function processMsg(message: any, channel: Channel) {
 
     try {
         const data = JSON.parse(message.content.toString());
-        console.log("event",data.event);
-        const crondata = await getCronDetailsById(data.tool);
-        const messageFromAI  = (await sendMessage("this is a message from the cron we have setup " , {context : crondata ,system_prompt : "below data is the reminder , that we have set up ,  now take action and drop a message to the user "} ))||""
-        await createMessage(crondata?.userId || "",messageFromAI);
-        rtlayer.message(messageFromAI,{
-            channel :crondata?.userId 
-        });
+        console.log(data.event)
+        // console.log("event",data.event);
+        // const crondata = await getCronDetailsById(data.tool);
+        // const messageFromAI  = (await sendMessage("this is a message from the cron we have setup " , {context : crondata ,system_prompt : "below data is the reminder , that we have set up ,  now take action and drop a message to the user "} ))||""
+        // await createMessage(crondata?.userId || "",messageFromAI);
+        // rtlayer.message(messageFromAI,{
+        //     channel :crondata?.userId 
+        // });
         channel.ack(message);
     } catch (error: any) {
         console.log(error?.response,"error", error)

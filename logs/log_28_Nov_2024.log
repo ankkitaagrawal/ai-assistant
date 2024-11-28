@@ -1,0 +1,4 @@
+{"level":"info","message":"[RABBIT](onConnectionReady) Connection established to amqps://socketv3:5QL2g6T5gPKcm5O@smart-yellow-anteater.rmq4.cloudamqp.com/socketv3","service":"ebl-api","timestamp":"2024-11-28T07:49:03.049Z"}
+{"level":"info","message":"connected to mongo db ","service":"ebl-api","timestamp":"2024-11-28T07:49:03.211Z"}
+{"level":"info","message":"[RABBIT](onConnectionReady) Connection established to amqps://socketv3:5QL2g6T5gPKcm5O@smart-yellow-anteater.rmq4.cloudamqp.com/socketv3","service":"ebl-api","timestamp":"2024-11-28T07:49:24.853Z"}
+{"level":"info","message":"connected to mongo db ","service":"ebl-api","timestamp":"2024-11-28T07:49:24.893Z"}
