@@ -6,6 +6,6 @@ const express = require('express');
 
 const routes = express.Router();
 
-routes.route('/:tool/:event').post(processWebhook);
+routes.route('/:tool/:event').get(processWebhook);
 
 export default routes;
