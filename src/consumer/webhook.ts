@@ -13,7 +13,8 @@ async function processMsg(message: any, channel: Channel) {
         const data = JSON.parse(message.content.toString());
         console.log(data)
         // console.log("event",data.event);
-        // const crondata = await getCronDetailsById(data.tool);
+        const crondata = await getCronDetailsById(data.tool);
+        console.log(crondata,"crondata" , crondata?.userId );
         // const messageFromAI  = (await sendMessage("this is a message from the cron we have setup " , {context : crondata ,system_prompt : "below data is the reminder , that we have set up ,  now take action and drop a message to the user "} ))||""
         // await createMessage(crondata?.userId || "",messageFromAI);
         // rtlayer.message(messageFromAI,{
