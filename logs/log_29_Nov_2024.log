@@ -1,0 +1,29 @@
+{"level":"info","message":"[RABBIT](onConnectionReady) Connection established to amqps://socketv3:5QL2g6T5gPKcm5O@smart-yellow-anteater.rmq4.cloudamqp.com/socketv3","service":"ebl-api","timestamp":"2024-11-29T05:18:51.581Z"}
+{"level":"info","message":"connected to mongo db ","service":"ebl-api","timestamp":"2024-11-29T05:18:51.693Z"}
+{"level":"error","message":"[WEBHOOK] Error processing webhook: Request failed with status code 404","service":"ebl-api","timestamp":"2024-11-29T05:18:56.676Z"}
+{"level":"error","message":"[WEBHOOK] Error processing webhook: Request failed with status code 404","service":"ebl-api","timestamp":"2024-11-29T05:19:00.326Z"}
+{"level":"error","message":"[WEBHOOK] Error processing webhook: Request failed with status code 404","service":"ebl-api","timestamp":"2024-11-29T05:19:05.171Z"}
+{"level":"error","message":"[WEBHOOK] Error processing webhook: Request failed with status code 404","service":"ebl-api","timestamp":"2024-11-29T05:19:11.458Z"}
+{"level":"error","message":"[WEBHOOK] Error processing webhook: Request failed with status code 404","service":"ebl-api","timestamp":"2024-11-29T05:19:15.763Z"}
+{"level":"error","message":"[WEBHOOK] Error processing webhook: Request failed with status code 404","service":"ebl-api","timestamp":"2024-11-29T05:19:19.954Z"}
+{"level":"error","message":"[WEBHOOK] Error processing webhook: Request failed with status code 404","service":"ebl-api","timestamp":"2024-11-29T05:19:24.241Z"}
+{"level":"error","message":"[WEBHOOK] Error processing webhook: Request failed with status code 404","service":"ebl-api","timestamp":"2024-11-29T05:19:28.557Z"}
+{"level":"info","message":"[PRODUCER] Listening for connection...","service":"ebl-api","timestamp":"2024-11-29T05:19:31.027Z"}
+{"level":"info","message":"[RABBIT](onConnectionReady) Connection established to amqps://socketv3:5QL2g6T5gPKcm5O@smart-yellow-anteater.rmq4.cloudamqp.com/socketv3","service":"ebl-api","timestamp":"2024-11-29T05:19:31.411Z"}
+{"level":"info","message":"[PRODUCER] Connection received...","service":"ebl-api","timestamp":"2024-11-29T05:19:31.411Z"}
+{"level":"info","message":"[PRODUCER] Creating channel...","service":"ebl-api","timestamp":"2024-11-29T05:19:31.411Z"}
+{"level":"info","message":"connected to mongo db ","service":"ebl-api","timestamp":"2024-11-29T05:19:31.466Z"}
+{"level":"info","message":"[PRODUCER] Listening for connection...","service":"ebl-api","timestamp":"2024-11-29T05:20:11.023Z"}
+{"level":"info","message":"[RABBIT](onConnectionReady) Connection established to amqps://socketv3:5QL2g6T5gPKcm5O@smart-yellow-anteater.rmq4.cloudamqp.com/socketv3","service":"ebl-api","timestamp":"2024-11-29T05:20:11.393Z"}
+{"level":"info","message":"[PRODUCER] Connection received...","service":"ebl-api","timestamp":"2024-11-29T05:20:11.394Z"}
+{"level":"info","message":"[PRODUCER] Creating channel...","service":"ebl-api","timestamp":"2024-11-29T05:20:11.394Z"}
+{"level":"info","message":"connected to mongo db ","service":"ebl-api","timestamp":"2024-11-29T05:20:11.507Z"}
+{"level":"info","message":"[PRODUCER] Listening for connection...","service":"ebl-api","timestamp":"2024-11-29T05:20:16.267Z"}
+{"level":"info","message":"[RABBIT](onConnectionReady) Connection established to amqps://socketv3:5QL2g6T5gPKcm5O@smart-yellow-anteater.rmq4.cloudamqp.com/socketv3","service":"ebl-api","timestamp":"2024-11-29T05:20:16.580Z"}
+{"level":"info","message":"[PRODUCER] Connection received...","service":"ebl-api","timestamp":"2024-11-29T05:20:16.580Z"}
+{"level":"info","message":"[PRODUCER] Creating channel...","service":"ebl-api","timestamp":"2024-11-29T05:20:16.580Z"}
+{"level":"info","message":"connected to mongo db ","service":"ebl-api","timestamp":"2024-11-29T05:20:16.639Z"}
+{"level":"info","message":"[PRODUCER] Preparing payload...","service":"ebl-api","timestamp":"2024-11-29T05:20:21.792Z"}
+{"level":"info","message":"[PRODUCER] Asserting 'webhook_FAILED' queue...","service":"ebl-api","timestamp":"2024-11-29T05:20:21.793Z"}
+{"level":"error","message":"[WEBHOOK] Error processing webhook: Request failed with status code 404","service":"ebl-api","timestamp":"2024-11-29T05:20:21.798Z"}
+{"level":"info","message":"[PRODUCER] Producing to 'webhook_FAILED' queue...","service":"ebl-api","timestamp":"2024-11-29T05:20:21.829Z"}

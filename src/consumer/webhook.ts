@@ -22,9 +22,10 @@ async function processMsg(message: any, channel: Channel) {
         });
         channel.ack(message);
     } catch (error: any) {
+        producer.publishToQueue(QUEUE_NAME+"_FAILED",message)
         console.log(error?.response,"error", error)
         logger.error(`[WEBHOOK] Error processing webhook: ${error.message}`);
-        channel.nack(message);
+        channel.ack(message);
     }
 
 }
