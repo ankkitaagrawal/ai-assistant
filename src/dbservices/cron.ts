@@ -1,4 +1,4 @@
-import CronModel from "../models/cron";
+import CronModel from "../models/crons";
 
 
 export async function createCron({ isOnce, userId, message, cronExpression,id ,timezone ,cronJobId }: { isOnce: boolean, userId: string, message: string, cronExpression: string ,id:string ,timezone :string ,cronJobId :string}) {
