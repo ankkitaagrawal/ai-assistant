@@ -1,4 +1,5 @@
 
+import { getUserDetails } from "../dbservices/user";
 import { getPreviousMessage, sendMessage } from "../utility/aimiddleware";
 import { Response, Request } from 'express';
 
@@ -7,8 +8,9 @@ import { Response, Request } from 'express';
 export const sendMessageToAi = async (req: Request, res: Response) => {
     try {
         const { message } = req.body
-        const userId = req.tokenData?.user.id
-        const response = await sendMessage(message, {user_id :  userId?.toString()} ,userId?.toString() );
+        const userId = req.tokenData?.user?.id?.toString()  ;
+         const data  = await getUserDetails(userId)
+        const response = await sendMessage(message, { user_id :  userId ,system_prompt : "behave like a assisstatnt " , context : data?.appList },userId );
         console.log(response)
         return res.status(200).json({ success: true, data: { message: response } })
     } catch (err: any) {

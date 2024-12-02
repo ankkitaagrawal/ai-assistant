@@ -3,12 +3,17 @@ import mongoose from 'mongoose';
     isOnce :{
       type :Boolean
     },
-    userId:{
+    to:{
+      type :String,
+      required :true
+    },
+    from:{
       type :String,
       required :true
     },
     message :{
-      type :String
+      type :String,
+      required :true
     },
     meta: Object, 
     createdAt: {

@@ -18,7 +18,7 @@ interface tokenData {
 declare global {
     namespace Express {
         interface Request {
-        tokenData?: tokenData;
+        tokenData: tokenData;
         }
     }
 }
