@@ -5,8 +5,9 @@ import { Response, Request } from 'express';
 export const saveCronJobData = async (req: Request, res: Response) => {
 
     try {
-        const {isOnce, message ,userId ,cronExpression ,id, timezone, cronJobId} = req.body
-        const response = await createCron({isOnce, message, userId ,cronExpression ,id, timezone, cronJobId });
+
+        const { to , isOnce , message ,from, userId ,cronExpression ,id, timezone, cronJobId} = req.body
+        const response = await createCron({isOnce, message, userId ,cronExpression ,id, timezone, cronJobId , to ,from});
         return res.status(200).json({ success: true, data:  response  })
     } catch (err: any) {
         console.log(err.response)

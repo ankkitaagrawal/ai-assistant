@@ -7,7 +7,24 @@ import userModel from "../models/users";
 
 
 
-export async function getUserDetails(id :String){
-    return await userModel.findOne({proxyId:id})
+export async function getUserDetailsByProxyId(id :String){
+    return await userModel.findOne({proxyId:id}).populate('appList.pluginData').lean();
+ } 
+
+ export async function createUser({proxyId,channelId}:{proxyId :string ,channelId:string}){
+    const user = await userModel.create({
+        proxyId,
+        channelId,
+        appList :[ { pluginData:"674b0066d7097c29597410f6" ,userData : { id :proxyId }}]
+    });
+    // Step 2: Populate the appList.pluginData field
+    const populatedUser = await user.populate('appList.pluginData');
+    return populatedUser.toObject();
+ } 
+ 
+
+
+export async function addThreadInUserHistory(id :String){
+    // return await userModel.findOne({proxyId:id})
  } 
  
