@@ -42,7 +42,7 @@ export const perfromAction = async (req: Request, res: Response) => {
         const config = {
             method: method,         
             url: url,                
-            data: payload,           
+            ...(method !== 'GET' && { data: payload })        
         };
         const response = (await axios(config))?.data;
        

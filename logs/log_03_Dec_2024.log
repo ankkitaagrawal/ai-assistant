@@ -1,0 +1,4 @@
+{"level":"info","message":"[PRODUCER] Listening for connection...","service":"ebl-api","timestamp":"2024-12-03T11:36:16.025Z"}
+{"level":"info","message":"[RABBIT](onConnectionReady) Connection established to amqps://socketv3:5QL2g6T5gPKcm5O@smart-yellow-anteater.rmq4.cloudamqp.com/socketv3","service":"ebl-api","timestamp":"2024-12-03T11:36:16.295Z"}
+{"level":"info","message":"[PRODUCER] Connection received...","service":"ebl-api","timestamp":"2024-12-03T11:36:16.296Z"}
+{"level":"info","message":"[PRODUCER] Creating channel...","service":"ebl-api","timestamp":"2024-12-03T11:36:16.296Z"}
