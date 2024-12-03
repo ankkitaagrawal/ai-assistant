@@ -16,7 +16,13 @@ export const sendMessageToAi = async (req: Request, res: Response) => {
             description: app.pluginData.description
           };
         });
-        const response = await sendMessage(message, { user_id :  userId ,system_prompt : "behave like a assisstatnt " , context : JSON.stringify(appContext)  },userId );
+        const response = await sendMessage(message, 
+            { user_id :  userId ,
+            system_prompt : "behave like a assisstatnt " ,
+            context : JSON.stringify(appContext) ,
+            channeluserId : data.channelId
+            }
+             ,userId );
         console.log(response)
         return res.status(200).json({ success: true, data: { message: response } })
     } catch (err: any) {

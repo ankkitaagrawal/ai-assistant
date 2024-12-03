@@ -2,3 +2,33 @@
 {"level":"info","message":"[RABBIT](onConnectionReady) Connection established to amqps://socketv3:5QL2g6T5gPKcm5O@smart-yellow-anteater.rmq4.cloudamqp.com/socketv3","service":"ebl-api","timestamp":"2024-12-03T11:36:16.295Z"}
 {"level":"info","message":"[PRODUCER] Connection received...","service":"ebl-api","timestamp":"2024-12-03T11:36:16.296Z"}
 {"level":"info","message":"[PRODUCER] Creating channel...","service":"ebl-api","timestamp":"2024-12-03T11:36:16.296Z"}
+{"level":"info","message":"[PRODUCER] Listening for connection...","service":"ebl-api","timestamp":"2024-12-03T11:58:13.845Z"}
+{"level":"info","message":"[RABBIT](onConnectionReady) Connection established to amqps://socketv3:5QL2g6T5gPKcm5O@smart-yellow-anteater.rmq4.cloudamqp.com/socketv3","service":"ebl-api","timestamp":"2024-12-03T11:58:14.090Z"}
+{"level":"info","message":"[PRODUCER] Connection received...","service":"ebl-api","timestamp":"2024-12-03T11:58:14.090Z"}
+{"level":"info","message":"[PRODUCER] Creating channel...","service":"ebl-api","timestamp":"2024-12-03T11:58:14.090Z"}
+{"level":"info","message":"connected to mongo db ","service":"ebl-api","timestamp":"2024-12-03T11:58:14.262Z"}
+{"level":"info","message":"[PRODUCER] Listening for connection...","service":"ebl-api","timestamp":"2024-12-03T11:58:16.008Z"}
+{"level":"info","message":"[RABBIT](onConnectionReady) Connection established to amqps://socketv3:5QL2g6T5gPKcm5O@smart-yellow-anteater.rmq4.cloudamqp.com/socketv3","service":"ebl-api","timestamp":"2024-12-03T11:58:16.276Z"}
+{"level":"info","message":"[PRODUCER] Connection received...","service":"ebl-api","timestamp":"2024-12-03T11:58:16.277Z"}
+{"level":"info","message":"[PRODUCER] Creating channel...","service":"ebl-api","timestamp":"2024-12-03T11:58:16.277Z"}
+{"level":"info","message":"connected to mongo db ","service":"ebl-api","timestamp":"2024-12-03T11:58:16.373Z"}
+{"level":"info","message":"[PRODUCER] Listening for connection...","service":"ebl-api","timestamp":"2024-12-03T11:58:18.334Z"}
+{"level":"info","message":"[RABBIT](onConnectionReady) Connection established to amqps://socketv3:5QL2g6T5gPKcm5O@smart-yellow-anteater.rmq4.cloudamqp.com/socketv3","service":"ebl-api","timestamp":"2024-12-03T11:58:18.573Z"}
+{"level":"info","message":"[PRODUCER] Connection received...","service":"ebl-api","timestamp":"2024-12-03T11:58:18.573Z"}
+{"level":"info","message":"[PRODUCER] Creating channel...","service":"ebl-api","timestamp":"2024-12-03T11:58:18.574Z"}
+{"level":"info","message":"connected to mongo db ","service":"ebl-api","timestamp":"2024-12-03T11:58:18.653Z"}
+{"level":"info","message":"[PRODUCER] Listening for connection...","service":"ebl-api","timestamp":"2024-12-03T11:58:21.081Z"}
+{"level":"info","message":"[RABBIT](onConnectionReady) Connection established to amqps://socketv3:5QL2g6T5gPKcm5O@smart-yellow-anteater.rmq4.cloudamqp.com/socketv3","service":"ebl-api","timestamp":"2024-12-03T11:58:21.315Z"}
+{"level":"info","message":"[PRODUCER] Connection received...","service":"ebl-api","timestamp":"2024-12-03T11:58:21.316Z"}
+{"level":"info","message":"[PRODUCER] Creating channel...","service":"ebl-api","timestamp":"2024-12-03T11:58:21.316Z"}
+{"level":"info","message":"connected to mongo db ","service":"ebl-api","timestamp":"2024-12-03T11:58:21.427Z"}
+{"level":"info","message":"[PRODUCER] Listening for connection...","service":"ebl-api","timestamp":"2024-12-03T11:58:23.539Z"}
+{"level":"info","message":"[RABBIT](onConnectionReady) Connection established to amqps://socketv3:5QL2g6T5gPKcm5O@smart-yellow-anteater.rmq4.cloudamqp.com/socketv3","service":"ebl-api","timestamp":"2024-12-03T11:58:23.794Z"}
+{"level":"info","message":"[PRODUCER] Connection received...","service":"ebl-api","timestamp":"2024-12-03T11:58:23.794Z"}
+{"level":"info","message":"[PRODUCER] Creating channel...","service":"ebl-api","timestamp":"2024-12-03T11:58:23.796Z"}
+{"level":"info","message":"connected to mongo db ","service":"ebl-api","timestamp":"2024-12-03T11:58:23.876Z"}
+{"level":"info","message":"[PRODUCER] Listening for connection...","service":"ebl-api","timestamp":"2024-12-03T11:58:25.350Z"}
+{"level":"info","message":"[RABBIT](onConnectionReady) Connection established to amqps://socketv3:5QL2g6T5gPKcm5O@smart-yellow-anteater.rmq4.cloudamqp.com/socketv3","service":"ebl-api","timestamp":"2024-12-03T11:58:25.599Z"}
+{"level":"info","message":"[PRODUCER] Connection received...","service":"ebl-api","timestamp":"2024-12-03T11:58:25.600Z"}
+{"level":"info","message":"[PRODUCER] Creating channel...","service":"ebl-api","timestamp":"2024-12-03T11:58:25.600Z"}
+{"level":"info","message":"connected to mongo db ","service":"ebl-api","timestamp":"2024-12-03T11:58:25.700Z"}
