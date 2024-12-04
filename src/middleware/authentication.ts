@@ -57,6 +57,7 @@ const decodeToken = async (req: Request, res: Response, next: NextFunction) => {
         req.tokenData = decodedToken as tokenData;
         res.locals.userdata = await getUserChannelData( req.tokenData?.user?.id , req.tokenData?.user?.email);
     } catch (err: any) {
+        console.log(err,"err");
         return res.status(401).json({ message: 'unauthorized user' });
     }
     return next();

@@ -6,7 +6,7 @@ export const getUserIdByEmailId = async (userEmail :string)=>{
             type: ["U"],
             orgId: ["q957w6rtkdinckgbp8vv"],
             email : [
-                "tanish@whozzat.com"
+                userEmail
             ]
         },
         scoreMultiplier: {
