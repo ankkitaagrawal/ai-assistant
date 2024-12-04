@@ -7,6 +7,7 @@ import cors from 'cors'; // Import the cors middleware
 import { connectDB } from './models';
 import webhook from './route/webhook';
 import plugin from './route/plugin';
+import thread from './route/thread';
 const app = express();
 const port = process.env.PORT || 3000;
 connectDB();
@@ -21,6 +22,7 @@ app.use('/plugin',plugin );
 app.use('/chat', chat);
 app.use('/utility', utility);
 app.use('/webhook', webhook);
+app.use('/thread', thread);
 
 // Define a route
 app.get('/', (req: Request, res: Response) => {
