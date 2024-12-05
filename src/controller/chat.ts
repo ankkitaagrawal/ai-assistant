@@ -7,22 +7,23 @@ import { Response, Request } from 'express';
 export const sendMessageToAi = async (req: Request, res: Response) => {
     try {
         const { message } = req.body
-        const userId = req.tokenData?.user?.id?.toString()  ;
+        const userId = req.tokenData?.user?.id?.toString();
         const data = res.locals?.userdata;
-      const appContext = data.appList.map((app :any)=> {
-        return {
-            appId: app.pluginData._id,
-            appName: app.pluginData.appName,
-            description: app.pluginData.description
-          };
+        const appContext = data.appList.map((app: any) => {
+            return {
+                appId: app.pluginData._id,
+                appName: app.pluginData.appName,
+                description: app.pluginData.description
+            };
         });
-        const response = await sendMessage(message, 
-            { user_id :  userId ,
-            system_prompt : "behave like a assisstatnt " ,
-            context : JSON.stringify(appContext) ,
-            channeluserId : data.channelId
+        const response = await sendMessage(message,
+            {
+                user_id: userId,
+                system_prompt: "behave like a assisstatnt ",
+                context: JSON.stringify(appContext),
+                channeluserId: data.channelId
             }
-             ,userId );
+            , userId);
         console.log(response)
         return res.status(200).json({ success: true, data: { message: response } })
     } catch (err: any) {
@@ -40,9 +41,8 @@ export const sendMessageToAi = async (req: Request, res: Response) => {
 
 export const getMessages = async (req: Request, res: Response) => {
     try {
-
-        const userId = req.tokenData?.user.id
-        const response = await getPreviousMessage(userId?.toString());
+        const threadId = req.query.threadId || req.tokenData?.user.id;
+        const response = await getPreviousMessage(threadId.toString());
         return res.status(200).json({ success: true, data: { chats: response } })
     } catch (err: any) {
         console.log(err.response)
