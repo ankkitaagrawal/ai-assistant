@@ -1,5 +1,6 @@
 import { createCron, deleteCronById, getCronDetailsByUserId } from "../dbservices/cron"
 import { Response, Request } from 'express';
+import { updatePrompt } from "../dbservices/user";
 
 
 export const saveCronJobData = async (req: Request, res: Response) => {
@@ -39,6 +40,22 @@ export const deleteCron = async (req: Request, res: Response) => {
         const { id } = req.params
         const response = await deleteCronById(id)
         return res.status(200).json({ success: true, data: response  })
+    } catch (err: any) {
+        console.log(err.response)
+        res.status(400).json({
+            message: 'Some Error on  Server',
+            data: { errMessage: err?.message },
+        });
+
+    }
+}
+
+export const updateUserPrompt = async (req: Request, res: Response) => {
+
+    try {
+        const {userId , prompt} = req.body
+         await updatePrompt({userId,prompt})
+        return res.status(200).json({ success: true, data: null  })
     } catch (err: any) {
         console.log(err.response)
         res.status(400).json({

@@ -10,18 +10,19 @@ export const sendMessageToAi = async (req: Request, res: Response) => {
         const { message } = req.body
         const userId = req.tokenData?.user?.id?.toString();
         const data = res.locals?.userdata;
-        const appContext = data.appList.map((app: any) => {
-            return {
-                appId: app.pluginData._id,
-                appName: app.pluginData.appName,
-                description: app.pluginData.description
-            };
-        });
+        // const appContext = data.appList.map((app: any) => {
+        //     return {
+        //         appId: app.pluginData._id,
+        //         appName: app.pluginData.appName,
+        //         description: app.pluginData.description
+        //     };
+        // });
         const response = await sendMessage(message,
             {
                 user_id: userId,
                 system_prompt: "behave like a assisstatnt ",
-                context: JSON.stringify(appContext),
+                diary : data.prompt ,
+                // context: JSON.stringify(appContext),
                 channeluserId: data.channelId
             }
             , userId);

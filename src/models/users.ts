@@ -23,7 +23,10 @@ const userSchema = new mongoose.Schema({
       of: mongoose.Schema.Types.Mixed, // Allowing any type of value (strings, numbers, objects, etc.)
       required: false
     }
-  }]
+  }],
+  prompt : {
+    type : String 
+  }
   
 }, { minimize: false });
 
