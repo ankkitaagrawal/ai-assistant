@@ -1,11 +1,10 @@
 import { Channel } from '../config/rabbitmq';
 import logger from "../service/logger";
-import axios from 'axios';
 import producer from '../config/producer';
 import rtlayer from '../config/rtlayer';
-import { getCronDetailsById } from '../dbservices/cron';
-import { createMessage, sendMessage } from '../utility/aimiddleware';
+import { createMessage, } from '../utility/aimiddleware';
 import { createOrFindThread } from '../dbservices/thread';
+
 
 const QUEUE_NAME =  'message';
 async function processMsg(message: any, channel: Channel) {
@@ -14,7 +13,7 @@ async function processMsg(message: any, channel: Channel) {
         const {to , from, message : textMessage } = data 
         let threadId = (to === from) ? to : await createOrFindThread(to, from);
         await createMessage(threadId , textMessage); // need to write logic for message will  passed to assistant and then to human if needed 
-        rtlayer.message(textMessage,{
+        rtlayer.message( JSON.stringify({ message : textMessage  , threadId : threadId } ) ,{
             channel : to
         });
         channel.ack(message);
