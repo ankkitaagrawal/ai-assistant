@@ -6,6 +6,6 @@ const express = require('express');
 
 const routes = express.Router();
 
-routes.route('/').get(getThreads);
+routes.route('/').get(decodeToken, getThreads);
 
 export default routes;
