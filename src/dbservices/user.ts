@@ -23,6 +23,12 @@ export async function getUserDetailsByProxyId(id :String){
  } 
  
 
+ export async function updatePrompt ({userId , prompt } :{userId :string , prompt :string }){
+    return await userModel.findOneAndUpdate({channelId:userId} ,{
+        $set :{prompt : prompt}
+    })
+ }
+
 
 export async function addThreadInUserHistory(id :String){
     // return await userModel.findOne({proxyId:id})

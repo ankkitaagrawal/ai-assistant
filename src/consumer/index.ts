@@ -5,15 +5,17 @@ import { Connection, Channel } from "amqplib";
 import logger from "../service/logger";
 import rabbitmq from "../config/rabbitmq";
 import webhook from "./webhook";
+import message from "./message";
 import { connectDB } from "../models";
 connectDB();
 
 const CONSUMERS: IConsumer[] = [];
-console.log(args);
+console.log(args ,"args");
 switch (args?.consumer) {
   case "webhook":
     // Add notification consumer to the consumers array
     CONSUMERS.push(webhook);
+    CONSUMERS.push(message);
     break;
   default:
     break;

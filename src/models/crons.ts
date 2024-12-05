@@ -3,10 +3,6 @@ import mongoose from 'mongoose';
     isOnce :{
       type :Boolean
     },
-    to:{
-      type :String,
-      required :true
-    },
     from:{
       type :String,
       required :true
