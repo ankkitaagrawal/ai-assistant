@@ -42,9 +42,8 @@ export const sendMessageToAi = async (req: Request, res: Response) => {
 
 export const getMessages = async (req: Request, res: Response) => {
     try {
-
-        const userId = req.tokenData?.user.id
-        const response = await getPreviousMessage(userId?.toString());
+        const threadId = req.query.threadId || req.tokenData?.user.id;
+        const response = await getPreviousMessage(threadId.toString());
         return res.status(200).json({ success: true, data: { chats: response } })
     } catch (err: any) {
         console.log(err.response)
