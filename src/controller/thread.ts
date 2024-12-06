@@ -16,7 +16,7 @@ export const getThreads = async (req: Request, res: Response) => {
             const user = await getUser(otherUser).catch(error=>{
                 console.log(error);
             });
-            return { id: _id, name: user?.title };
+            return { id: _id, name: user?.title, uid: user?.userId  };
         }));
         console.log(threads)
         return res.status(200).json({ success: true, data: { threads: threads } });
