@@ -6,7 +6,7 @@ import { createMessage, } from '../utility/aimiddleware';
 import { createOrFindThread } from '../dbservices/thread';
 
 
-const QUEUE_NAME =  'message';
+const QUEUE_NAME =  process.env.MESSAGE_QUEUE || 'message';
 async function processMsg(message: any, channel: Channel) {
     try {
         const data = JSON.parse(message.content.toString());
