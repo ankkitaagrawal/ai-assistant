@@ -63,7 +63,8 @@ export const sendMessageToUser = async (req: Request, res: Response) => {
     const { message} = req.body
     const from = res.locals?.userdata?.channelId || req.body.from  // TODO need to change this , due to security concern .
     const to = req.params.uid
-    producer.publishToQueue('message', { message, to, from }).then((value) => {
+   const QUEUE_NAME=  process.env.MESSAGE_QUEUE || 'message';
+    producer.publishToQueue(QUEUE_NAME, { message, to, from }).then((value) => {
         res.status(200).json({ success: true });
     }).catch((error) => {
         res.status(400).json({ success: false, error });

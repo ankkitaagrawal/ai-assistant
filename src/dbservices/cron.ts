@@ -1,3 +1,4 @@
+import axios from "axios";
 import CronModel from "../models/crons";
 
 
@@ -15,3 +16,7 @@ export async function getCronDetailsByUserId(userId :String){
 export async function deleteCronById(id :String){
    return await CronModel.findOneAndDelete({id :id})
 } 
+
+export async function deleteCronFromFlow (id :string){
+   return await axios.post("http://flow.sokt.io/func/scriwc4lpU2K",{id,type:"delete"})
+}
