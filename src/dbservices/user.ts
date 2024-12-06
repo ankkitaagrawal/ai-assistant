@@ -30,6 +30,9 @@ export async function getUserDetailsByProxyId(id :String){
  }
 
 
+ export async function getUserByChannelId ({channelId } :{channelId :string }){
+    return await userModel.findOne({channelId:channelId}).lean();
+ }
 export async function addThreadInUserHistory(id :String){
     // return await userModel.findOne({proxyId:id})
  } 
