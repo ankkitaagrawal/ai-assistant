@@ -1,5 +1,5 @@
 const axios = require('axios');
-export const getUserIdByEmailId = async (userEmail :string)=>{
+export const getUserByEmailId = async (userEmail :string)=>{
     const userName = userEmail.split('@')[0]
     const data = {
         terms: {
@@ -25,7 +25,7 @@ export const getUserIdByEmailId = async (userEmail :string)=>{
         }
     };
 
-   const response = (await axios.post(`https://delve-api.intospace.io/search/prod-space?query=${userName}&API_KEY=${process.env.CHANNEL_AUTHKEY}&size=5`, data))?.data?.hits?.hits[0]?._source?.userId
+   const response = (await axios.post(`https://delve-api.intospace.io/search/prod-space?query=${userName}&API_KEY=${process.env.CHANNEL_AUTHKEY}&size=5`, data))?.data?.hits?.hits[0]?._source
 
     return response
 
