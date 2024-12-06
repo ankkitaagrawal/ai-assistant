@@ -7,6 +7,8 @@ const routes = express.Router();
 
 routes.route('/messages').get(decodeToken, getMessages);
 routes.route('/message').post(decodeToken, sendMessageToAi);
-routes.route('/message/send-to-user').post(sendMessageToUser );
+
+routes.route('/message/:uid').post( decodeToken, sendMessageToUser );
+routes.route('/message/ai/:uid').post(sendMessageToUser);
 
 export default routes;
