@@ -26,7 +26,7 @@ export async function getUserDetailsByProxyId(id :String){
  export async function updatePrompt ({userId , prompt } :{userId :string , prompt :string }){
     return await userModel.findOneAndUpdate({channelId:userId} ,{
         $set :{prompt : prompt}
-    })
+    },{new :true}).lean();
  }
 
 

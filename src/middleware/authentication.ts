@@ -24,7 +24,7 @@ declare global {
         }
     }
 }
-const userChannelPoxyMap: { [key: string]: any } = {};  // Map to store channel info
+export const userChannelPoxyMap: { [key: string]: any } = {};
 
 
 const getUserChannelData = async (userId: string,userEmail :string) => {
