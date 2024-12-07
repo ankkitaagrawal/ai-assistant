@@ -3,6 +3,6 @@ import { Response, Request } from 'express';
 import { error } from "console";
 
 export const getUser = async (req: Request, res: Response) => {
-    const user = res.locals?.userdata;
+    const user = res.locals?.user;
     return res.status(200).json({ success: true, data: { ...user } });
 };
