@@ -9,15 +9,20 @@ import webhook from './route/webhook';
 import plugin from './route/plugin';
 import thread from './route/thread';
 import user from './route/user';
+import bodyParser from 'body-parser';
+import errorHandler from './middleware/error-handler';
 const app = express();
 const port = process.env.PORT || 3000;
 connectDB();
 
-// Middleware to parse JSON
+app.use(cors({
+  origin: "*",
+  maxAge: 86400,
+  preflightContinue: true,
+}));
+app.use(bodyParser.json({ limit: '8mb' }));
 app.use(express.json());
-
-// Enable CORS
-app.use(cors());
+app.use(express.urlencoded({ extended: true }));
 
 app.use('/plugin', plugin);
 app.use('/chat', chat);
@@ -30,7 +35,7 @@ app.use('/user', user);
 app.get('/', (req: Request, res: Response) => {
   res.send('Welcome to AI Assistant!');
 });
-
+app.use(errorHandler as any);
 // Start the server
 app.listen(port, () => {
   console.log(`Server is running at http://localhost:${port}`);
