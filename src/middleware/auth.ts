@@ -4,6 +4,8 @@ import logger from '../service/logger';
 import { ApiError } from '../error/api-error';
 import { createUser, getUserDetailsByProxyId } from '../dbservices/user';
 import { getUserByEmailId } from '../utility/channel';
+import { getUserDetail } from '../utility';
+import { User } from '../type/user';
 export enum AuthMethod {
     TOKEN = "token",
     API_KEY = "apiKey",
@@ -22,7 +24,15 @@ interface TokenData {
     },
     "userEmail": string
 };
-
+declare global {
+    namespace Express {
+        interface Request {
+            locals: {
+                user?: User;
+            }
+        }
+    }
+}
 export function auth(authMethods: AuthMethod[] = [AuthMethod.TOKEN]) {
     return async function (req: Request, res: Response, next: NextFunction) {
         const methods = [...authMethods];
@@ -79,9 +89,7 @@ export async function tokenAuth(req: Request, res: Response, next: NextFunction)
         // Populate user details in res.locals
         const user = await getUserDetail(proxyId, userEmail).catch((error) => { throw new ApiError('User not found', 401) });
         res.locals.user = {
-            proxyId: user?.proxyId,
-            channelId: user?.channelId,
-            name: user?.name,
+            ...user,
             email: userEmail,
             avatar: user?.avatar || `https://ui-avatars.com/api/?name=${user?.name}&background=random`
         };
@@ -92,27 +100,9 @@ export async function tokenAuth(req: Request, res: Response, next: NextFunction)
     }
 
 }
-
-export function validateToken(token: string): TokenData {
+function validateToken(token: string): TokenData {
     const tokenSecret = process.env.TOKEN_SECRET_KEY;
     if (!tokenSecret) throw new Error('Token secret not found');
     const decodedToken = jwt.verify(token, tokenSecret) as TokenData;
     return decodedToken;
-}
-
-interface User {
-    proxyId: string;
-    channelId: string;
-    name?: string,
-    email?: string,
-    avatar?: string,
-}
-async function getUserDetail(proxyId: string, email: string): Promise<User> {
-    let user = await getUserDetailsByProxyId(proxyId).catch((error) => null) as User;
-    if (!user) {
-        // Get user detail from channel and save in db
-        const channelUser = await getUserByEmailId(email);
-        user = await createUser({ proxyId, channelId: channelUser?.userId, name: channelUser?.title }) as User;
-    }
-    return user;
 }

@@ -26,7 +26,6 @@ declare global {
 }
 export const userChannelPoxyMap: { [key: string]: any } = {};
 
-
 const getUserChannelData = async (userId: string, userEmail: string) => {
     // First, check in the in-memory map
     let userChannelData = userChannelPoxyMap[userId];
