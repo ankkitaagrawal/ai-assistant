@@ -28,6 +28,9 @@ const userSchema = new mongoose.Schema({
   }],
   prompt : {
     type : String 
+  },
+  defaultModel :{
+    type :String 
   }
   
 }, { minimize: false });

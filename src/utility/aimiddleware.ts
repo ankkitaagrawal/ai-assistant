@@ -2,7 +2,7 @@
 
 import axios, { AxiosResponse } from "axios"
 
-export const sendMessage = async (usermessage: string,  variables? : object |null , thread_id?: string) :Promise<string | null> => {
+export const sendMessage = async (usermessage: string, variables?: object | null, thread_id?: string,model?:string): Promise<string | null> => {
   const response: AxiosResponse<any> = await axios.post(
     'https://routes.msg91.com/api/proxy/1258584/29gjrmh24/api/v2/model/chat/completion',
     {
@@ -11,7 +11,11 @@ export const sendMessage = async (usermessage: string,  variables? : object |nul
       bridge_id: "6733097358507028fd81de16",
       thread_id: thread_id,
       RTLayer: false,
-      response_type:'text'
+      response_type: 'text',
+      "configuration": {
+        "model": model || 'gpt-4o' , 
+      },
+      "service": "openai",
     },
     {
       headers: {
@@ -36,11 +40,11 @@ export const getPreviousMessage = async (thread_id?: string): Promise<AxiosRespo
   return response?.data;
 
 };
-export const createMessage = async (thread_id: string,  message :string): Promise<string | null> => {
+export const createMessage = async (thread_id: string, message: string): Promise<string | null> => {
   const response: AxiosResponse<any> = await axios.post(
     `https://proxy.viasocket.com/proxy/api/1258584/32nghul25/api/v1/config/threads/${thread_id}/6733097358507028fd81de16`,
     {
-      "message":message
+      "message": message
     },
     {
       headers: {

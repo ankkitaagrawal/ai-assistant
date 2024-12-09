@@ -10,13 +10,7 @@ export const sendMessageToAi = async (req: Request, res: Response) => {
         const { message } = req.body
         const userId = req.tokenData?.user?.id?.toString();
         const data = res.locals?.userdata;
-        // const appContext = data.appList.map((app: any) => {
-        //     return {
-        //         appId: app.pluginData._id,
-        //         appName: app.pluginData.appName,
-        //         description: app.pluginData.description
-        //     };
-        // });
+
         const response = await sendMessage(message,
             {
                 user_id: userId,
@@ -25,8 +19,7 @@ export const sendMessageToAi = async (req: Request, res: Response) => {
                 // context: JSON.stringify(appContext),
                 channeluserId: data.channelId
             }
-            , userId);
-        console.log(response)
+            , userId , data.defaultModel);
         return res.status(200).json({ success: true, data: { message: response } })
     } catch (err: any) {
 

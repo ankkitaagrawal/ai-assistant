@@ -1,11 +1,4 @@
-
-
-
-
-
 import userModel from "../models/users";
-
-
 
 export async function getUserDetailsByProxyId(id :String){
     return await userModel.findOne({proxyId:id}).populate('appList.pluginData').lean();
@@ -33,6 +26,12 @@ export async function getUserDetailsByProxyId(id :String){
  export async function getUserByChannelId ({channelId } :{channelId :string }){
     return await userModel.findOne({channelId:channelId}).lean();
  }
+
+ export async function updateUserModel ({userId ,model } :{userId :string ,model :string }){
+   return  await userModel.findOneAndUpdate({channelId:userId} ,{
+      $set :{defaultModel : model}
+  },{new :true}).lean();
+}
 export async function addThreadInUserHistory(id :String){
     // return await userModel.findOne({proxyId:id})
  } 
