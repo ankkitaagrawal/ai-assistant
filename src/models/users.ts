@@ -6,11 +6,13 @@ import { object } from 'zod';
 const userSchema = new mongoose.Schema({
   proxyId: {
     type: String,
-    required: true
+    required: true,
+    unique:true
   },
   channelId: {
     type: String,
-    required: true
+    required: true,
+    unique:true
   },
   appList: [{
     pluginData : {
