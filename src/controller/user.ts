@@ -5,7 +5,7 @@ import { updateUserModel } from "../dbservices/user";
 import { userChannelPoxyMap } from "../middleware/authentication";
 
 export const getUser = async (req: Request, res: Response) => {
-    const user = res.locals?.userdata;
+    const user = res.locals?.user;
     return res.status(200).json({ success: true, data: { ...user } });
 };
 export const updateModel = async (req: Request, res: Response) => {
