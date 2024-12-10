@@ -80,25 +80,29 @@ export async function apiKeyAuth(req: Request, res: Response, next: NextFunction
     }
 }
 export async function tokenAuth(req: Request, res: Response, next: NextFunction) {
-    let token = req.header('Authorization') ? req.header('Authorization')?.replace('Bearer ', '') : req.query.token?.toString();
-    if (token) {
-        const tokenData = validateToken(token);
-        console.log(tokenData);
-        const proxyId = tokenData.user.id;
-        const userEmail = tokenData.user.email;
-        // Populate user details in res.locals
-        const user = await getUserDetail(proxyId, userEmail).catch((error) => { throw new ApiError('User not found', 401) });
-        res.locals.user = {
-            ...user,
-            email: userEmail,
-            avatar: user?.avatar || `https://ui-avatars.com/api/?name=${user?.name}&background=random`
-        };
-        next();
-    } else {
-        logger.error("Token not found");
-        throw new ApiError('Token not found', 401);
-    }
+    try {
 
+        let token = req.header('Authorization') ? req.header('Authorization')?.replace('Bearer ', '') : req.query.token?.toString();
+        if (token) {
+            const tokenData = validateToken(token);
+            const proxyId = tokenData.user.id;
+            const userEmail = tokenData.user.email;
+            // Populate user details in res.locals
+            const user = await getUserDetail(proxyId, userEmail);
+            res.locals.user = {
+                ...user,
+                email: userEmail,
+                avatar: user?.avatar || `https://ui-avatars.com/api/?name=${user?.name}&background=random`
+            };
+            next();
+        } else {
+            logger.error("Token not found");
+            throw new ApiError('Token not found', 401);
+        }
+
+    } catch (error) {
+        next(error);
+    }
 }
 function validateToken(token: string): TokenData {
     const tokenSecret = process.env.TOKEN_SECRET_KEY;
