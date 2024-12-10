@@ -1,5 +1,5 @@
 import { NextFunction } from "connect";
-import { getPreviousMessage, sendMessage } from "../utility/aimiddleware";
+import { AIMiddlewareBuilder, getPreviousMessage, sendMessage } from "../utility/aimiddleware";
 import { Response, Request } from 'express';
 import { ApiError } from "../error/api-error";
 import { createThread, getThreadById, updateThreadName } from "../dbservices/thread";
@@ -46,12 +46,22 @@ export const sendMessageToThread = async (req: Request, res: Response, next: Nex
         }
         const thread = await getThreadById(threadId.toString());
         if (thread?.createdBy != user._id) throw new ApiError('Unauthorized', 401);
+        const AI_MIDDLEWARE_AUTH_KEY = process.env.AI_MIDDLEWARE_AUTH_KEY as string;
+        const aiMiddlewareBuilder = new AIMiddlewareBuilder(AI_MIDDLEWARE_AUTH_KEY);
         const variables = {
             user_id: user._id,
             channelUserId: user.channelId,
         }
-        const response = await sendMessage(message, variables, thread?.middleware_id);
-        if (isNewThread && thread?._id && response) updateThreadName(thread?._id, response?.slice(0, 10));
+
+        const userModel = aiMiddlewareBuilder.build();
+        const response = await userModel.sendMessage(message, threadId, variables);
+        if (isNewThread && thread?._id && response) {
+            const namingModel = aiMiddlewareBuilder.useOpenAI("gpt-4-turbo").useBridge("6758354ff2bb1d19ee083e92").build();
+            const prompt = `User: ${message} \n Assistant: ${response}`;
+            const name = await namingModel.sendMessage(prompt)
+            thread.name = name;
+            updateThreadName(thread?._id, name);
+        };
         return res.status(200).json({ success: true, data: { message: response, tid: thread?._id, thread: ((isNewThread) ? thread : undefined) } })
     } catch (error) {
         next(error);
