@@ -21,9 +21,9 @@ export const getThreadMessages = async (req: Request, res: Response, next: NextF
         const selectRole = ['user', 'assistant'];
         if (isArray(messages)) {
             messages = messages.
-            filter((message) => message.role && selectRole.includes(message.role)).
-            map((message: any) => pick(message, selectFields)).
-            slice(0, 100);
+                filter((message) => message.role && selectRole.includes(message.role)).
+                map((message: any) => pick(message, selectFields)).
+                slice(0, 100);
         }
         return res.status(200).json({ success: true, data: { messages: messages, count: messages?.length } })
     } catch (err: any) {
@@ -52,7 +52,7 @@ export const sendMessageToThread = async (req: Request, res: Response, next: Nex
         }
         const response = await sendMessage(message, variables, thread?.middleware_id);
         if (isNewThread && thread?._id && response) updateThreadName(thread?._id, response?.slice(0, 10));
-        return res.status(200).json({ success: true, data: { message: response, tid: thread?._id } })
+        return res.status(200).json({ success: true, data: { message: response, tid: thread?._id, thread: ((isNewThread) ? thread : undefined) } })
     } catch (error) {
         next(error);
     }
