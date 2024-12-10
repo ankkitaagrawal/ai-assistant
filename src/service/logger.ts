@@ -1,7 +1,7 @@
 import { format, createLogger, transports } from 'winston';
 import { DateTime } from 'luxon';
 const { timestamp, combine, printf, colorize } = format;
-const SERVICE_NAME = process.env.SERVICE_NAME || 'ebl-api';
+const SERVICE_NAME = process.env.SERVICE_NAME || 'assistant-api';
 
 function buildDevLogger(logLevel?: string) {
     const localLogFormat = printf(({ level, message, timestamp, stack }: any) => {

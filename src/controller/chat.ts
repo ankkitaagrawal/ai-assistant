@@ -5,7 +5,7 @@ import { ApiError } from "../error/api-error";
 import { createThread, getThreadById, updateThreadName } from "../dbservices/thread";
 import { v4 as uuidv4 } from 'uuid';
 import { isArray, pick } from "lodash";
-
+import env from '../config/env';
 
 export const getThreadMessages = async (req: Request, res: Response, next: NextFunction) => {
     try {
@@ -46,8 +46,7 @@ export const sendMessageToThread = async (req: Request, res: Response, next: Nex
         }
         const thread = await getThreadById(threadId.toString());
         if (thread?.createdBy != user._id) throw new ApiError('Unauthorized', 401);
-        const AI_MIDDLEWARE_AUTH_KEY = process.env.AI_MIDDLEWARE_AUTH_KEY as string;
-        const aiMiddlewareBuilder = new AIMiddlewareBuilder(AI_MIDDLEWARE_AUTH_KEY);
+        const aiMiddlewareBuilder = new AIMiddlewareBuilder(env.AI_MIDDLEWARE_AUTH_KEY as string);
         const variables = {
             user_id: user._id,
             channelUserId: user.channelId,

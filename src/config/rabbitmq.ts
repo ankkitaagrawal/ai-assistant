@@ -2,10 +2,11 @@ import amqp from 'amqplib';
 import EventEmitter from 'events';
 import logger from '../service/logger';
 import { delay } from '../utility';
+import env from './env';
 export type Connection = amqp.Connection;
 export type Channel = amqp.Channel;
 
-const RABBIT_CONNECTION_STRING = process.env.QUEUE_CONNECTIONURL || "";
+const RABBIT_CONNECTION_STRING = env.QUEUE_CONNECTION_URL || "";
 const RETRY_INTERVAL = 5000; // in millis
 
 class RabbitConnection extends EventEmitter {

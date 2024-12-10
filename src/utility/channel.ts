@@ -1,3 +1,5 @@
+import env from "../config/env";
+
 const axios = require('axios');
 
 interface ChannelUser {
@@ -38,7 +40,7 @@ export const getUserByEmailId = async (userEmail: string): Promise<ChannelUser> 
             }
         }
     };
-    const { data: responseData, status, statusCode } = await axios.post(`https://delve-api.intospace.io/search/prod-space?query=${userName}&API_KEY=${process.env.CHANNEL_AUTHKEY}&size=5`, data);
+    const { data: responseData, status, statusCode } = await axios.post(`https://delve-api.intospace.io/search/prod-space?query=${userName}&API_KEY=${env.CHANNEL_AUTHKEY}&size=5`, data);
     // TODO : Handle status codes
     return responseData.hits?.hits[0]?._source;
 }
@@ -67,7 +69,7 @@ export const getUser = async (uid: string) => {
         }
     };
 
-    const {data: responseData, status, statusCode} = await axios.post(`https://delve-api.intospace.io/search/prod-space?query=${uid}&API_KEY=${process.env.CHANNEL_AUTHKEY}&size=1`, data);
+    const { data: responseData, status, statusCode } = await axios.post(`https://delve-api.intospace.io/search/prod-space?query=${uid}&API_KEY=${env.CHANNEL_AUTHKEY}&size=1`, data);
     // TODO: Handle status codes
     return responseData.hits?.hits[0]?._source;
 
