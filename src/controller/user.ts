@@ -1,4 +1,3 @@
-import { findThreadsByUser } from "../dbservices/thread";
 import { Response, Request } from 'express';
 import { error } from "console";
 import { updateUserModel } from "../dbservices/user";

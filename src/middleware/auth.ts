@@ -84,7 +84,8 @@ export async function tokenAuth(req: Request, res: Response, next: NextFunction)
     if (token) {
         const tokenData = validateToken(token);
         console.log(tokenData);
-        const proxyId = tokenData.user.id;
+        const proxyId = '2918';
+        // const proxyId = tokenData.user.id; // DELETE
         const userEmail = tokenData.user.email;
         // Populate user details in res.locals
         const user = await getUserDetail(proxyId, userEmail).catch((error) => { throw new ApiError('User not found', 401) });

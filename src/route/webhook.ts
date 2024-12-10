@@ -1,4 +1,4 @@
-import { getMessages, sendMessageToAi } from "../controller/chat";
+import { getThreadMessages } from "../controller/chat";
 import { processWebhook } from "../controller/webhook";
 import { decodeToken } from "../middleware/authentication";
 

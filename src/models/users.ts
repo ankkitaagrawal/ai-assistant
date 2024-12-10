@@ -34,15 +34,19 @@ const userSchema = new mongoose.Schema({
     }
   }],
 
-  prompt : {
-    type : String 
+  prompt: {
+    type: String
   },
-  defaultModel :{
-    type :String 
+  defaultModel: {
+    type: String
 
   }
 
-}, { minimize: false });
+}, {
+  timestamps: true, // Automatically adds `createdAt` and `updatedAt` fields
+  versionKey: false, // Remove `__v` field
+  minimize: false
+});
 
 
 

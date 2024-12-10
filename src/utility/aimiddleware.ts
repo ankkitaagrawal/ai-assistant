@@ -2,7 +2,7 @@
 
 import axios, { AxiosResponse } from "axios"
 
-export const sendMessage = async (usermessage: string, variables?: object | null, thread_id?: string,model?:string): Promise<string | null> => {
+export const sendMessage = async (usermessage: string, variables?: object | null, thread_id?: string, model?: string): Promise<string | null> => {
   const response: AxiosResponse<any> = await axios.post(
     'https://routes.msg91.com/api/proxy/1258584/29gjrmh24/api/v2/model/chat/completion',
     {
@@ -13,7 +13,7 @@ export const sendMessage = async (usermessage: string, variables?: object | null
       RTLayer: false,
       response_type: 'text',
       "configuration": {
-        "model": model || 'gpt-4o' , 
+        "model": model || 'gpt-4o',
       },
       "service": "openai",
     },
