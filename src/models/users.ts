@@ -6,6 +6,7 @@ const userSchema = new mongoose.Schema({
     type: String,
     required: true,
     unique: true
+
   },
   channelId: {
     type: String,
@@ -32,8 +33,13 @@ const userSchema = new mongoose.Schema({
       required: false
     }
   }],
-  prompt: {
-    type: String
+
+  prompt : {
+    type : String 
+  },
+  defaultModel :{
+    type :String 
+
   }
 
 }, { minimize: false });

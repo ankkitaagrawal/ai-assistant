@@ -18,7 +18,6 @@ export const getThreads = async (req: Request, res: Response) => {
             });
             return { id: _id, name: user?.title, uid: user?.userId };
         }));
-        console.log(threads)
         return res.status(200).json({ success: true, data: { threads: threads } });
     } catch (err: any) {
         console.log(err.response)

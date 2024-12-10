@@ -29,3 +29,10 @@ export async function getUserByChannelId({ channelId }: { channelId: string }) {
 export async function addThreadInUserHistory(id: String) {
    // return await userModel.findOne({proxyId:id})
 }
+
+ export async function updateUserModel ({userId ,model } :{userId :string ,model :string }){
+   return  await userModel.findOneAndUpdate({channelId:userId} ,{
+      $set :{defaultModel : model}
+  },{new :true}).lean();
+}
+

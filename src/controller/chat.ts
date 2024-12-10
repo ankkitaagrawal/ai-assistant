@@ -10,14 +10,6 @@ export const sendMessageToAi = async (req: Request, res: Response) => {
         const { message } = req.body
         const data = res.locals?.user;
         const userId = data?.proxyId;
-        // const appContext = data.appList.map((app: any) => {
-        //     return {
-        //         appId: app.pluginData._id,
-        //         appName: app.pluginData.appName,
-        //         description: app.pluginData.description
-        //     };
-        // });
-
         const variables = {
             user_id: userId,
             system_prompt: "behave like a assisstatnt ",
