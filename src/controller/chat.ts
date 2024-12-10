@@ -4,6 +4,7 @@ import { Response, Request } from 'express';
 import { ApiError } from "../error/api-error";
 import { createThread, getThreadById, updateThreadName } from "../dbservices/thread";
 import { v4 as uuidv4 } from 'uuid';
+import { isArray, pick } from "lodash";
 
 
 export const getThreadMessages = async (req: Request, res: Response, next: NextFunction) => {
@@ -15,7 +16,16 @@ export const getThreadMessages = async (req: Request, res: Response, next: NextF
         if (thread?.createdBy != user._id) throw new ApiError('Unauthorized', 401);
         if (!thread) throw new ApiError('Thread not found', 404);
         const response = await getPreviousMessage(thread?.middleware_id);
-        return res.status(200).json({ success: true, data: { messages: response?.data } })
+        let messages = response?.data;
+        const selectFields = ['id', 'content', 'createdAt', 'role', 'org_id'];
+        const selectRole = ['user', 'assistant'];
+        if (isArray(messages)) {
+            messages = messages.
+            filter((message) => message.role && selectRole.includes(message.role)).
+            map((message: any) => pick(message, selectFields)).
+            slice(0, 100);
+        }
+        return res.status(200).json({ success: true, data: { messages: messages, count: messages?.length } })
     } catch (err: any) {
         next(err);
     }
