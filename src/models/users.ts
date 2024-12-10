@@ -37,9 +37,11 @@ const userSchema = new mongoose.Schema({
   prompt: {
     type: String
   },
-  defaultModel: {
+  aiModel: {
     type: String
-
+  },
+  aiService: {
+    type: String
   }
 
 }, {
