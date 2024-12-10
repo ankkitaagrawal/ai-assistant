@@ -15,6 +15,9 @@ const env = {
     MONGO_URI: process.env.MONGODB_CONNECTION_URI,
     QUEUE_CONNECTION_URL: process.env.QUEUE_CONNECTIONURL,
     CHANNEL_AUTHKEY: process.env.CHANNEL_AUTHKEY,
+    // New Relic Config
+    NEW_RELIC_LICENSE_KEY: process.env.NEW_RELIC_LICENSE_KEY,
+    NEW_RELIC_APP_NAME: process.env.NEW_RELIC_APP_NAME,
 }
 
 export default env;
