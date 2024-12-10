@@ -4,6 +4,7 @@ import { updateUserService } from "../dbservices/user";
 import { userChannelPoxyMap } from "../middleware/authentication";
 import { NextFunction } from 'connect';
 import { ModelSchema } from '../utility/aimiddleware';
+import { deleteCache, getUserKey } from '../service/cache';
 
 export const getUser = async (req: Request, res: Response) => {
     const user = res.locals?.user;
@@ -16,6 +17,8 @@ export const updateAIService = async (req: Request, res: Response, next: NextFun
         const newAIService = req.body.service;
         ModelSchema.parse({ service: newAIService, model: newAIModel });
         const updatedUser = await updateUserService({ userId: user._id, model: newAIModel, service: newAIService });
+        // Delete cache
+        deleteCache(getUserKey(user.proxyId, user.emailId));
         return res.status(200).json({ success: true, data: updatedUser });
 
     } catch (error: any) {

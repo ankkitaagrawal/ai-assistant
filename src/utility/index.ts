@@ -10,8 +10,6 @@ export function delay(time = 1000) {
     });
 }
 
-
-
 export async function getUserDetail(proxyId: string, email: string): Promise<User> {
     let user = await getUserDetailsByProxyId(proxyId).catch((error) => null) as User;
     if (!user) {

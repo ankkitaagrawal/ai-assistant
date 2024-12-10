@@ -2,10 +2,9 @@ import { NextFunction, Request, RequestHandler, RequestParamHandler, Response } 
 import jwt from 'jsonwebtoken';
 import logger from '../service/logger';
 import { ApiError } from '../error/api-error';
-import { createUser, getUserDetailsByProxyId } from '../dbservices/user';
-import { getUserByEmailId } from '../utility/channel';
 import { getUserDetail } from '../utility';
 import { User } from '../type/user';
+import { getCache, getUserKey, setCache } from '../service/cache';
 export enum AuthMethod {
     TOKEN = "token",
     API_KEY = "apiKey",
@@ -88,7 +87,10 @@ export async function tokenAuth(req: Request, res: Response, next: NextFunction)
             const proxyId = tokenData.user.id;
             const userEmail = tokenData.user.email;
             // Populate user details in res.locals
-            const user = await getUserDetail(proxyId, userEmail);
+            const userKey = getUserKey(proxyId, userEmail);
+            const user = getCache(userKey) || await getUserDetail(proxyId, userEmail);
+            setCache(userKey, user);
+            
             res.locals.user = {
                 ...user,
                 email: userEmail,
