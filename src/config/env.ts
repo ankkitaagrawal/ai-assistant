@@ -9,7 +9,6 @@
 const env = {
     PORT: process.env.PORT,
     NODE_ENV: process.env.NODE_ENV,
-    AI_MIDDLEWARE_AUTH_KEY: process.env.AI_MIDDLEWARE_AUTH_KEY,
     TOKEN_SECRET_KEY: process.env.TOKEN_SECRET_KEY,
     RTLAYER_API_KEY: process.env.RTLAYER_API_KEY,
     MONGO_URI: process.env.MONGODB_CONNECTION_URI,
@@ -18,6 +17,11 @@ const env = {
     // New Relic Config
     NEW_RELIC_LICENSE_KEY: process.env.NEW_RELIC_LICENSE_KEY,
     NEW_RELIC_APP_NAME: process.env.NEW_RELIC_APP_NAME,
+    // Middleware Config
+    AI_MIDDLEWARE_AUTH_KEY: process.env.AI_MIDDLEWARE_AUTH_KEY,
+    OPENAI_API_KEY: process.env.OPENAI_API_KEY,
+    GROQ_API_KEY: process.env.GROQ_API_KEY,
+    ANTHROPIC_API_KEY: process.env.ANTHROPIC_API_KEY
 }
 
 export default env;
