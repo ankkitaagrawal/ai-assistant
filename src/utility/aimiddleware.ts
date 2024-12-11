@@ -1,5 +1,6 @@
 import axios, { AxiosResponse } from "axios"
 import { z } from 'zod';
+import env from "../config/env";
 export const sendMessage = async (usermessage: string, variables?: object | null, thread_id?: string, model?: string): Promise<string | null> => {
   const response: AxiosResponse<any> = await axios.post(
     'https://routes.msg91.com/api/proxy/1258584/29gjrmh24/api/v2/model/chat/completion',
@@ -63,13 +64,15 @@ class AIMiddleware {
   private responseType: string;
   private model: string;
   private service: string;
-  constructor(authKey: string, bridgeId: string, responseType: string, model: string, service: string, rtlayer: boolean = false) {
+  private apiKey: string;
+  constructor(authKey: string, bridgeId: string, responseType: string, model: string, service: string, rtlayer: boolean = false, apiKey: string) {
     this.authKey = authKey;
     this.rtlayer = rtlayer;
     this.bridgeId = bridgeId;
     this.responseType = responseType;
     this.model = model;
     this.service = service;
+    this.apiKey = apiKey; // TODO: Temporary
   }
 
   async getMessages(threadId: string) {
@@ -98,6 +101,7 @@ class AIMiddleware {
           "model": this.model,
         },
         "service": this.service,
+        "apikey": this.apiKey
       },
       {
         headers: {
@@ -226,6 +230,20 @@ export class AIMiddlewareBuilder {
   }
   build() {
     ModelSchema.parse({ service: this.service, model: this.model });
-    return new AIMiddleware(this.authKey, this.bridgeId, this.responseType, this.model, this.service, this.rtlayer);
+    // TODO: Temporary Start
+    let apiKey = "";
+    switch (this.service) {
+      case 'openai':
+        apiKey = env.OPENAI_API_KEY as string;
+        break;
+      case 'groq':
+        apiKey = env.GROQ_API_KEY as string;
+        break;
+      case 'anthropic':
+        apiKey = env.ANTHROPIC_API_KEY as string;
+        break;
+    }
+    // TODO: Temporary End
+    return new AIMiddleware(this.authKey, this.bridgeId, this.responseType, this.model, this.service, this.rtlayer, apiKey);
   }
 }
