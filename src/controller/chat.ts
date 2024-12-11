@@ -49,8 +49,11 @@ export const sendMessageToThread = async (req: Request, res: Response, next: Nex
         const aiMiddlewareBuilder = new AIMiddlewareBuilder(env.AI_MIDDLEWARE_AUTH_KEY as string);
         const variables = {
             user_id: user._id,
-            channelUserId: user.channelId,
+            channeUserId: user.channelId,
+            diary: user.prompt,
+            username :user.name
         };
+
         const userModel = aiMiddlewareBuilder.useService(user.service, user.model).build();
         const response = await userModel.sendMessage(message, threadId, variables);
         if (isNewThread && thread?._id && response) {
