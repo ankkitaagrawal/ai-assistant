@@ -15,7 +15,7 @@ export const getThreadMessages = async (req: Request, res: Response, next: NextF
         if (!threadId) throw new ApiError('Thread Id is required', 400);
         if (thread?.createdBy != user._id) throw new ApiError('Unauthorized', 401);
         if (!thread) throw new ApiError('Thread not found', 404);
-        const response = await getPreviousMessage(thread?.middleware_id);
+        const response = await getPreviousMessage(thread?._id);
         let messages = response?.data;
         const selectFields = ['id', 'content', 'createdAt', 'role', 'org_id'];
         const selectRole = ['user', 'assistant'];
