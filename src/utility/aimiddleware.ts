@@ -156,7 +156,7 @@ export const OpenAIModelSchema = z.enum([
 export type OpenAIModel = z.infer<typeof OpenAIModelSchema>;
 // type OpenAIModel = 'gpt-3.5-turbo' | 'gpt-4' | 'gpt-4-turbo' | 'gpt-4o' | 'chatgpt-4o-latest' | 'gpt-4o-mini';
 export const AnthropicModelSchema = z.enum([
-  'claude-3.5-sonnet-20240620',
+  'claude-3-5-sonnet-20240620',
   'claude-3-opus-20240229',
   'claude-3-sonnet-20240229',
   'claude-3-haiku-2024307'

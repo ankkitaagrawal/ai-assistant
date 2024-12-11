@@ -53,8 +53,7 @@ export const sendMessageToThread = async (req: Request, res: Response, next: Nex
             diary: user.prompt,
             username :user.name
         };
-
-        const userModel = aiMiddlewareBuilder.useService(user.service, user.model).build();
+        const userModel = aiMiddlewareBuilder.useService(user.aiService, user.aiModel).build();
         const response = await userModel.sendMessage(message, threadId, variables);
         if (isNewThread && thread?._id && response) {
             const namingModel = aiMiddlewareBuilder.useOpenAI("gpt-4-turbo").useBridge("6758354ff2bb1d19ee083e92").build();
