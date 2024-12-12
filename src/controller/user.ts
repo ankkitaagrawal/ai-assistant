@@ -18,7 +18,7 @@ export const updateAIService = async (req: Request, res: Response, next: NextFun
         ModelSchema.parse({ service: newAIService, model: newAIModel });
         const updatedUser = await updateUserService({ userId: user._id, model: newAIModel, service: newAIService });
         // Delete cache
-        deleteCache(getUserKey(user.proxyId, user.emailId));
+        deleteCache(getUserKey(user.proxyId, user.email));
         return res.status(200).json({ success: true, data: updatedUser });
 
     } catch (error: any) {
