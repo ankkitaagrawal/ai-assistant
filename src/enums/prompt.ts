@@ -1,0 +1,1 @@
+export const langchainPrompt = `Give result in json format only and make the meaningfull content out of these string.`

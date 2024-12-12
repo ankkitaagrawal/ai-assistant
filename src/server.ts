@@ -12,6 +12,9 @@ import thread from './route/thread';
 import user from './route/user';
 import bodyParser from 'body-parser';
 import errorHandler from './middleware/error-handler';
+import axios from 'axios';
+import { convert } from 'html-to-text'
+import { saveVectorsToPinecone } from './service/langchain'
 const app = express();
 const port = process.env.PORT || 3000;
 connectDB();
@@ -41,3 +44,26 @@ app.use(errorHandler as any);
 app.listen(port, () => {
   console.log(`Server is running at http://localhost:${port}`);
 });
+
+app.post('/storevector', async (req: Request, res: Response) => {
+  try {
+    debugger
+    const data = await getCrawledDataFromSite(req.body.url);
+    res.status(200).json({ message: "Working Done!", data: data })
+  } catch (error) {
+    console.error('Error while crawling data:', error);
+    res.status(400).json({ message: "Not Working!" })
+  }
+})
+
+const getCrawledDataFromSite = async (url: string) => {
+  try {
+    const response = await axios.get(url);
+    const textContent = convert(response.data)
+    const storedVectors = await saveVectorsToPinecone('idris', textContent, 'assistant');
+    return { textContent, storedVectors };
+  } catch (error) {
+    console.error('Error fetching the webpage:', error);
+    throw error;
+  }
+}
