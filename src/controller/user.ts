@@ -3,7 +3,7 @@ import { error } from "console";
 import { updateUserService } from "../dbservices/user";
 import { userChannelPoxyMap } from "../middleware/authentication";
 import { NextFunction } from 'connect';
-import { ModelSchema } from '../utility/aimiddleware';
+import { ModelSchema } from '../type/ai_middleware';
 import { deleteCache, getUserKey } from '../service/cache';
 
 export const getUser = async (req: Request, res: Response) => {

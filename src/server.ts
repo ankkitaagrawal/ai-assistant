@@ -12,6 +12,7 @@ import thread from './route/thread';
 import user from './route/user';
 import bodyParser from 'body-parser';
 import errorHandler from './middleware/error-handler';
+import agent from './route/agent';
 const app = express();
 const port = process.env.PORT || 3000;
 connectDB();
@@ -31,6 +32,7 @@ app.use('/utility', utility);
 app.use('/webhook', webhook);
 app.use('/thread', thread);
 app.use('/user', user);
+app.use('/agent', agent);
 
 // Define a route
 app.get('/', (req: Request, res: Response) => {

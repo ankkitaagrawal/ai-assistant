@@ -6,6 +6,7 @@ import { createThread, getThreadById, updateThreadName } from "../dbservices/thr
 import { v4 as uuidv4 } from 'uuid';
 import { isArray, pick } from "lodash";
 import env from '../config/env';
+import { APIResponseBuilder } from "../service/utility";
 
 export const getThreadMessages = async (req: Request, res: Response, next: NextFunction) => {
     try {
@@ -27,12 +28,13 @@ export const getThreadMessages = async (req: Request, res: Response, next: NextF
         }
         return res.status(200).json({ success: true, data: { messages: messages, count: messages?.length } })
     } catch (err: any) {
-        console.log(err,"-err-" , err?.message);
+        console.log(err, "-err-", err?.message);
         next(err);
     }
 };
 
 export const sendMessageToThread = async (req: Request, res: Response, next: NextFunction) => {
+    const responseBuilder = new APIResponseBuilder();
     try {
         let threadId = req.query.tid as string;
         const user = res.locals?.user;
@@ -52,7 +54,7 @@ export const sendMessageToThread = async (req: Request, res: Response, next: Nex
             user_id: user._id,
             channeUserId: user.channelId,
             diary: user.prompt,
-            username :user.name
+            username: user.name
         };
         const userModel = aiMiddlewareBuilder.useService(user.aiService, user.aiModel).build();
         const response = await userModel.sendMessage(message, threadId, variables);
@@ -63,7 +65,8 @@ export const sendMessageToThread = async (req: Request, res: Response, next: Nex
             thread.name = name;
             updateThreadName(thread?._id, name);
         };
-        return res.status(200).json({ success: true, data: { message: response, tid: thread?._id, thread: ((isNewThread) ? thread : undefined) } })
+        const data = { message: response, tid: thread?._id, thread: ((isNewThread) ? thread : undefined) }
+        return res.status(200).json(responseBuilder.setSuccess(data).build());
     } catch (error) {
         next(error);
     }

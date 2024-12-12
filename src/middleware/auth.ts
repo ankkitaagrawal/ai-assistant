@@ -25,7 +25,7 @@ interface TokenData {
 };
 declare global {
     namespace Express {
-        interface Request {
+        interface Response {
             locals: {
                 user?: User;
             }
@@ -90,9 +90,10 @@ export async function tokenAuth(req: Request, res: Response, next: NextFunction)
             const userKey = getUserKey(proxyId, userEmail);
             const user = getCache(userKey) || await getUserDetail(proxyId, userEmail);
             setCache(userKey, user);
-            
+
             res.locals.user = {
                 ...user,
+                _id: user._id?.toString(),
                 email: userEmail,
                 avatar: user?.avatar || `https://ui-avatars.com/api/?name=${user?.name}&background=random`
             };
