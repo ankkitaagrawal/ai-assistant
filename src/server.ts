@@ -14,7 +14,7 @@ import bodyParser from 'body-parser';
 import errorHandler from './middleware/error-handler';
 import axios from 'axios';
 import { convert } from 'html-to-text'
-import { saveVectorsToPinecone } from './service/langchain'
+import { queryLangchain, saveVectorsToPinecone } from './service/langchain'
 const app = express();
 const port = process.env.PORT || 3000;
 connectDB();
@@ -47,7 +47,6 @@ app.listen(port, () => {
 
 app.post('/storevector', async (req: Request, res: Response) => {
   try {
-    debugger
     const data = await getCrawledDataFromSite(req.body.url);
     res.status(200).json({ message: "Working Done!", data: data })
   } catch (error) {
@@ -56,12 +55,22 @@ app.post('/storevector', async (req: Request, res: Response) => {
   }
 })
 
+app.post('/query', async (req: Request, res: Response) => {
+  try {
+    const data = await queryLangchain(req.body.prompt, req.body.namespace);
+    res.status(200).json({ message: "Working Done!", data: data })
+  } catch (error) {
+    console.error('Did not get the result from AI:', error);
+    res.status(400).json({ message: "Not Working!" })
+  }
+})
+
 const getCrawledDataFromSite = async (url: string) => {
   try {
     const response = await axios.get(url);
     const textContent = convert(response.data)
-    const storedVectors = await saveVectorsToPinecone('idris', textContent, 'assistant');
-    return { textContent, storedVectors };
+    const storedVectors = await saveVectorsToPinecone('1234', textContent, 'assistant');
+    return { storedVectors };
   } catch (error) {
     console.error('Error fetching the webpage:', error);
     throw error;

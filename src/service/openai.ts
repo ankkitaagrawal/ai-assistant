@@ -1,4 +1,4 @@
-import { OpenAI } from "@langchain/openai";
+import { OpenAI } from "openai";
 
 const openai: any = new OpenAI({
     apiKey: process.env.OPENAI_API_KEY,

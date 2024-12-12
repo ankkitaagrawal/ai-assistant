@@ -1,6 +1,6 @@
 import { Pinecone } from '@pinecone-database/pinecone';
 import { OpenAIEmbeddings } from "@langchain/openai";
-import { nanoid } from 'nanoid'
+import { nanoid } from 'nanoid';
 import { calculateVectorSize, chunkTextWithOverlap } from '../utility/langchain';
 import { getOpenAIResponse } from './openai';
 import { langchainPrompt } from '../enums/prompt';
@@ -19,7 +19,7 @@ const embeddings: any = new OpenAIEmbeddings({
 
 const index = pc.index(process.env.PINECONE_INDEX_NAME);
 
-const savingVectorsInPineconeBatches = async (vectors: string[], namespace: string) => {
+const savingVectorsInPineconeBatches = async (vectors: any, namespace: any) => {
     try {
         let currentBatch = [];
         let currentBatchSize = 0;
@@ -63,13 +63,12 @@ export const saveVectorsToPinecone = async (pageId: string, text: string, namesp
     try {
         const textChunks = chunkTextWithOverlap(text, 512, 50);
         const textEmbeddings = await embeddings.embedDocuments(textChunks);
-        const vectors: any = textEmbeddings.map(async (embedding: any, index: number) => {
-            const vectorId = nanoid(12);
-            // const data = await savePineconeVectorIdToMongoDB(pageId, textChunks[index], namespace);
+        const vectors: any = textEmbeddings.map((embedding: any, index: number) => {
+            // await savePineconeVectorIdToMongoDB(pageId, textChunks[index], namespace);
             return {
-                id: vectorId,
+                id: Math.floor(10000000 + Math.random() * 90000000).toString(), // Use NanoId!!!!
                 values: embedding,
-                metadata: { pageId }
+                metadata: { pageId, text: textChunks[index] }
             }
         });
         const vectorIds = vectors.map((vector: any) => vector.id);
