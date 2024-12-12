@@ -27,6 +27,7 @@ export const getThreadMessages = async (req: Request, res: Response, next: NextF
         }
         return res.status(200).json({ success: true, data: { messages: messages, count: messages?.length } })
     } catch (err: any) {
+        console.log(err,"-err-" , err?.message);
         next(err);
     }
 };
