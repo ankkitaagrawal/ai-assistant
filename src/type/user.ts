@@ -1,7 +1,7 @@
 import { z } from "zod";
 
 export const userSchema = z.object({
-  _id: z.string().optional(),
+  _id: z.union([z.string(), z.object({})]).optional(),
   proxyId: z.string(),
   channelId: z.string(),
   name: z.string().optional(),
