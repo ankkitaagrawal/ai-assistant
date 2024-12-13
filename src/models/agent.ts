@@ -10,6 +10,14 @@ const agentSchema = new mongoose.Schema(
             required: true,
             unique: true
         },
+        description: {
+            type: String,
+            required: false
+        },
+        logo: {
+            type: String,
+            required: false
+        },
         llm: {
             service: {
                 type: String,

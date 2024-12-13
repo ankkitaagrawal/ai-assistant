@@ -3,6 +3,8 @@ import { ModelSchema, ServiceSchema } from './ai_middleware';
 export const AgentSchema = z.object({
     _id: z.string().optional(),
     name: z.string(),
+    description: z.string().optional(),
+    logo: z.string().url().optional(),
     bridgeId: z.string(),
     llm: ModelSchema,
     vectorTable: z.string().optional(),
