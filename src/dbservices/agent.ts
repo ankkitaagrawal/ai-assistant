@@ -1,6 +1,7 @@
 import { Agent } from '../models/agent';
 import { Agent as AgentType, AgentSchema } from '../type/agent';
 import redis from '../config/redis';
+import { ApiError } from '../error/api-error';
 
 const agentKey = (agentId: string) => `assistant:agent:${agentId}`;
 class AgentService {
@@ -41,7 +42,7 @@ class AgentService {
             redis.del(cahcheKey);
             return updatedAgent;
         } catch (error: any) {
-            throw new Error(`Failed to update agent: ${error.message}`);
+            throw new ApiError(`Failed to update agent: ${error.message}`, 404);
         }
     }
 
@@ -59,7 +60,7 @@ class AgentService {
             redis.cset(cacheKey, JSON.stringify(agent));
             return agent;
         } catch (error: any) {
-            throw new Error(`Failed to retrieve agent: ${error.message}`);
+            throw new ApiError(`Failed to retrieve agent: ${error.message}`, 404);
         }
     }
 }
