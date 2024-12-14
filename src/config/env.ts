@@ -21,7 +21,9 @@ const env = {
     AI_MIDDLEWARE_AUTH_KEY: process.env.AI_MIDDLEWARE_AUTH_KEY,
     OPENAI_API_KEY: process.env.OPENAI_API_KEY,
     GROQ_API_KEY: process.env.GROQ_API_KEY,
-    ANTHROPIC_API_KEY: process.env.ANTHROPIC_API_KEY
+    ANTHROPIC_API_KEY: process.env.ANTHROPIC_API_KEY,
+    // Redis
+    REDIS_CONNECTION_STRING: process.env.REDIS_CONNECTION_STRING,
 }
 
 export default env;

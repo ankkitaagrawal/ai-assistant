@@ -7,7 +7,6 @@ import { v4 as uuidv4 } from 'uuid';
 import { isArray, pick } from "lodash";
 import env from '../config/env';
 import { APIResponseBuilder } from "../service/utility";
-import { User } from "../type/user";
 import AgentService from "../dbservices/agent";
 
 export const getThreadMessages = async (req: Request, res: Response, next: NextFunction) => {
