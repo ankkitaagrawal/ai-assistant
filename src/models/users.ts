@@ -33,7 +33,11 @@ const userSchema = new mongoose.Schema({
       required: false
     }
   }],
-
+  agent: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'agent',
+    required: false
+  },
   prompt: {
     type: String
   },
