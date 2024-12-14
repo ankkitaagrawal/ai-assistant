@@ -50,7 +50,6 @@
     "lodash": "^4.17.21",
     "luxon": "^3.5.0",
     "mongoose": "^8.8.2",
-    "nanoid": "^5.0.9",
     "newrelic": "^12.8.2",
     "openai": "^4.76.1",
     "rtlayer-node": "^1.0.2",
