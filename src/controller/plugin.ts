@@ -32,7 +32,7 @@ export const perfromAction = async (req: Request, res: Response) => {
         const payload = req.body.payload
         const plugData = await getPluginById(appId)
         const userDetails = await getUserDetailsByProxyId(userId)
-        const userContext = (userDetails?.appList.find((data) => data.pluginData?._id.toString() == appId))?.userData
+        const userContext = (userDetails?.appList.find((data) => (data.pluginData as any)?._id.toString() == appId))?.userData
         const actionPayload = JSON.parse(plugData?.action || "")?.[actionId]
         const { url, method } = actionPayload;
         Object.keys(actionPayload.userPayload).forEach((payloadPath) => {
