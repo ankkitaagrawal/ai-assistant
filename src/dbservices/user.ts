@@ -22,6 +22,12 @@ export async function updatePrompt({ userId, prompt }: { userId: string, prompt:
    }, { new: true }).lean();
 }
 
+export async function updateUserAgent({ userId, agentId }: { userId: string, agentId: string }) {
+   return await userModel.findByIdAndUpdate(userId, {
+      $set: { agent: agentId }
+   }, { new: true }).lean();
+}
+
 
 export async function getUserByChannelId({ channelId }: { channelId: string }) {
    return await userModel.findOne({ channelId: channelId }).lean();
