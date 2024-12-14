@@ -7,8 +7,7 @@ const agentSchema = new mongoose.Schema(
         },
         bridgeId: {
             type: String,
-            required: true,
-            unique: true
+            required: true
         },
         description: {
             type: String,
