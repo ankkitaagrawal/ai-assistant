@@ -6,6 +6,7 @@ const ThreadDataSchema = z.object({
   _id: z.string().optional(),
   name: z.string(),
   middleware_id: z.string(),
+  agent: z.string(),
   createdBy: z.string(),
 });
 
