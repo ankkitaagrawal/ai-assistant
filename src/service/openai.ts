@@ -1,7 +1,7 @@
 import { OpenAI } from "openai";
 
 const openai: any = new OpenAI({
-    apiKey: process.env.OPENAI_API_KEY,
+    apiKey: process.env.OPENAI_API_KEY_EMBEDDING_RESPONSE_ENHANCE,
 });
 
 export const getOpenAIResponse = async (prompt: string) => {

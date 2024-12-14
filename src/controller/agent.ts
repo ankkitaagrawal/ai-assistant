@@ -2,6 +2,10 @@ import express, { NextFunction, Request, Response } from 'express';
 import AgentService from '../dbservices/agent';
 import { APIResponseBuilder } from '../service/utility';
 import { Agent as AgentType } from '../type/agent';
+import { v4 as uuidv4 } from 'uuid';
+import producer from '../config/producer';
+import { queryLangchain } from '../service/langchain';
+
 
 // Create a new agent
 export const createAgent = async (req: Request, res: Response, next: NextFunction) => {
@@ -9,6 +13,7 @@ export const createAgent = async (req: Request, res: Response, next: NextFunctio
     try {
         const user = res.locals.user;
         const agentData = req.body;
+        agentData.bridgeId = "675b2637746e370c5a559ea2" 
         agentData.createdBy = user?._id;
         const newAgent = await AgentService.createAgent(agentData);
         responseBuilder.setSuccess(newAgent);
@@ -38,6 +43,7 @@ export const patchAgent = async (req: Request, res: Response, next: NextFunction
         const { id } = req.params;
         const updateData = req.body as Partial<AgentType>;
         delete updateData.createdBy; // Don't allow createdBy to be updated
+
         const updatedAgent = await AgentService.updateAgent(id, updateData);
         responseBuilder.setSuccess(updatedAgent);
         res.status(200).json(responseBuilder.build());
@@ -45,3 +51,41 @@ export const patchAgent = async (req: Request, res: Response, next: NextFunction
         next(error);
     }
 };
+
+// Update  link in the agent 
+export const updateLinkInAgent = async (req: Request, res: Response, next: NextFunction) => {
+    const responseBuilder = new APIResponseBuilder();
+    try {
+        const { id } = req.params;
+        const {docLink ,docTitle} = req.body;
+        const docId = uuidv4();
+        const newLink = {
+            title: docTitle,
+            url: docLink,
+            id: docId
+        };
+        const updatedAgent = await AgentService.addDocInAgent(id,newLink);
+        const QUEUE_NAME = process.env.AGENT_QUEUE || 'agent';
+        await producer.publishToQueue(QUEUE_NAME, { ...newLink , assistantId : id })
+        responseBuilder.setSuccess(updatedAgent);
+        res.status(200).json(responseBuilder.build());
+    } catch (error: any) {
+        next(error);
+    }
+};
+
+
+export const getDocContextofAgent = async (req: Request, res: Response, next: NextFunction) => {
+    const responseBuilder = new APIResponseBuilder();
+    try {
+        const {prompt  }=req.body ;
+        const { id } = req.params;
+        const data = await queryLangchain(prompt, id);
+        responseBuilder.setSuccess(data);
+        res.status(200).json(responseBuilder.build());
+    } catch (error: any) {
+        next(error);
+    }
+};
+
+

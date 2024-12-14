@@ -21,7 +21,10 @@ const env = {
     AI_MIDDLEWARE_AUTH_KEY: process.env.AI_MIDDLEWARE_AUTH_KEY,
     OPENAI_API_KEY: process.env.OPENAI_API_KEY,
     GROQ_API_KEY: process.env.GROQ_API_KEY,
-    ANTHROPIC_API_KEY: process.env.ANTHROPIC_API_KEY
+    ANTHROPIC_API_KEY: process.env.ANTHROPIC_API_KEY,
+    PINECONE_API_KEY : process.env.PINECONE_API_KEY,
+    OPENAI_API_KEY_EMBEDDING : process.env.OPENAI_API_KEY_EMBEDDING,
+    PINECONE_INDEX_NAME : process.env.PINECONE_INDEX_NAME
 }
 
 export default env;

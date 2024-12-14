@@ -4,15 +4,18 @@ import { nanoid } from 'nanoid';
 import { calculateVectorSize, chunkTextWithOverlap } from '../utility/langchain';
 import { getOpenAIResponse } from './openai';
 import { langchainPrompt } from '../enums/prompt';
+import axios from 'axios';
+import { convert } from 'html-to-text';
+import env from '../config/env';
+
 
 const MAX_REQUEST_SIZE = 4 * 1024 * 1024;
 
 const pc: any = new Pinecone({
-    apiKey: process.env.PINECONE_API_KEY || '',
+    apiKey: env.PINECONE_API_KEY || ""
 });
-
 const embeddings: any = new OpenAIEmbeddings({
-    openAIApiKey: process.env.OPENAI_API_KEY,
+    openAIApiKey: env.OPENAI_API_KEY_EMBEDDING,
     batchSize: 100,
     model: 'text-embedding-3-small',
 });
@@ -59,7 +62,7 @@ export const deleteNamespaceInPinecone = async (namespace: string) => {
     }
 }
 
-export const saveVectorsToPinecone = async (pageId: string, text: string, namespace: string) => {
+export const saveVectorsToPinecone = async (docId: string, text: string, namespace: string) => {
     try {
         const textChunks = chunkTextWithOverlap(text, 512, 50);
         const textEmbeddings = await embeddings.embedDocuments(textChunks);
@@ -68,7 +71,7 @@ export const saveVectorsToPinecone = async (pageId: string, text: string, namesp
             return {
                 id: Math.floor(10000000 + Math.random() * 90000000).toString(), // Use NanoId!!!!
                 values: embedding,
-                metadata: { pageId, text: textChunks[index] }
+                metadata: { docId, text: textChunks[index] }
             }
         });
         const vectorIds = vectors.map((vector: any) => vector.id);
@@ -97,3 +100,15 @@ export const getVectorIdsFromSearchText = async (searchText: string, namespace: 
     const queryResponse = await index.namespace(namespace).query({ topK: 5, includeMetadata: true, vector: queryEmbedding });
     return queryResponse;
 }
+
+
+export const getCrawledDataFromSite = async (url: string , assistantId :string , docId :string ) => {
+    try {
+      const response = await axios.get(url);
+      const textContent = convert(response.data)
+      await saveVectorsToPinecone(docId, textContent , assistantId);
+    } catch (error) {
+      console.error('Error fetching the webpage:', error);
+      throw error;
+    }
+  }

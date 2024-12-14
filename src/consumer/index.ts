@@ -6,6 +6,7 @@ import logger from "../service/logger";
 import rabbitmq from "../config/rabbitmq";
 import webhook from "./webhook";
 import message from "./message";
+import agent from "./agent";
 import { connectDB } from "../models";
 connectDB();
 
@@ -16,6 +17,8 @@ switch (args?.consumer) {
     // Add notification consumer to the consumers array
     CONSUMERS.push(webhook);
     CONSUMERS.push(message);
+    CONSUMERS.push(agent);
+
     break;
   default:
     break;
