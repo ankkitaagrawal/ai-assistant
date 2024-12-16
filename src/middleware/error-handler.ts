@@ -22,6 +22,6 @@ export default function errorHandler(err: Error, req: Request, res: Response, ne
     }
     // Default action for errors that are not handled.
     logger.error(err);
-    responseBuilder.setError('Internal Server Error', 400);
+    responseBuilder.setError(err.message || 'Internal Server Error', 400);
     return res.status(400).json(responseBuilder.build());
 }

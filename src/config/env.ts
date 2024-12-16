@@ -25,6 +25,8 @@ const env = {
     PINECONE_API_KEY : process.env.PINECONE_API_KEY,
     OPENAI_API_KEY_EMBEDDING : process.env.OPENAI_API_KEY_EMBEDDING,
     PINECONE_INDEX_NAME : process.env.PINECONE_INDEX_NAME
+    // Redis
+    REDIS_CONNECTION_STRING: process.env.REDIS_CONNECTION_STRING,
 }
 
 export default env;

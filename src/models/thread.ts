@@ -14,7 +14,12 @@ const threadSchema = new mongoose.Schema(
         createdBy: {
             type: String,
             required: true
-        }
+        },
+        agent: {
+            type: mongoose.Schema.Types.ObjectId,
+            ref: 'agent',
+            required: true
+        },
     },
     {
         timestamps: true, // Automatically adds `createdAt` and `updatedAt` fields

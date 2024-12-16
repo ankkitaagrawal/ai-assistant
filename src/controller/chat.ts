@@ -7,6 +7,7 @@ import { v4 as uuidv4 } from 'uuid';
 import { isArray, pick } from "lodash";
 import env from '../config/env';
 import { APIResponseBuilder } from "../service/utility";
+import AgentService from "../dbservices/agent";
 
 export const getThreadMessages = async (req: Request, res: Response, next: NextFunction) => {
     try {
@@ -34,21 +35,26 @@ export const getThreadMessages = async (req: Request, res: Response, next: NextF
 };
 
 export const sendMessageToThread = async (req: Request, res: Response, next: NextFunction) => {
+    // TODO: This method is getting too long. Consider refactoring it.
     const responseBuilder = new APIResponseBuilder();
     try {
         let threadId = req.query.tid as string;
         const user = res.locals?.user;
+        if (!user.agent) throw new Error('User does not have an agent');
         const { message } = req.body;
         let isNewThread = false;
         if (!message) throw new ApiError('Message is required', 400);
         if (!threadId) {
             isNewThread = true;
             const middlewareId = uuidv4();
-            const thread = await createThread({ createdBy: user._id?.toString(), name: message?.slice(0, 10), middleware_id: middlewareId });
+            const agentId = req.body.agent || user.agent?.toString();
+            const thread = await createThread({ createdBy: user._id?.toString(), name: message?.slice(0, 10), middleware_id: middlewareId, agent: agentId });
             if (thread?._id) threadId = thread._id;
         }
         const thread = await getThreadById(threadId.toString());
+        if (!thread) throw new ApiError('Thread not found', 404);
         if (thread?.createdBy != user._id) throw new ApiError('Unauthorized', 401);
+        const agent = await AgentService.getAgentById(thread.agent);
         const aiMiddlewareBuilder = new AIMiddlewareBuilder(env.AI_MIDDLEWARE_AUTH_KEY as string);
         const variables = {
             user_id: user._id,
@@ -56,7 +62,7 @@ export const sendMessageToThread = async (req: Request, res: Response, next: Nex
             diary: user.prompt,
             username: user.name
         };
-        const userModel = aiMiddlewareBuilder.useService(user.aiService, user.aiModel).build();
+        const userModel = aiMiddlewareBuilder.useBridge(agent.bridgeId).useService(agent.llm.service, agent.llm.model).build();
         const response = await userModel.sendMessage(message, threadId, variables);
         if (isNewThread && thread?._id && response) {
             const namingModel = aiMiddlewareBuilder.useOpenAI("gpt-4-turbo").useBridge("6758354ff2bb1d19ee083e92").build();
