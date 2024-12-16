@@ -63,6 +63,26 @@ class AgentService {
             throw new ApiError(`Failed to retrieve agent: ${error.message}`, 404);
         }
     }
+    static async addDocInAgent(id: string, newLink :any
+        // :  Partial<AgentType>
+    ) {
+        // AgentSchema.partial().parse(newLink);
+        try {
+            const updatedAgent = await Agent.findByIdAndUpdate(
+                id,
+                {
+                    $push: { docLinks: newLink } 
+                },
+                { new: true }
+            );
+            if (!updatedAgent) {
+                throw new Error(`Agent with ID ${id} not found.`);
+            }
+            return updatedAgent;
+        } catch (error: any) {
+            throw new Error(`Failed to update agent: ${error.message}`);
+        }
+    }
 }
 
 export default AgentService;

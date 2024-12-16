@@ -10,6 +10,13 @@ export const AgentSchema = z.object({
     vectorTable: z.string().optional(),
     prompt: z.string().optional(),
     createdBy: z.string(),
+    docLinks: z.array(
+        z.object({
+            id : z.string(),
+            title: z.string().optional(), 
+            url: z.string().url(), 
+        })
+    ).optional(),
 });
 
 export type Agent = z.infer<typeof AgentSchema>;

@@ -12,7 +12,6 @@ async function processWebhook(message: any, channel: Channel) {
         const data = JSON.parse(message.content.toString());
         const crondata = await getCronDetailsById(data.event);
         if (!crondata) throw new Error("invalid id")
-        console.log(crondata,"crondata")
         const  userData = await getUserByChannelId({ channelId :crondata?.from })
         if (crondata.isOnce == true){
             await deleteCronFromFlow(crondata.id)

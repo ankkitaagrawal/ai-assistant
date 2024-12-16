@@ -35,6 +35,16 @@ const agentSchema = new mongoose.Schema(
             type: String,
             required: false
         },
+        docLinks: {
+            type: [
+                {
+                    title: { type: String }, 
+                    url: { type: String, required: true },   
+                    id :{type :String,required : true }
+                }
+            ],
+            required: false,
+        },
         createdBy: {
             type: String,
             required: true
