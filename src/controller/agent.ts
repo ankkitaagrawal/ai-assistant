@@ -14,7 +14,7 @@ export const createAgent = async (req: Request, res: Response, next: NextFunctio
     try {
         const user = res.locals.user;
         const agentData = req.body;
-        agentData.bridgeId = agentData.bridgeId || "67580e9d6f4c76fad6a8116f";
+        agentData.bridgeId = agentData.bridgeId || "675b2637746e370c5a559ea2";
         agentData.createdBy = user?._id;
         const newAgent = await AgentService.createAgent(agentData);
         responseBuilder.setSuccess(newAgent);
