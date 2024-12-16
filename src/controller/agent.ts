@@ -103,7 +103,7 @@ export const getDocContextofAgent = async (req: Request, res: Response, next: Ne
         const { prompt } = req.body;
         const { id } = req.params;
         const data = await queryLangchain(prompt, id);
-        responseBuilder.setSuccess(data);
+        responseBuilder.setSuccess({data});
         res.status(200).json(responseBuilder.build());
     } catch (error: any) {
         next(error);

@@ -3,8 +3,7 @@ import { OpenAIEmbeddings } from "@langchain/openai";
 import { calculateVectorSize, chunkTextWithOverlap } from '../utility/langchain';
 import { getOpenAIResponse } from './openai';
 import { langchainPrompt } from '../enums/prompt';
-import axios from 'axios';
-import { convert } from 'html-to-text';
+import { CheerioWebBaseLoader } from "@langchain/community/document_loaders/web/cheerio";
 import env from '../config/env';
 
 
@@ -101,13 +100,16 @@ export const getVectorIdsFromSearchText = async (searchText: string, namespace: 
 }
 
 
-export const getCrawledDataFromSite = async (url: string , assistantId :string , docId :string ) => {
+export const getCrawledDataFromSite = async (url: string) => {
     try {
-      const response = await axios.get(url);
-      const textContent = convert(response.data)
-      await saveVectorsToPinecone(docId, textContent , assistantId);
+
+        const docId = url?.match(/\/d\/(.*?)\//)?.[1]; 
+        const loader = new CheerioWebBaseLoader(`https://docs.google.com/document/d/${docId}/export?format=txt`);
+        const docs = await loader.load();
+        return docs[0].pageContent;
+
     } catch (error) {
-      console.error('Error fetching the webpage:', error);
-      throw error;
+        console.error('Error fetching the webpage:', error);
+        throw error;
     }
-  }
+}

@@ -11,6 +11,6 @@ router.route('/').get(auth([AuthMethod.TOKEN]), getAgents);
 router.route('/:id').patch(auth([AuthMethod.TOKEN]), patchAgent);
 router.route('/').post(auth([AuthMethod.TOKEN]), createAgent);
 router.route('/:id/doc').patch(auth([AuthMethod.TOKEN]), updateLinkInAgent);
-router.route('/:id/getcontext').get(auth([AuthMethod.NONE]), getDocContextofAgent);
+router.route('/:id/getcontext').post(auth([AuthMethod.NONE]), getDocContextofAgent);
 
 export default router;
