@@ -30,7 +30,6 @@ class AgentService {
 
     static async updateAgent(id: string, updateData: Partial<AgentType>) {
         AgentSchema.partial().parse(updateData);
-        const cahcheKey = agentKey(id);
         try {
             const updatedAgent = await Agent.findByIdAndUpdate(id, updateData, {
                 new: true,
@@ -39,7 +38,8 @@ class AgentService {
                 throw new Error(`Agent with ID ${id} not found.`);
             }
             // Clear cache
-            redis.del(cahcheKey);
+            redis.del(agentKey(id));
+            redis.del(agentKey('all'));
             return updatedAgent;
         } catch (error: any) {
             throw new ApiError(`Failed to update agent: ${error.message}`, 404);
@@ -63,15 +63,35 @@ class AgentService {
             throw new ApiError(`Failed to retrieve agent: ${error.message}`, 404);
         }
     }
-    static async addDocInAgent(id: string, newLink :any
+
+    static async getAgents(): Promise<AgentType[]> {
+        try {
+            const cacheKey = agentKey('all');
+            const cachedAgents = await redis.cget(cacheKey).catch((error) => null);
+            if (cachedAgents) {
+                return JSON.parse(cachedAgents);
+            }
+            const agents = await Agent.find();
+            redis.cset(cacheKey, JSON.stringify(agents));
+            return agents;
+        } catch (error: any) {
+            throw new Error(`Failed to retrieve agents: ${error.message}`);
+        }
+    }
+
+
+
+    static async addDocInAgent(id: string, newLink: any
         // :  Partial<AgentType>
     ) {
         // AgentSchema.partial().parse(newLink);
         try {
+            redis.del(agentKey(id));
+            redis.del(agentKey('all'));
             const updatedAgent = await Agent.findByIdAndUpdate(
                 id,
                 {
-                    $push: { docLinks: newLink } 
+                    $push: { docLinks: newLink }
                 },
                 { new: true }
             );
