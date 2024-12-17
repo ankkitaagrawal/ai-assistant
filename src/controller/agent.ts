@@ -18,6 +18,7 @@ export const createAgent = async (req: Request, res: Response, next: NextFunctio
         agentData.bridgeId = agentData.bridgeId || "675b2637746e370c5a559ea2";
         agentData.createdBy = user?._id;
         const newAgent = await AgentService.createAgent(agentData);
+        newAgent.logo =  newAgent.logo || `https://ui-avatars.com/api/?name=${newAgent?.name}&background=random`
         responseBuilder.setSuccess(newAgent);
         res.json(responseBuilder.build());
     } catch (error: any) {
@@ -30,7 +31,7 @@ export const getAgents = async (req: Request, res: Response, next: NextFunction)
     const responseBuilder = new APIResponseBuilder();
     try {
         const agents = await AgentService.getAgents();
-        const agentFields = ['_id', 'name', 'description', 'logo'];
+        const agentFields = ['_id', 'name', 'description', 'logo','createdBy'];
         const response = {
             agents: agents.map((agent) => {
                 return {
@@ -52,6 +53,7 @@ export const getAgent = async (req: Request, res: Response, next: NextFunction) 
     try {
         const { id } = req.params;
         const agent = await AgentService.getAgentById(id);
+         agent.logo =  agent.logo || `https://ui-avatars.com/api/?name=${agent?.name}&background=random`
         responseBuilder.setSuccess(agent);
         res.status(200).json(responseBuilder.build());
     } catch (error: any) {
