@@ -2,7 +2,6 @@ import { Channel } from '../config/rabbitmq';
 import logger from "../service/logger";
 import producer from '../config/producer';
 import rtlayer from '../config/rtlayer';
-import { createMessage, } from '../utility/aimiddleware';
 
 
 const QUEUE_NAME =  process.env.MESSAGE_QUEUE || 'message';
