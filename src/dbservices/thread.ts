@@ -12,24 +12,25 @@ const ThreadDataSchema = z.object({
 
 type ThreadData = z.infer<typeof ThreadDataSchema>;
 
-const userAssistantThreadKey = (userId: string , assistantId :string ) => `assistant:thread:user:${userId}:assistant:${assistantId}`;
+const userAssistantThreadKey = (userId: string, assistantId: string = "all") => `assistant:thread:user:${userId}:assistant:${assistantId}`;
 
 const threadKey = (threadId: string) => `assistant:thread:${threadId}`;
 
 export async function createThread(data: ThreadData): Promise<ThreadData> {
   data = ThreadDataSchema.parse(data);
-  redis.del(userThreadKey(data.createdBy));
+  redis.del(userAssistantThreadKey(data.createdBy));
   const thread = new Thread(data);
   return await thread.save();
 }
 
-export async function getUserThreads(assistantId:string ,userId: string): Promise<ThreadData[]> {
-  if (!userId ) throw new Error("User ID is required");
-  if (!assistantId) throw new Error("AssistantId ID is required");
-  const cachedThreads = await redis.cget(userAssistantThreadKey(userId,assistantId)).catch((error) => null);
+export async function getUserThreads(userId: string, assistantId?: string): Promise<ThreadData[]> {
+  if (!userId) throw new Error("User ID is required");
+  const cachedThreads = await redis.cget(userAssistantThreadKey(userId, assistantId)).catch((error) => null);
   if (cachedThreads) return JSON.parse(cachedThreads);
-  const userThreads = await Thread.find({ createdBy: userId , agent : assistantId}).sort({ createdAt: -1 });
-  redis.cset(userAssistantThreadKey(userId,assistantId), JSON.stringify(userThreads));
+  const filter = { createdBy: userId } as any;
+  if (assistantId) filter.agent = assistantId;
+  const userThreads = await Thread.find(filter).sort({ createdAt: -1 });
+  redis.cset(userAssistantThreadKey(userId, assistantId), JSON.stringify(userThreads));
   return userThreads;
 }
 
@@ -48,6 +49,6 @@ export async function updateThreadName(threadId: string, name: string): Promise<
   const thread = await Thread.findByIdAndUpdate(threadId, { name }, { new: true });
   // Clear cache
   redis.del(threadKey(threadId));
-  redis.del(userAssistantThreadKey(thread.createdBy , thread.agent));
+  redis.del(userAssistantThreadKey(thread.createdBy, thread.agent));
   return thread;
 }

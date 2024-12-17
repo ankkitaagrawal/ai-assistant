@@ -10,8 +10,8 @@ export const getThreads = async (req: Request, res: Response, next: NextFunction
     try {
         const user = res.locals?.user;
         const userId = user?._id;
-        const {assistantId} = req.params  ;
-        let threads = await getUserThreads(assistantId ,userId?.toString());
+        const { assistantId } = req.params;
+        let threads = await getUserThreads(userId?.toString(), assistantId);
         return res.status(200).json(responseBuilder.setSuccess({ threads }).build());
     } catch (err: any) {
         console.log(err.response)
