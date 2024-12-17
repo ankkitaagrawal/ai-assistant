@@ -6,6 +6,7 @@ import { v4 as uuidv4 } from 'uuid';
 import producer from '../config/producer';
 import { queryLangchain } from '../service/langchain';
 import { pick } from 'lodash';
+import { ApiError } from '../error/api-error';
 
 
 // Create a new agent
@@ -62,10 +63,12 @@ export const getAgent = async (req: Request, res: Response, next: NextFunction) 
 export const patchAgent = async (req: Request, res: Response, next: NextFunction) => {
     const responseBuilder = new APIResponseBuilder();
     try {
+        const user = res.locals.user;
         const { id } = req.params;
         const updateData = req.body as Partial<AgentType>;
         delete updateData.createdBy; // Don't allow createdBy to be updated
-
+        const agent = await AgentService.getAgentById(id);
+        if (agent?.createdBy !== user?._id) throw new ApiError('You are not authorized to update this agent', 403);
         const updatedAgent = await AgentService.updateAgent(id, updateData);
         responseBuilder.setSuccess(updatedAgent);
         res.status(200).json(responseBuilder.build());
@@ -103,7 +106,7 @@ export const getDocContextofAgent = async (req: Request, res: Response, next: Ne
         const { prompt } = req.body;
         const { id } = req.params;
         const data = await queryLangchain(prompt, id);
-        responseBuilder.setSuccess({data});
+        responseBuilder.setSuccess({ data });
         res.status(200).json(responseBuilder.build());
     } catch (error: any) {
         next(error);
