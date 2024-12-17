@@ -44,10 +44,10 @@ export const sendMessageToThread = async (req: Request, res: Response, next: Nex
         const { message } = req.body;
         let isNewThread = false;
         if (!message) throw new ApiError('Message is required', 400);
+        const agentId = req.body.agent || user.agent?.toString();
         if (!threadId) {
             isNewThread = true;
             const middlewareId = uuidv4();
-            const agentId = req.body.agent || user.agent?.toString();
             const thread = await createThread({ createdBy: user._id?.toString(), name: message?.slice(0, 10), middleware_id: middlewareId, agent: agentId });
             if (thread?._id) threadId = thread._id;
         }
@@ -57,6 +57,7 @@ export const sendMessageToThread = async (req: Request, res: Response, next: Nex
         const agent = await AgentService.getAgentById(thread.agent);
         const aiMiddlewareBuilder = new AIMiddlewareBuilder(env.AI_MIDDLEWARE_AUTH_KEY as string);
         const variables = {
+            agentId :agentId ,
             user_id: user._id,
             channeUserId: user.channelId,
             diary: user.prompt,

@@ -86,8 +86,8 @@ export const queryLangchain = async (prompt: string, namespace: string) => {
         const queryEmbedding = await embeddings.embedQuery(prompt);
         const queryResponse = await index.namespace(namespace).query({ topK: 10, includeMetadata: true, vector: queryEmbedding });
         const vectorInText = queryResponse.matches.map((match: any) => match.metadata.text).join(" ");
-        const { responseFromAI } = await getOpenAIResponse(`${langchainPrompt}:  ${JSON.stringify({ vectorInText, userQuery: prompt })}`);
-        return responseFromAI;
+        // const { responseFromAI } = await getOpenAIResponse(`${langchainPrompt}:  ${JSON.stringify({ vectorInText, userQuery: prompt })}`);
+        return vectorInText;
     } catch (error) {
         throw new Error("Invalid AI response");
     }
