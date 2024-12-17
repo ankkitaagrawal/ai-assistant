@@ -61,3 +61,8 @@ export class APIResponseBuilder {
         };
     }
 }
+
+
+export function getDefaultPicture(name: string) {
+    return `https://ui-avatars.com/api/?name=${name}&background=random`
+}

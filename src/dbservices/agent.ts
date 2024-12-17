@@ -2,6 +2,7 @@ import { Agent } from '../models/agent';
 import { Agent as AgentType, AgentSchema } from '../type/agent';
 import redis from '../config/redis';
 import { ApiError } from '../error/api-error';
+import { getDefaultPicture } from '../service/utility';
 
 const agentKey = (agentId: string) => `assistant:agent:${agentId}`;
 class AgentService {
@@ -9,6 +10,7 @@ class AgentService {
         AgentSchema.parse(agentData);
         redis.del(agentKey('all'));
         try {
+            agentData.logo = agentData.logo || getDefaultPicture(agentData.name);
             const agent = new Agent(agentData);
             await agent.save();
             return agent;
