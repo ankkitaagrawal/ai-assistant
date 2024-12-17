@@ -90,27 +90,32 @@ class AIMiddleware {
   }
 
   async sendMessage(message: string, threadId?: string, variables = {}) {
-    const response: AxiosResponse<any> = await axios.post('https://routes.msg91.com/api/proxy/1258584/29gjrmh24/api/v2/model/chat/completion',
-      {
-        user: message,
-        variables: variables,
-        bridge_id: this.bridgeId,
-        thread_id: threadId,
-        RTLayer: false,
-        response_type: this.responseType,
-        "configuration": {
-          "model": this.model,
+    try {
+      const response: AxiosResponse<any> = await axios.post('https://routes.msg91.com/api/proxy/1258584/29gjrmh24/api/v2/model/chat/completion',
+        {
+          user: message,
+          variables: variables,
+          bridge_id: this.bridgeId,
+          thread_id: threadId,
+          RTLayer: false,
+          response_type: this.responseType,
+          "configuration": {
+            "model": this.model,
+          },
+          "service": this.service,
+          "apikey": this.apiKey
         },
-        "service": this.service,
-        "apikey": this.apiKey
-      },
-      {
-        headers: {
-          pauthkey: this.authKey,
-        },
-      }
-    );
-    return response.data?.response?.data?.content || null;
+        {
+          headers: {
+            pauthkey: this.authKey,
+          },
+        }
+      );
+      return response.data?.response?.data?.content || null;
+    } catch (error: any) {
+      throw new Error(error.response?.data.detail.error);
+    }
+
   }
 
   async createMessage(threadId: string, message: string) {

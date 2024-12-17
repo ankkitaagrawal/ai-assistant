@@ -12,8 +12,8 @@ const ThreadDataSchema = z.object({
 
 type ThreadData = z.infer<typeof ThreadDataSchema>;
 
+const userAssistantThreadKey = (userId: string , assistantId :string ) => `assistant:thread:user:${userId}:assistant:${assistantId}`;
 
-const userThreadKey = (userId: string) => `assistant:thread:user:${userId}`;
 const threadKey = (threadId: string) => `assistant:thread:${threadId}`;
 
 export async function createThread(data: ThreadData): Promise<ThreadData> {
@@ -23,12 +23,13 @@ export async function createThread(data: ThreadData): Promise<ThreadData> {
   return await thread.save();
 }
 
-export async function getUserThreads(userId: string): Promise<ThreadData[]> {
-  if (!userId) throw new Error("User ID is required");
-  const cachedThreads = await redis.cget(userThreadKey(userId)).catch((error) => null);
+export async function getUserThreads(assistantId:string ,userId: string): Promise<ThreadData[]> {
+  if (!userId ) throw new Error("User ID is required");
+  if (!assistantId) throw new Error("AssistantId ID is required");
+  const cachedThreads = await redis.cget(userAssistantThreadKey(userId,assistantId)).catch((error) => null);
   if (cachedThreads) return JSON.parse(cachedThreads);
-  const userThreads = await Thread.find({ createdBy: userId }).sort({ createdAt: -1 });
-  redis.cset(userThreadKey(userId), JSON.stringify(userThreads));
+  const userThreads = await Thread.find({ createdBy: userId , agent : assistantId}).sort({ createdAt: -1 });
+  redis.cset(userAssistantThreadKey(userId,assistantId), JSON.stringify(userThreads));
   return userThreads;
 }
 
@@ -47,6 +48,6 @@ export async function updateThreadName(threadId: string, name: string): Promise<
   const thread = await Thread.findByIdAndUpdate(threadId, { name }, { new: true });
   // Clear cache
   redis.del(threadKey(threadId));
-  redis.del(userThreadKey(thread.createdBy));
+  redis.del(userAssistantThreadKey(thread.createdBy , thread.agent));
   return thread;
 }
