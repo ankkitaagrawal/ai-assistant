@@ -7,6 +7,7 @@ const agentKey = (agentId: string) => `assistant:agent:${agentId}`;
 class AgentService {
     static async createAgent(agentData: AgentType) {
         AgentSchema.parse(agentData);
+        redis.del(agentKey('all'));
         try {
             const agent = new Agent(agentData);
             await agent.save();
