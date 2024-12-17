@@ -7,6 +7,7 @@ const express = require('express');
 
 const routes = express.Router();
 
+routes.route('/').get(auth([AuthMethod.TOKEN]), getThreads);
 routes.route('/:assistantId').get(auth([AuthMethod.TOKEN]), getThreads);
 
 export default routes;
