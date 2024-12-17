@@ -1,5 +1,5 @@
 import { NextFunction } from "connect";
-import { AIMiddlewareBuilder, getPreviousMessage, sendMessage } from "../utility/aimiddleware";
+import { AIMiddlewareBuilder } from "../utility/aimiddleware";
 import { Response, Request } from 'express';
 import { ApiError } from "../error/api-error";
 import { createThread, getThreadById, updateThreadName } from "../dbservices/thread";
@@ -17,7 +17,10 @@ export const getThreadMessages = async (req: Request, res: Response, next: NextF
         if (!threadId) throw new ApiError('Thread Id is required', 400);
         if (thread?.createdBy != user._id) throw new ApiError('Unauthorized', 401);
         if (!thread) throw new ApiError('Thread not found', 404);
-        const response = await getPreviousMessage(thread?._id);
+        const agent = await AgentService.getAgentById(thread.agent);
+        const aiMiddlewareBuilder = new AIMiddlewareBuilder(env.AI_MIDDLEWARE_AUTH_KEY);
+        const middleware = aiMiddlewareBuilder.useBridge(agent.bridgeId).useService(agent.llm.service, agent.llm.model).build();
+        const response = await middleware.getMessages(threadId);
         let messages = response?.data;
         const selectFields = ['id', 'content', 'createdAt', 'role', 'org_id'];
         const selectRole = ['user', 'assistant'];
@@ -55,9 +58,9 @@ export const sendMessageToThread = async (req: Request, res: Response, next: Nex
         if (!thread) throw new ApiError('Thread not found', 404);
         if (thread?.createdBy != user._id) throw new ApiError('Unauthorized', 401);
         const agent = await AgentService.getAgentById(thread.agent);
-        const aiMiddlewareBuilder = new AIMiddlewareBuilder(env.AI_MIDDLEWARE_AUTH_KEY as string);
+        const aiMiddlewareBuilder = new AIMiddlewareBuilder(env.AI_MIDDLEWARE_AUTH_KEY);
         const variables = {
-            agentId :agentId ,
+            agentId: agentId,
             user_id: user._id,
             channeUserId: user.channelId,
             diary: user.prompt,
