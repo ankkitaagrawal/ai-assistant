@@ -9,11 +9,9 @@ export const ResourceSchema = z.object({
   // Optional fields
   content: z.string().optional(),
   url: z.string().url().optional(),
-  metadata: z.record(z.any()).optional(), 
-  
-  // Timestamp fields that Mongoose adds automatically
-  createdAt: z.date(),
-  updatedAt: z.date(),
+  metadata: z.record(z.any()).optional(),
+  createdAt: z.date().optional(),
+  updatedAt: z.date().optional(),
 });
 
 // Type inference

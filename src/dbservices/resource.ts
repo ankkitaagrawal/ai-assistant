@@ -3,13 +3,16 @@ import { Resource as ResourceType, ResourceSchema } from '../type/resource';
 import redis from '../config/redis';
 import { ApiError } from '../error/api-error';
 
-const resourceKey = (agentId: string, resourceId: string = 'all') => `assistant:agent:${agentId}:resource:${resourceId}`;
+// Cache all resources for an agent
+const agentResourceKey = (agentId: string) => `assistant:resource:all:agent:${agentId}`;
+// Cache a specific resource
+const resourceKey = (resourceId: string) => `assistant:resource:${resourceId}`;
 
 class ResourceService {
-    static async createResource(resourceData: ResourceType) {
+    static async createResource(resourceData: ResourceType): Promise<ResourceType> {
         ResourceSchema.parse(resourceData);
         // Clear the agent's resources cache
-        redis.del(resourceKey(resourceData.agentId));
+        redis.del(agentResourceKey(resourceData.agentId));
         try {
             const resource = new Resource(resourceData);
             await resource.save();
@@ -19,22 +22,23 @@ class ResourceService {
         }
     }
 
-    static async deleteResource(agentId: string, id: string) {
+    static async deleteResource(id: string): Promise<ResourceType> {
         try {
             const deletedResource = await Resource.findByIdAndDelete(id);
             if (!deletedResource) {
                 throw new Error(`Resource with ID ${id} not found.`);
             }
             // Clear specific resource cache and agent's resources cache
-            redis.del(resourceKey(agentId, id));
-            redis.del(resourceKey(agentId));
+            const agentId = deletedResource.agentId;
+            redis.del(resourceKey(id));
+            redis.del(agentResourceKey(agentId));
             return deletedResource;
         } catch (error: any) {
             throw new Error(`Failed to delete resource: ${error.message}`);
         }
     }
 
-    static async updateResource(agentId: string, id: string, updateData: Partial<ResourceType>) {
+    static async updateResource(id: string, updateData: Partial<ResourceType>) {
         ResourceSchema.partial().parse(updateData);
         try {
             const updatedResource = await Resource.findByIdAndUpdate(id, updateData, {
@@ -44,17 +48,18 @@ class ResourceService {
                 throw new Error(`Resource with ID ${id} not found.`);
             }
             // Clear specific resource cache and agent's resources cache
-            redis.del(resourceKey(agentId, id));
-            redis.del(resourceKey(agentId));
+            const agentId = updatedResource.agentId;
+            redis.del(resourceKey(id));
+            redis.del(agentResourceKey(agentId));
             return updatedResource;
         } catch (error: any) {
             throw new ApiError(`Failed to update resource: ${error.message}`, 404);
         }
     }
 
-    static async getResourceById(agentId: string, id: string): Promise<ResourceType> {
+    static async getResourceById(id: string): Promise<ResourceType> {
         try {
-            const cacheKey = resourceKey(agentId, id);
+            const cacheKey = resourceKey(id);
             const cachedResource = await redis.cget(cacheKey).catch((error) => null);
             if (cachedResource) {
                 return JSON.parse(cachedResource);
@@ -75,7 +80,7 @@ class ResourceService {
 
     static async getResourcesByAgent(agentId: string): Promise<ResourceType[]> {
         try {
-            const cacheKey = resourceKey(agentId);
+            const cacheKey = agentResourceKey(agentId);
             const cachedResources = await redis.cget(cacheKey).catch((error) => null);
             if (cachedResources) {
                 return JSON.parse(cachedResources);
@@ -101,8 +106,8 @@ class ResourceService {
                 throw new Error(`Resource with ID ${id} not found.`);
             }
             // Clear specific resource cache and agent's resources cache
-            redis.del(resourceKey(agentId, id));
-            redis.del(resourceKey(agentId));
+            redis.del(resourceKey(id));
+            redis.del(agentResourceKey(agentId));
             return updatedResource;
         } catch (error: any) {
             throw new ApiError(`Failed to update resource metadata: ${error.message}`, 404);
