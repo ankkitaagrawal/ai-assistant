@@ -18,6 +18,11 @@ const resourceSchema = new mongoose.Schema(
             type: String,
             required: false
         },
+        public: {
+            type: Boolean,
+            required: true,
+            default: false
+        },
         metadata: {
             type: Map,
             of: mongoose.Schema.Types.Mixed,

@@ -5,6 +5,7 @@ export const ResourceSchema = z.object({
   title: z.string(),
   agentId: z.string(), // MongoDB ObjectId as string
   createdBy: z.string(), // MongoDB ObjectId as string
+  public: z.boolean().default(false),
 
   // Optional fields
   content: z.string().optional(),
