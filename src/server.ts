@@ -13,7 +13,7 @@ import user from './route/user';
 import bodyParser from 'body-parser';
 import errorHandler from './middleware/error-handler';
 import agent from './route/agent';
-import redis from './config/redis';
+import resource from './route/resource';
 const app = express();
 const port = process.env.PORT || 3000;
 connectDB();
@@ -34,6 +34,7 @@ app.use('/webhook', webhook);
 app.use('/thread', thread);
 app.use('/user', user);
 app.use('/agent', agent);
+app.use('/resource', resource);
 
 // Define a route
 app.get('/', (req: Request, res: Response) => {

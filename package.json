@@ -6,6 +6,7 @@
     "build": "tsc",
     "start": "node dist/server.js",
     "webhook": "ts-node-dev src/consumer/index.ts --consumer=webhook",
+    "rag-sync": "ts-node-dev src/job/index.ts --job=rag-sync",
     "dev": "ts-node-dev src/server.ts",
     "test": "jest",
     "test:watch": "jest --watch"

@@ -11,7 +11,7 @@ const env = {
     NODE_ENV: process.env.NODE_ENV,
     TOKEN_SECRET_KEY: process.env.TOKEN_SECRET_KEY,
     RTLAYER_API_KEY: process.env.RTLAYER_API_KEY,
-    MONGO_URI: process.env.MONGODB_CONNECTION_URI,
+    MONGO_URI: process.env.MONGODB_CONNECTION_URI as string,
     QUEUE_CONNECTION_URL: process.env.QUEUE_CONNECTIONURL,
     CHANNEL_AUTHKEY: process.env.CHANNEL_AUTHKEY,
     // New Relic Config

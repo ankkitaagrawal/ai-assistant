@@ -1,3 +1,4 @@
+import redis from "../config/redis";
 
 type StatusMessage = 'success' | 'error';
 /**
@@ -65,4 +66,18 @@ export class APIResponseBuilder {
 
 export function getDefaultPicture(name: string) {
     return `https://ui-avatars.com/api/?name=${name}&background=random`
+}
+
+
+
+const pointerKey = (jobName: string) => `assistant:pointer:${jobName}`;
+export class JobPointer {
+
+    static async getPointer(jobName: string): Promise<string | null> {
+        const pointer = await redis.get(pointerKey(jobName));
+        return pointer || null;
+    }
+    static async setPointer(jobName: string, pointer: string) {
+        redis.set(pointerKey(jobName), pointer);
+    }
 }
