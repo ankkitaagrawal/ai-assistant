@@ -81,3 +81,8 @@ export class JobPointer {
         redis.set(pointerKey(jobName), pointer);
     }
 }
+
+
+export interface ContentLoader {
+    getContent(url: string, options?: { [key: string]: any }): Promise<string>;
+}
