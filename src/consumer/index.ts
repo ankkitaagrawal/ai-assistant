@@ -7,18 +7,19 @@ import rabbitmq from "../config/rabbitmq";
 import webhook from "./webhook";
 import message from "./message";
 import agent from "./agent";
+import rag from './rag';
 import { connectDB } from "../models";
 connectDB();
 
 const CONSUMERS: IConsumer[] = [];
-console.log(args ,"args");
+console.log(args, "args");
 switch (args?.consumer) {
   case "webhook":
     // Add notification consumer to the consumers array
     CONSUMERS.push(webhook);
     CONSUMERS.push(message);
     CONSUMERS.push(agent);
-
+    CONSUMERS.push(rag);
     break;
   default:
     break;
