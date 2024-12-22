@@ -19,7 +19,7 @@ switch (args?.consumer) {
     CONSUMERS.push(webhook);
     CONSUMERS.push(message);
     CONSUMERS.push(agent);
-    CONSUMERS.push(rag);
+    // CONSUMERS.push(rag);
     break;
   default:
     break;
