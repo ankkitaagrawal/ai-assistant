@@ -7,38 +7,40 @@ import { delay } from '../utility';
 import { DocumentLoader } from '../service/document-loader';
 import { RecursiveCharacterTextSplitter } from "langchain/text_splitter";
 import ResourceService from '../dbservices/resource';
+import { Doc, MongoStorage, OpenAiEncoder, PineconeStorage } from '../service/document';
 
 
 const QUEUE_NAME = process.env.RAG_QUEUE || 'rag';
 async function processMsg(message: any, channel: Channel) {
     try {
         const msg = JSON.parse(message.content.toString());
-        if (msg.version != VERSION) {
-            await delay(1000);
-            logger.error(`[message] Version mismatch: ${msg.version}`);
-            return channel.nack(message);
-        }
         const { version, event, data } = EventSchema.parse(msg);
+        console.log(`Event: ${event}`);
         switch (event) {
             case 'load':
                 const loader = new DocumentLoader();
                 const content = await loader.getContent(data.url);
                 await ResourceService.updateResource(data.resourceId, { content });
                 break;
-            case 'delete':
-                // TODO: Delete the existing chunks because resource has been updated
+            case 'delete': {
+                const doc = new Doc(data.resourceId);
+                await doc.delete(new PineconeStorage()); // WARNING: Pinecone delete is dependent on id from mongo
+                await doc.delete(new MongoStorage());
                 break;
-            case 'chunk':
-                // Chunk the content
-                const textSplitter = new RecursiveCharacterTextSplitter({
-                    chunkSize: 500,
-                    chunkOverlap: 50,
-                    // separators: ['\n', '\r\n', '\r', '\t', ' '],
-                    // separators: ["|", "##", ">", "-"],
-                });
-                const splits = await textSplitter.splitDocuments([{ pageContent: data.content, metadata: {} }]);
-                // TODO: Save the chunks to the database
+            }
+            case 'chunk': {
+                const doc = new Doc(data.resourceId, data.content, { public: data.public, agentId: data.agentId });
+                const chunk = await doc.chunk(512, 50);
+                await chunk.save(new MongoStorage());
+                await chunk.encode(new OpenAiEncoder());
+                try {
+                    await chunk.save(new PineconeStorage());
+                } catch (error) {
+                    chunk.delete(new MongoStorage());
+                    throw error;
+                }
                 break;
+            }
             case 'update':
                 // TODO: Change the visibility of the resource
                 break;
@@ -50,8 +52,9 @@ async function processMsg(message: any, channel: Channel) {
 
         channel.ack(message);
     } catch (error: any) {
+        console.log(error);
         // TODO: Add error message to the failed message
-        producer.publishToQueue(QUEUE_NAME + "_FAILED", message);
+        producer.publishToQueue(QUEUE_NAME + "_FAILED", message.content.toString());
         logger.error(`[message] Error processing message: ${error.message}`);
         channel.ack(message);
     }

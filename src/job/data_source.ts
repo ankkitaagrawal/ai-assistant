@@ -147,8 +147,8 @@ class PublishEvent extends Transform {
                             resourceId: fullDocument._id?.toString(),
                             url: url,
                             meta: {
-                                domain: fullDocument.metaData.domain,
-                                extension: fullDocument.metaData.extension
+                                domain: fullDocument.metaData?.domain,
+                                extension: fullDocument.metaData?.extension
                             },
                             timestamp: Date.now()
                         }

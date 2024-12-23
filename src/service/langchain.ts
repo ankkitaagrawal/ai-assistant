@@ -5,7 +5,9 @@ import { getOpenAIResponse } from './openai';
 import { langchainPrompt } from '../enums/prompt';
 import { CheerioWebBaseLoader } from "@langchain/community/document_loaders/web/cheerio";
 import env from '../config/env';
+import ChunkService from '../dbservices/chunk';
 
+// TODO: Refactor this file
 
 const MAX_REQUEST_SIZE = 4 * 1024 * 1024;
 
@@ -20,7 +22,7 @@ const embeddings: any = new OpenAIEmbeddings({
 
 const index = pc.index(process.env.PINECONE_INDEX_NAME);
 
-const savingVectorsInPineconeBatches = async (vectors: any, namespace: any) => {
+export const savingVectorsInPineconeBatches = async (vectors: any, namespace: any) => {
     try {
         let currentBatch = [];
         let currentBatchSize = 0;
@@ -42,6 +44,13 @@ const savingVectorsInPineconeBatches = async (vectors: any, namespace: any) => {
     } catch (error) {
         throw error
     }
+}
+
+export async function deleteResourceChunks(namespace: string, resourceId: string) {
+    const resourceChunks = await ChunkService.getChunksByResource(resourceId);
+    const chunkIds = resourceChunks.map((chunk: any) => chunk._id);
+    if (chunkIds.length === 0) return;
+    return index.namespace(namespace).deleteMany(chunkIds);
 }
 
 export const deleteVectorsFromPinecone = async (vectorIdsArray: string[], namespace: string) => {
@@ -103,7 +112,7 @@ export const getVectorIdsFromSearchText = async (searchText: string, namespace: 
 export const getCrawledDataFromSite = async (url: string) => {
     try {
 
-        const docId = url?.match(/\/d\/(.*?)\//)?.[1]; 
+        const docId = url?.match(/\/d\/(.*?)\//)?.[1];
         const loader = new CheerioWebBaseLoader(`https://docs.google.com/document/d/${docId}/export?format=txt`);
         const docs = await loader.load();
         return docs[0].pageContent;
