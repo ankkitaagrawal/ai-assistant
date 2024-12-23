@@ -7,6 +7,10 @@ import { HtmlToTextTransformer } from "@langchain/community/document_transformer
 export class WebLoader implements ContentLoader {
     async getContent(url: string, options?: { [key: string]: any }): Promise<string> {
         const loader = new PuppeteerWebBaseLoader(url, {
+            launchOptions: {
+                headless: true,
+                args: ['--no-sandbox']
+            },
             gotoOptions: {
                 waitUntil: 'load'
             }
