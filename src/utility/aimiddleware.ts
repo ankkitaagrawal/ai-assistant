@@ -23,7 +23,7 @@ class AIMiddleware {
 
   async getMessages(threadId: string) {
     const response: AxiosResponse<any> = await axios.get(
-      `https://routes.msg91.com/api/proxy/1258584/32nghul25/api/v1/config/threads/${threadId}/${this.bridgeId}`,
+      `https://routes.msg91.com/api/proxy/1258584/32nghul25/api/v1/config/get-message-history/${threadId}/${this.bridgeId}`,
       {
         headers: {
           pauthkey: this.authKey,
