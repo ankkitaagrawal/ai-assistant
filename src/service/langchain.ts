@@ -90,12 +90,19 @@ export const saveVectorsToPinecone = async (docId: string, text: string, namespa
     }
 }
 
-export const queryLangchain = async (prompt: string, namespace: string) => {
+export const queryLangchain = async (prompt: string, agentId: string) => {
     try {
         const queryEmbedding = await embeddings.embedQuery(prompt);
-        const queryResponse = await index.namespace(namespace).query({ topK: 4, includeMetadata: true, vector: queryEmbedding });
-        const vectorInText = queryResponse.matches.map((match: any) => match.metadata.text).join(" ");
-        // const { responseFromAI } = await getOpenAIResponse(`${langchainPrompt}:  ${JSON.stringify({ vectorInText, userQuery: prompt })}`);
+        const queryResponse = await index.namespace("default").query({
+            topK: 4, includeMetadata: true, vector: queryEmbedding, filter: {
+                agentId: {
+                    $eq: agentId
+                }
+            }
+        });
+        const vectorIds = queryResponse.matches.map((match: any) => match.id);
+        const textChunks = await Promise.all(vectorIds.map(async (id: string) => (await ChunkService.getChunkById(id)).data));
+        const vectorInText = textChunks.join(" ");
         return vectorInText;
     } catch (error) {
         throw new Error("Invalid AI response");
@@ -104,7 +111,7 @@ export const queryLangchain = async (prompt: string, namespace: string) => {
 
 export const getVectorIdsFromSearchText = async (searchText: string, namespace: string) => {
     const queryEmbedding = await embeddings.embedQuery(searchText);
-    const queryResponse = await index.namespace(namespace).query({ topK: 5, includeMetadata: true, vector: queryEmbedding });
+    const queryResponse = await index.namespace("default").query({ topK: 5, includeMetadata: true, vector: queryEmbedding });
     return queryResponse;
 }
 
