@@ -98,3 +98,15 @@ export const updateMetadata = async (req: Request, res: Response, next: NextFunc
         next(error);
     }
 };
+
+export const refreshResource = async (req: Request, res: Response, next: NextFunction) => {
+    const responseBuilder = new APIResponseBuilder();
+    try {
+        const { agentId, id } = req.params;
+        const resource = await ResourceService.updateResource(id, { refreshedAt: new Date() });
+        const response = responseBuilder.setSuccess(resource).build();
+        res.status(200).json(response);
+    } catch (error: any) {
+        next(error);
+    }
+}

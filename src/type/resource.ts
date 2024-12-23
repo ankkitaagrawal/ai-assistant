@@ -9,6 +9,7 @@ export const ResourceSchema = z.object({
 
   // Optional fields
   content: z.string().optional(),
+  refreshedAt: z.date().optional(),
   description: z.string().optional(),
   url: z.string().url().optional(),
   metadata: z.record(z.any()).optional(),

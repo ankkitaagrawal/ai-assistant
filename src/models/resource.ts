@@ -1,3 +1,5 @@
+import { Timestamp } from "bson";
+
 const mongoose = require('mongoose');
 const resourceSchema = new mongoose.Schema(
     {
@@ -31,6 +33,11 @@ const resourceSchema = new mongoose.Schema(
             type: Map,
             of: mongoose.Schema.Types.Mixed,
             required: false
+        },
+        refreshedAt: {
+            type: mongoose.Schema.Types.Date,
+            required: false,
+            default: null
         },
         createdBy: {
             type: mongoose.Schema.Types.ObjectId,
