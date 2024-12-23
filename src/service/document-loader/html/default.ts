@@ -1,11 +1,19 @@
 import { CheerioWebBaseLoader } from "@langchain/community/document_loaders/web/cheerio";
 import { ContentLoader } from "../../utility";
+import { PuppeteerWebBaseLoader } from "@langchain/community/document_loaders/web/puppeteer";
 import { RecursiveCharacterTextSplitter } from "@langchain/textsplitters";
+import { HtmlToTextTransformer } from "@langchain/community/document_transformers/html_to_text";
 
 export class WebLoader implements ContentLoader {
     async getContent(url: string, options?: { [key: string]: any }): Promise<string> {
-        const loader = new CheerioWebBaseLoader(url);
+        const loader = new PuppeteerWebBaseLoader(url, {
+            gotoOptions: {
+                waitUntil: 'load'
+            }
+        });
         const docs = await loader.load();
-        return docs[0].pageContent;
+        const transformer = new HtmlToTextTransformer();
+        const textDoc = await transformer.invoke(docs) as any;
+        return textDoc[0]?.pageContent || "";
     }
 }
