@@ -117,6 +117,7 @@ export class PineconeStorage implements Storage {
                 metadata: {
                     docId: chunk.resourceId,
                     public: chunk.public,
+                    agentId: chunk.agentId
                 }
             }
         })
