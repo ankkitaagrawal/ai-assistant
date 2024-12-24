@@ -8,6 +8,7 @@ import { isArray, pick } from "lodash";
 import env from '../config/env';
 import { APIResponseBuilder } from "../service/utility";
 import AgentService from "../dbservices/agent";
+import ResourceService from "../dbservices/resource";
 
 export const getThreadMessages = async (req: Request, res: Response, next: NextFunction) => {
     try {
@@ -57,14 +58,22 @@ export const sendMessageToThread = async (req: Request, res: Response, next: Nex
         const thread = await getThreadById(threadId.toString());
         if (!thread) throw new ApiError('Thread not found', 404);
         if (thread?.createdBy != user._id) throw new ApiError('Unauthorized', 401);
-        const agent = await AgentService.getAgentById(thread.agent);
+        const [agent, resources] = await Promise.all([
+            AgentService.getAgentById(thread.agent),
+            ResourceService.getResourcesByAgent(thread.agent)
+        ]);
+        const resourcesTitles = resources.map((resource, index) => `${index + 1}. ${resource.title}`).join('\n');
         const aiMiddlewareBuilder = new AIMiddlewareBuilder(env.AI_MIDDLEWARE_AUTH_KEY);
         const variables = {
+            assistantName : agent.name,
             agentId: agentId,
+            agentOwnerId :agent.createdBy,
+            diary: user.prompt,
             user_id: user._id,
             channeUserId: user.channelId,
-            diary: user.prompt,
-            username: user.name
+            username: user.name,
+            availableDocs : resourcesTitles
+
         };
         const userModel = aiMiddlewareBuilder.useBridge(agent.bridgeId).useService(agent.llm.service, agent.llm.model).build();
         const response = await userModel.sendMessage(message, threadId, variables);
