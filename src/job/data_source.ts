@@ -25,7 +25,7 @@ export const ragSyncJob = async (jobName: string = "rag-sync") => {
 async function handleResourceStream(changeStream: ChangeStream, jobName: string) {
     const readableStream: Readable = changeStream.stream();
     try {
-        await pipeline(readableStream, new FilterUpdate(['metadata']), new MetaData(), new PublishEvent(), new Pointer(jobName).on("data", (data) => {
+        await pipeline(readableStream, new FilterOutNull(), new FilterUpdate(['metadata']), new MetaData(), new PublishEvent(), new Pointer(jobName).on("data", (data) => {
             console.log(data);
         }));
     } catch (error: any) {
@@ -118,6 +118,22 @@ class FilterUpdate extends Transform {
             if (!isFiltered) {
                 this.push(request);
             }
+        }
+        callback();
+    }
+}
+
+export class FilterOutNull extends Transform {
+    constructor(options: any = {}) {
+        options.objectMode = true;
+        super(options);
+    }
+
+    async _transform(request: any, encoding: BufferEncoding, callback: TransformCallback): Promise<void> {
+        const operationType = request.operationType;
+        const fullDocument = request.fullDocument;
+        if (fullDocument || operationType == "delete") {
+            this.push(request);
         }
         callback();
     }

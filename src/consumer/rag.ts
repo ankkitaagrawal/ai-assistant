@@ -12,20 +12,24 @@ import { Doc, MongoStorage, OpenAiEncoder, PineconeStorage } from '../service/do
 
 const QUEUE_NAME = process.env.RAG_QUEUE || 'rag';
 async function processMsg(message: any, channel: Channel) {
+    let resourceId: string = '';
     try {
         const msg = JSON.parse(message.content.toString());
         const { version, event, data } = EventSchema.parse(msg);
+        resourceId = data.resourceId;
         console.log(`Event: ${event}`);
         switch (event) {
             case 'load':
                 const loader = new DocumentLoader();
                 const content = await loader.getContent(data.url);
                 await ResourceService.updateResource(data.resourceId, { content });
+                ResourceService.updateMetadata(data.resourceId, { status: 'loaded' }).catch(error => console.log(error));
                 break;
             case 'delete': {
                 const doc = new Doc(data.resourceId);
                 await doc.delete(new PineconeStorage()); // WARNING: Pinecone delete is dependent on id from mongo
                 await doc.delete(new MongoStorage());
+                ResourceService.updateMetadata(data.resourceId, { status: 'deleted' }).catch(error => console.log(error));
                 break;
             }
             case 'chunk': {
@@ -39,6 +43,7 @@ async function processMsg(message: any, channel: Channel) {
                     chunk.delete(new MongoStorage());
                     throw error;
                 }
+                ResourceService.updateMetadata(data.resourceId, { status: 'chunked' }).catch(error => console.log(error));
                 break;
             }
             case 'update':
@@ -55,6 +60,7 @@ async function processMsg(message: any, channel: Channel) {
         console.log(error);
         // TODO: Add error message to the failed message
         producer.publishToQueue(QUEUE_NAME + "_FAILED", message.content.toString());
+        if (resourceId) ResourceService.updateMetadata(resourceId, { status: 'error', message: error?.message }).catch(error => console.log(error));
         logger.error(`[message] Error processing message: ${error.message}`);
         channel.ack(message);
     }

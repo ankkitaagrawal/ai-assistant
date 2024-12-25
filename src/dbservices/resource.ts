@@ -95,7 +95,7 @@ class ResourceService {
         }
     }
 
-    static async updateMetadata(agentId: string, id: string, metadata: Record<string, any>) {
+    static async updateMetadata(id: string, metadata: Record<string, any>) {
         try {
             const updatedResource = await Resource.findByIdAndUpdate(
                 id,
@@ -107,7 +107,7 @@ class ResourceService {
             }
             // Clear specific resource cache and agent's resources cache
             redis.del(resourceKey(id));
-            redis.del(agentResourceKey(agentId));
+            redis.del(agentResourceKey(updatedResource?.agentId));
             return updatedResource;
         } catch (error: any) {
             throw new ApiError(`Failed to update resource metadata: ${error.message}`, 404);
