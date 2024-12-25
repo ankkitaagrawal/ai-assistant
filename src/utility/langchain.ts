@@ -11,8 +11,6 @@ export const chunkTextWithOverlap = (text: string, chunkSize: number, overlapSiz
 };
 
 export const calculateVectorSize = (vector: any) => {
-    const idSize = Buffer.byteLength(vector.id, 'utf8');
-    const metadataSize = Buffer.byteLength(JSON.stringify(vector.metadata), 'utf8');
-    const valuesSize = vector.values.length * 4;
-    return idSize + metadataSize + valuesSize;
+    const serializedVector = JSON.stringify(vector);
+    return Buffer.byteLength(serializedVector, 'utf8');
 };
