@@ -10,7 +10,7 @@ import { APIResponseBuilder } from "../service/utility";
 import AgentService from "../dbservices/agent";
 import ResourceService from "../dbservices/resource";
 import producer from "../config/producer";
-import { createThreadNameSchema } from "../type/utility_consumer";
+import { generateThreadNameSchema } from "../type/event";
 
 export const getThreadMessages = async (req: Request, res: Response, next: NextFunction) => {
     try {
@@ -18,8 +18,8 @@ export const getThreadMessages = async (req: Request, res: Response, next: NextF
         const user = res.locals?.user;
         const thread = await getThreadById(threadId.toString());
         if (!threadId) throw new ApiError('Thread Id is required', 400);
-        if (thread?.createdBy != user._id) throw new ApiError('Unauthorized', 401);
         if (!thread) throw new ApiError('Thread not found', 404);
+        if (thread?.createdBy != user._id) throw new ApiError('Unauthorized', 401);
         const agent = await AgentService.getAgentById(thread.agent);
         const aiMiddlewareBuilder = new AIMiddlewareBuilder(env.AI_MIDDLEWARE_AUTH_KEY);
         const middleware = aiMiddlewareBuilder.useBridge(agent.bridgeId).useService(agent.llm.service, agent.llm.model).build();
@@ -55,15 +55,9 @@ export const sendMessageToThread = async (req: Request, res: Response, next: Nex
 
         let isNewThread = false;
         if (!threadId) {
+            // Create a new thread
             isNewThread = true;
-            const middlewareId = uuidv4();
-            const thread = await createThread({
-                createdBy: user._id?.toString(),
-                name: message?.slice(0, 10),
-                middleware_id: middlewareId,
-                agent: agentId
-            });
-
+            const thread = await createThread({ createdBy: user._id?.toString(), name: message?.slice(0, 10), middleware_id: uuidv4(), agent: agentId });
             if (thread?._id) threadId = thread._id;
         }
 
@@ -96,10 +90,7 @@ export const sendMessageToThread = async (req: Request, res: Response, next: Nex
 
         const response = await userModel.sendMessage(message, threadId, variables);
 
-        if (isNewThread && thread?._id && response) {
-            console.log({isNewThread}, { thread : thread?._id  ,response })
-            await publishThreadNameEvent(message, response, thread._id);
-        }
+        if (isNewThread && thread?._id && response) await publishThreadNameEvent(message, response, thread._id);
 
         const data = {
             message: response,
@@ -113,14 +104,15 @@ export const sendMessageToThread = async (req: Request, res: Response, next: Nex
     }
 };
 
+// TODO: Can we move it somewhere else?
 const publishThreadNameEvent = async (message: string, response: string, threadId: string) => {
-    const createThreadNameEvent = {
+    const generateThreadNameEvent = {
         event: 'createThreadName',
         data: {
             message,
             response,
-            threadId:threadId.toString()
+            threadId: threadId.toString()
         }
     };
-    await producer.publishToQueue('assistant-utility', createThreadNameSchema.parse(createThreadNameEvent));
+    await producer.publishToQueue('assistant-utility', generateThreadNameSchema.parse(generateThreadNameEvent));
 };

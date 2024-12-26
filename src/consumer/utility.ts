@@ -2,8 +2,9 @@ import { Channel } from '../config/rabbitmq';
 import logger from "../service/logger";
 import producer from '../config/producer';
 import rtlayer from '../config/rtlayer';
-import { EventSchema } from '../type/utility_consumer';
-import { createThreadName } from '../service/thread';
+import { EventSchema } from '../type/event';
+import { generateThreadName } from '../service/thread';
+import { updateThreadName } from '../dbservices/thread';
 
 
 
@@ -13,11 +14,18 @@ async function processMsg(message: any, channel: Channel) {
         const msg = JSON.parse(message.content.toString());
         const { event, data } = EventSchema.parse(msg);
         switch (event) {
-            case 'createThreadName':
-            {
-                await createThreadName(data.threadId,data.message,data.response);
-                break;
-            }
+            case 'generate-thread-name':
+                {
+                    const name = await generateThreadName(data.threadId, data.message, data.response);
+                    if (!name) break;
+                    // Update the thread name in the database
+                    await updateThreadName(data.threadId, name);
+                    // Send the thread name to the UI
+                    rtlayer.message(JSON.stringify({ name: name }), {
+                        channel: data.threadId
+                    });
+                    break;
+                }
             default:
                 logger.error(`[message] Unknown event type: ${event}`);
                 throw new Error(`Unknown event type: ${event}`);
