@@ -91,7 +91,7 @@ export const updateMetadata = async (req: Request, res: Response, next: NextFunc
         const { agentId, id } = req.params;
         const { metadata } = req.body;
 
-        const resource = await ResourceService.updateMetadata(agentId, id, metadata);
+        const resource = await ResourceService.updateMetadata( id, metadata);
         const response = responseBuilder.setSuccess(resource).build();
         res.status(200).json(response);
     } catch (error: any) {
