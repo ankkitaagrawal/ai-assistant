@@ -58,7 +58,7 @@ class AIMiddleware {
       );
       return response.data?.response?.data?.content || null;
     } catch (error: any) {
-      throw new Error(error.response?.data.detail.error);
+      throw new Error(error?.response?.data?.detail?.error || error?.message);
     }
 
   }
