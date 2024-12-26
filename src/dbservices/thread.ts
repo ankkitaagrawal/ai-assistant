@@ -18,7 +18,7 @@ const threadKey = (threadId: string) => `assistant:thread:${threadId}`;
 
 export async function createThread(data: ThreadData): Promise<ThreadData> {
   data = ThreadDataSchema.parse(data);
-  redis.del(userAssistantThreadKey(data.createdBy));
+  redis.del(userAssistantThreadKey(data.createdBy, data.agent));
   const thread = new Thread(data);
   return await thread.save();
 }
