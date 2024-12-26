@@ -9,6 +9,7 @@ import message from "./message";
 import agent from "./agent";
 import rag from './rag';
 import { connectDB } from "../models";
+import utility from "./utility";
 connectDB();
 
 const CONSUMERS: IConsumer[] = [];
@@ -20,6 +21,7 @@ switch (args?.consumer) {
     CONSUMERS.push(message);
     CONSUMERS.push(agent);
     CONSUMERS.push(rag);
+    CONSUMERS.push(utility);
     break;
   default:
     break;

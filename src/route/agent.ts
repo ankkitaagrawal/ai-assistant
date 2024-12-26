@@ -1,5 +1,4 @@
 import { AuthMethod, auth } from "../middleware/auth";
-import { getUser, updateAIService } from "../controller/user";
 import { createAgent, getAgent, getAgents, getDocContextofAgent, patchAgent, updateLinkInAgent } from "../controller/agent";
 
 const express = require('express');

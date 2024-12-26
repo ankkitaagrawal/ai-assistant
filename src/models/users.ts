@@ -21,32 +21,13 @@ const userSchema = new mongoose.Schema({
     type: String,
     required: false
   },
-  appList: [{
-    pluginData: {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: 'plugin',
-      required: true
-    },
-    userData: {
-      type: Map, // Using Map to store key-value pairs
-      of: mongoose.Schema.Types.Mixed, // Allowing any type of value (strings, numbers, objects, etc.)
-      required: false
-    }
-  }],
+
   agent: {
     type: mongoose.Schema.Types.ObjectId,
     ref: 'agent',
     required: false
   },
-  prompt: {
-    type: String
-  },
-  aiModel: {
-    type: String
-  },
-  aiService: {
-    type: String
-  }
+ 
 
 }, {
   timestamps: true, // Automatically adds `createdAt` and `updatedAt` fields
