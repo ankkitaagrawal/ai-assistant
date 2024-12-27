@@ -28,7 +28,6 @@ const customFetch = (
 };
 const pc: any = new Pinecone({
     apiKey: env.PINECONE_API_KEY || "",
-    fetchApi: customFetch
 });
 const embeddings: any = new OpenAIEmbeddings({
     openAIApiKey: env.OPENAI_API_KEY_EMBEDDING,
