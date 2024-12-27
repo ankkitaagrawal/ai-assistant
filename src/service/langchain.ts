@@ -6,13 +6,29 @@ import { langchainPrompt } from '../enums/prompt';
 import { CheerioWebBaseLoader } from "@langchain/community/document_loaders/web/cheerio";
 import env from '../config/env';
 import ChunkService from '../dbservices/chunk';
+import { ProxyAgent, Dispatcher } from 'undici';
 
 // TODO: Refactor this file
 
 const MAX_REQUEST_SIZE = 4 * 1024 * 1024;
-
+const client = new ProxyAgent({
+    uri: 'http://34.48.179.78'
+    // uri: 'https://api.pinecone.io',
+    
+});
+const customFetch = (
+    input: string | URL | Request,
+    init: RequestInit | undefined
+) => {
+    return fetch(input, {
+        ...init,
+        dispatcher: client,
+        keepalive: true,
+    } as any);
+};
 const pc: any = new Pinecone({
-    apiKey: env.PINECONE_API_KEY || ""
+    apiKey: env.PINECONE_API_KEY || "",
+    fetchApi: customFetch
 });
 const embeddings: any = new OpenAIEmbeddings({
     openAIApiKey: env.OPENAI_API_KEY_EMBEDDING,
@@ -92,7 +108,9 @@ export const saveVectorsToPinecone = async (docId: string, text: string, namespa
 
 export const queryLangchain = async (prompt: string, agentId: string) => {
     try {
+        console.log(Date.now(), "Embedding query");
         const queryEmbedding = await embeddings.embedQuery(prompt);
+        console.log(Date.now(), "Querying Pinecone");
         const queryResponse = await index.namespace("default").query({
             topK: 4, includeMetadata: true, vector: queryEmbedding, filter: {
                 agentId: {
@@ -100,11 +118,13 @@ export const queryLangchain = async (prompt: string, agentId: string) => {
                 }
             }
         });
+        console.log(Date.now(), "Pinecone response received");
         const vectorIds = queryResponse.matches.map((match: any) => match.id);
         const textChunks = await Promise.all(vectorIds.map(async (id: string) => (await ChunkService.getChunkById(id)).data));
         const vectorInText = textChunks.join(" ");
         return vectorInText;
     } catch (error) {
+        console.log(error);
         throw new Error("Invalid AI response");
     }
 }
