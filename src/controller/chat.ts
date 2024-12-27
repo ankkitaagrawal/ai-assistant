@@ -107,7 +107,7 @@ export const sendMessageToThread = async (req: Request, res: Response, next: Nex
 // TODO: Can we move it somewhere else?
 const publishThreadNameEvent = async (message: string, response: string, threadId: string) => {
     const generateThreadNameEvent = {
-        event: 'createThreadName',
+        event: 'generate-thread-name',
         data: {
             message,
             response,
