@@ -89,6 +89,7 @@ export class AIMiddlewareBuilder {
   private service: Service;
 
   constructor(authKey: string) {
+    if (!authKey) throw new Error("Auth Key is required");
     this.authKey = authKey;
     this.rtlayer = false;
     this.bridgeId = "6733097358507028fd81de16";
