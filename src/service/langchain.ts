@@ -11,21 +11,6 @@ import { ProxyAgent, Dispatcher } from 'undici';
 // TODO: Refactor this file
 
 const MAX_REQUEST_SIZE = 4 * 1024 * 1024;
-const client = new ProxyAgent({
-    uri: 'http://34.48.179.78'
-    // uri: 'https://api.pinecone.io',
-
-});
-const customFetch = (
-    input: string | URL | Request,
-    init: RequestInit | undefined
-) => {
-    return fetch(input, {
-        ...init,
-        dispatcher: client,
-        keepalive: true,
-    } as any);
-};
 const pc: any = new Pinecone({
     apiKey: env.PINECONE_API_KEY || "",
 });
@@ -129,7 +114,10 @@ export const queryLangchain = async (prompt: string, agentId: string) => {
 }
 
 export const vectorSearch = async (query: string, agentId: string) => {
+    // TOOD: Remove logs
+    console.log(Date.now(), "Embedding query");
     const queryEmbedding = await embeddings.embedQuery(query);
+    console.log(Date.now(), "Querying Pinecone");
     const queryResponse = await index.namespace("default").query({
         topK: 4, includeMetadata: true, vector: queryEmbedding, filter: {
             agentId: {
@@ -138,6 +126,7 @@ export const vectorSearch = async (query: string, agentId: string) => {
         }
     });
     const vectorIds = queryResponse.matches.map((match: any) => match.id);
+    console.log(Date.now(), "Pinecone response received");
     return vectorIds;
 }
 

@@ -7,6 +7,8 @@ import producer from '../config/producer';
 import { queryLangchain } from '../service/langchain';
 import { pick } from 'lodash';
 import { ApiError } from '../error/api-error';
+import axios from '../config/axios';
+import ChunkService from '../dbservices/chunk';
 
 
 // Create a new agent
@@ -100,12 +102,29 @@ export const getDocContextofAgent = async (req: Request, res: Response, next: Ne
     try {
         const { prompt } = req.body;
         const { id } = req.params;
-        const data = await queryLangchain(prompt, id);
-        responseBuilder.setSuccess({ data });
+        const data = {
+            "query": prompt,
+            "agentId": id
+        };
+        const config = {
+            method: 'post',
+            maxBodyLength: Infinity,
+            url: 'https://dev-assistant-api-1091285226236.us-east4.run.app/uitlis/search',
+            data: data
+        };
+        // TODO: Remove logs
+        console.log(Date.now(), "Querying Vector DB");
+        const response = await axios.request(config);
+        const vectorIds = response.data?.data?.docs as string[] || [];
+        console.log(Date.now(), "Vector DB response received");
+        const textChunks = await Promise.all(vectorIds.map(async (id: string) => (await ChunkService.getChunkById(id))?.data));
+        console.log(Date.now(), "Chunks received");
+        responseBuilder.setSuccess({ data: textChunks.join(" \n") });
         res.status(200).json(responseBuilder.build());
     } catch (error: any) {
         next(error);
     }
 };
+
 
 
