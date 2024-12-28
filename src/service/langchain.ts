@@ -14,7 +14,7 @@ const MAX_REQUEST_SIZE = 4 * 1024 * 1024;
 const client = new ProxyAgent({
     uri: 'http://34.48.179.78'
     // uri: 'https://api.pinecone.io',
-    
+
 });
 const customFetch = (
     input: string | URL | Request,
@@ -126,6 +126,19 @@ export const queryLangchain = async (prompt: string, agentId: string) => {
         console.log(error);
         throw new Error("Invalid AI response");
     }
+}
+
+export const vectorSearch = async (query: string, agentId: string) => {
+    const queryEmbedding = await embeddings.embedQuery(query);
+    const queryResponse = await index.namespace("default").query({
+        topK: 4, includeMetadata: true, vector: queryEmbedding, filter: {
+            agentId: {
+                $eq: agentId
+            }
+        }
+    });
+    const vectorIds = queryResponse.matches.map((match: any) => match.id);
+    return vectorIds;
 }
 
 export const getVectorIdsFromSearchText = async (searchText: string, namespace: string) => {

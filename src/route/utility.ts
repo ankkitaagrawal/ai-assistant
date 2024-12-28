@@ -1,4 +1,4 @@
-import { deleteCron, getCronDetailsOfUser, saveCronJobData, updateUserPrompt } from "../controller/utility";
+import { deleteCron, getCronDetailsOfUser, saveCronJobData, searchVectorData, updateUserPrompt } from "../controller/utility";
 import { Request, Response } from "express";
 import redis from '../config/redis';
 import { APIResponseBuilder } from "../service/utility";
@@ -24,7 +24,7 @@ routes.route('/cache/flush').delete(async (req: Request, res: Response) => {
     const response = responseBuilder.setSuccess({ "keys": keys }).build();
     res.json(response);
 });
-
+// For testing purpose
 routes.route('/chunk').get(async (req: Request, res: Response, next: NextFunction) => {
     try {
 
@@ -40,5 +40,7 @@ routes.route('/chunk').get(async (req: Request, res: Response, next: NextFunctio
         next(error);
     }
 });
+
+routes.route('/search').post(searchVectorData);
 
 export default routes;
