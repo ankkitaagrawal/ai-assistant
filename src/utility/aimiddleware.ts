@@ -1,4 +1,5 @@
-import axios, { AxiosResponse } from "axios"
+import { AxiosResponse } from "axios";
+import axios from "../config/axios";
 import { z } from 'zod';
 import env from "../config/env";
 import { AnthropicModel, GroqModel, ModelSchema, OpenAIModel, Service } from "../type/ai_middleware";
@@ -35,6 +36,8 @@ class AIMiddleware {
   }
 
   async sendMessage(message: string, threadId?: string, variables = {}) {
+    console.log("Auth Key", this.authKey);
+    console.log("ApiKey", this.apiKey);
     try {
       const response: AxiosResponse<any> = await axios.post('https://routes.msg91.com/api/proxy/1258584/29gjrmh24/api/v2/model/chat/completion',
         {
