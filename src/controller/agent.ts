@@ -109,7 +109,7 @@ export const getDocContextofAgent = async (req: Request, res: Response, next: Ne
         const config = {
             method: 'post',
             maxBodyLength: Infinity,
-            url: 'https://dev-assistant-api-1091285226236.us-east4.run.app/uitlis/search',
+            url: 'https://dev-assistant-api-1091285226236.us-east4.run.app/utility/search',
             data: data
         };
         // TODO: Remove logs
