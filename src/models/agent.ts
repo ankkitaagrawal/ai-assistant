@@ -35,6 +35,13 @@ const agentSchema = new mongoose.Schema(
             type: String,
             required: false
         },
+        editors: [
+            {
+                type: mongoose.Schema.Types.ObjectId,
+                ref: 'User',
+                required: true
+            }
+        ],
         createdBy: {
             type: String,
             required: true

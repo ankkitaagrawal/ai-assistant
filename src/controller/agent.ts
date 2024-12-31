@@ -9,6 +9,8 @@ import { pick } from 'lodash';
 import { ApiError } from '../error/api-error';
 import axios from '../config/axios';
 import ChunkService from '../dbservices/chunk';
+import { getUserByEmailId } from '../utility/channel';
+import { getUserByChannelId } from '../dbservices/user';
 
 
 // Create a new agent
@@ -32,7 +34,7 @@ export const getAgents = async (req: Request, res: Response, next: NextFunction)
     const responseBuilder = new APIResponseBuilder();
     try {
         const agents = await AgentService.getAgents();
-        const agentFields = ['_id', 'name', 'description', 'logo', 'createdBy'];
+        const agentFields = ['_id', 'name', 'description', 'logo', 'createdBy', 'editors'];
         const response = {
             agents: agents.map((agent) => pick(agent, agentFields)),
         }
@@ -64,6 +66,7 @@ export const patchAgent = async (req: Request, res: Response, next: NextFunction
         const { id } = req.params;
         const updateData = req.body as Partial<AgentType>;
         delete updateData.createdBy; // Don't allow createdBy to be updated
+        delete updateData.editors; // Don't allow editors to be updated
         const agent = await AgentService.getAgentById(id);
         if (agent?.createdBy !== user?._id) throw new ApiError('You are not authorized to update this agent', 403);
         const updatedAgent = await AgentService.updateAgent(id, updateData);
@@ -125,6 +128,37 @@ export const getDocContextofAgent = async (req: Request, res: Response, next: Ne
         next(error);
     }
 };
+
+export const addEditor = async (req: Request, res: Response, next: NextFunction) => {
+    const responseBuilder = new APIResponseBuilder();
+    try {
+        const { id } = req.params;
+        const { emails }: { emails: Array<string> } = req.body;
+        for (const email of emails) {
+            const channelUser = await getUserByEmailId(email);
+            const user = await getUserByChannelId({ channelId: channelUser?.userId });
+            const userId = user?._id?.toString();
+            if (!userId) throw new ApiError('User not found', 404);
+            const updatedAgent = await AgentService.addEditor(id, userId);
+            responseBuilder.setSuccess(updatedAgent);
+        }
+        res.status(200).json(responseBuilder.build());
+    } catch (error: any) {
+        next(error);
+    }
+}
+
+export const removeEditor = async (req: Request, res: Response, next: NextFunction) => {
+    const responseBuilder = new APIResponseBuilder();
+    try {
+        const { id, editorId } = req.params;
+        const updatedAgent = await AgentService.removeEditor(id, editorId);
+        responseBuilder.setSuccess(updatedAgent);
+        res.status(200).json(responseBuilder.build());
+    } catch (error: any) {
+        next(error);
+    }
+}
 
 
 

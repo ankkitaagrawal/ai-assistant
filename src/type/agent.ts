@@ -9,12 +9,13 @@ export const AgentSchema = z.object({
     llm: ModelSchema,
     vectorTable: z.string().optional(),
     prompt: z.string().optional(),
+    editors: z.array(z.string()).optional(),
     createdBy: z.string(),
     docLinks: z.array(
         z.object({
-            id : z.string(),
-            title: z.string().optional(), 
-            url: z.string().url(), 
+            id: z.string(),
+            title: z.string().optional(),
+            url: z.string().url(),
         })
     ).optional(),
 });

@@ -1,5 +1,5 @@
 import { AuthMethod, auth } from "../middleware/auth";
-import { createAgent, getAgent, getAgents, getDocContextofAgent, patchAgent, updateLinkInAgent } from "../controller/agent";
+import { addEditor, createAgent, getAgent, getAgents, getDocContextofAgent, patchAgent, removeEditor, updateLinkInAgent } from "../controller/agent";
 
 const express = require('express');
 
@@ -11,5 +11,7 @@ router.route('/:id').patch(auth([AuthMethod.TOKEN]), patchAgent);
 router.route('/').post(auth([AuthMethod.TOKEN]), createAgent);
 router.route('/:id/doc').patch(auth([AuthMethod.TOKEN]), updateLinkInAgent);
 router.route('/:id/getcontext').post(auth([AuthMethod.NONE]), getDocContextofAgent);
+router.route('/:id/editor').patch(auth([AuthMethod.TOKEN]), addEditor);
+router.route('/:id/editor/:editorId').delete(auth([AuthMethod.TOKEN]), removeEditor);
 
 export default router;

@@ -106,6 +106,46 @@ class AgentService {
             throw new Error(`Failed to update agent: ${error.message}`);
         }
     }
+
+    static async addEditor(id: string, editor: string) {
+        try {
+            redis.del(agentKey(id));
+            redis.del(agentKey('all'));
+            const updatedAgent = await Agent.findByIdAndUpdate(
+                id,
+                {
+                    $push: { editors: editor }
+                },
+                { new: true }
+            );
+            if (!updatedAgent) {
+                throw new Error(`Agent with ID ${id} not found.`);
+            }
+            return updatedAgent;
+        } catch (error: any) {
+            throw new Error(`Failed to update agent: ${error.message}`);
+        }
+    }
+
+    static async removeEditor(id: string, editor: string) {
+        try {
+            redis.del(agentKey(id));
+            redis.del(agentKey('all'));
+            const updatedAgent = await Agent.findByIdAndUpdate(
+                id,
+                {
+                    $pull: { editors: editor }
+                },
+                { new: true }
+            );
+            if (!updatedAgent) {
+                throw new Error(`Agent with ID ${id} not found.`);
+            }
+            return updatedAgent;
+        } catch (error: any) {
+            throw new Error(`Failed to update agent: ${error.message}`);
+        }
+    }
 }
 
 export default AgentService;

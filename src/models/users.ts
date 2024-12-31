@@ -1,5 +1,4 @@
 import mongoose from 'mongoose';
-import { object } from 'zod';
 
 const userSchema = new mongoose.Schema({
   proxyId: {
