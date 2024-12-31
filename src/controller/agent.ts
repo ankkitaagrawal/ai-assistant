@@ -133,12 +133,15 @@ export const addEditor = async (req: Request, res: Response, next: NextFunction)
     const responseBuilder = new APIResponseBuilder();
     try {
         const { id } = req.params;
+        const agent = await AgentService.getAgentById(id);
+        const isOwner = agent?.createdBy == res.locals.user?._id?.toString();
+        if (!isOwner) throw new ApiError('You are not authorized to manage editors', 403);
         const { emails }: { emails: Array<string> } = req.body;
         for (const email of emails) {
             const channelUser = await getUserByEmailId(email);
             const user = await getUserByChannelId({ channelId: channelUser?.userId });
             const userId = user?._id?.toString();
-            if (!userId) throw new ApiError('User not found', 404);
+            if (!userId) continue;
             const updatedAgent = await AgentService.addEditor(id, userId);
             responseBuilder.setSuccess(updatedAgent);
         }
@@ -152,6 +155,9 @@ export const removeEditor = async (req: Request, res: Response, next: NextFuncti
     const responseBuilder = new APIResponseBuilder();
     try {
         const { id, editorId } = req.params;
+        const agent = await AgentService.getAgentById(id);
+        const isOwner = agent?.createdBy == res.locals.user?._id?.toString();
+        if (!isOwner) throw new ApiError('You are not authorized to manage editors', 403);
         const updatedAgent = await AgentService.removeEditor(id, editorId);
         responseBuilder.setSuccess(updatedAgent);
         res.status(200).json(responseBuilder.build());
