@@ -56,7 +56,7 @@ class AgentService {
             if (cachedAgent) {
                 return JSON.parse(cachedAgent);
             }
-            const agent = await Agent.findById(id);
+            const agent = await Agent.findById(id).populate("editors", "name");
             if (!agent) {
                 throw new Error(`Agent with ID ${id} not found.`);
             }
@@ -74,7 +74,7 @@ class AgentService {
             if (cachedAgents) {
                 return JSON.parse(cachedAgents);
             }
-            const agents = await Agent.find();
+            const agents = await Agent.find().populate('editors', 'name');
             redis.cset(cacheKey, JSON.stringify(agents));
             return agents;
         } catch (error: any) {
