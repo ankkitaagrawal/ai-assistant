@@ -114,10 +114,10 @@ class AgentService {
             const updatedAgent = await Agent.findByIdAndUpdate(
                 id,
                 {
-                    $push: { editors: editor }
+                    $addToSet: { editors: editor }
                 },
                 { new: true }
-            );
+            ).populate('editors', 'name');
             if (!updatedAgent) {
                 throw new Error(`Agent with ID ${id} not found.`);
             }
@@ -137,7 +137,7 @@ class AgentService {
                     $pull: { editors: editor }
                 },
                 { new: true }
-            );
+            ).populate('editors', 'name');
             if (!updatedAgent) {
                 throw new Error(`Agent with ID ${id} not found.`);
             }
