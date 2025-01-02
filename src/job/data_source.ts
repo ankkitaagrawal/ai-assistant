@@ -229,8 +229,8 @@ class PublishEvent extends Transform {
                             content: fullDocument.content,
                             public: fullDocument.public,
                             meta: {
-                                domain: request.metaData.domain,
-                                extension: request.metaData.extension
+                                domain: request?.metaData?.domain,
+                                extension: request?.metaData?.extension
                             },
                             timestamp: Date.now()
                         }
