@@ -10,6 +10,7 @@ import agent from "./agent";
 import rag from './rag';
 import { connectDB } from "../models";
 import utility from "./utility";
+import { delay } from "../utility";
 connectDB();
 
 const CONSUMERS: IConsumer[] = [];
@@ -40,6 +41,7 @@ class Consumer {
   private processor: Function;
   private bufferSize: number = 1;
   private rabbitService;
+  private shutdown = false;
   constructor(obj: IConsumer, connectionString?: string) {
     this.queue = obj.queue;
     this.processor = obj.processor;
@@ -60,6 +62,10 @@ class Consumer {
   }
   private start() {
     this.channel?.consume(this.queue, async (message: any) => {
+      if (this.shutdown) {
+        console.log("This consumer is shutting down, no longer processing messages");
+        return;
+      }
       try {
         await this.processor(message, this.channel);
       } catch (error) {
@@ -67,6 +73,9 @@ class Consumer {
         throw error;
       }
     }, { noAck: false })
+  }
+  public stop() {
+    this.shutdown = true;
   }
   public async queueStatus() {
     let status = { messageCount: 0, consumerCount: 0 };
@@ -78,4 +87,14 @@ class Consumer {
   }
 }
 
-export default CONSUMERS.map(consumer => new Consumer(consumer));
+const consumers = CONSUMERS.map(consumer => new Consumer(consumer));
+
+process.on('SIGINT', async () => {
+  consumers.forEach(consumer => consumer.stop());
+  await delay(10000);
+});
+
+process.on('SIGTERM', async () => {
+  consumers.forEach(consumer => consumer.stop());
+  await delay(10000);
+});
