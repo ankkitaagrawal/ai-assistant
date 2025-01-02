@@ -71,7 +71,10 @@ async function processMsg(message: any, channel: Channel) {
         console.log(error);
         // TODO: Add error message to the failed message
         producer.publishToQueue(QUEUE_NAME + "_FAILED", message.content.toString());
-        if (resourceId) ResourceService.updateMetadata(resourceId, { status: 'error', message: error?.message }).catch(error => console.log(error));
+        if (resourceId) {
+            await ResourceService.updateMetadata(resourceId, { status: 'error', message: error?.message }).catch(error => console.log(error));
+            await rtlayer.message(JSON.stringify({ id: resourceId, status: 'error', message: error?.message }), { channel: "resource" }).catch(error => logger.error(error));
+        }
         logger.error(`[message] Error processing message: ${error.message}`);
         channel.ack(message);
     }
