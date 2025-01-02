@@ -70,7 +70,7 @@ export const sendMessageToThread = async (req: Request, res: Response, next: Nex
             ResourceService.getResourcesByAgent(thread.agent)
         ]);
 
-        const resourcesTitles = resources.map((resource, index) => `${index + 1}. ${resource.title}`).join('\n');
+        const resourceContext = resources.map((resource, index) => `${index + 1}. Title: ${resource.title} \n\n Description: ${resource?.description}`).join('\n');
         const aiMiddlewareBuilder = new AIMiddlewareBuilder(env.AI_MIDDLEWARE_AUTH_KEY);
         const variables = {
             assistantName: agent.name,
@@ -80,7 +80,7 @@ export const sendMessageToThread = async (req: Request, res: Response, next: Nex
             user_id: user._id,
             channeUserId: user.channelId,
             username: user.name,
-            availableDocs: resourcesTitles
+            availableDocs: resourceContext
         };
 
         const userModel = aiMiddlewareBuilder
