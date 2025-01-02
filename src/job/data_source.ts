@@ -195,7 +195,7 @@ class PublishEvent extends Transform {
                 const isUrlChanged = updatedFields.has("url");
                 const isContentChanged = updatedFields.has("content");
                 const isRefreshedAtChanged = updatedFields.has("refreshedAt");
-                if (isUrlChanged || isRefreshedAtChanged) {
+                if (isUrlChanged || (url && isRefreshedAtChanged)) {
                     const loadEvent = {
                         event: "load",
                         data: {
