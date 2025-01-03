@@ -12,11 +12,19 @@ export const generateThreadNameSchema = z.object({
 export type GenerateThreadName = z.infer<typeof generateThreadNameSchema>;
 
 
+export const updateDiarySchema = z.object({
+    event: z.literal('update-diary'),
+    data: z.object({
+        agentId: z.string(),
+        message: z.string()
+    })
+});
+export type updateDiary = z.infer<typeof updateDiarySchema>;
 
 
 
 
 export const EventSchema = z.discriminatedUnion('event', [
-    generateThreadNameSchema
+    generateThreadNameSchema, updateDiarySchema
 ]);
 export type Event = z.infer<typeof EventSchema>;

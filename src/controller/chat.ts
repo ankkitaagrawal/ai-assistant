@@ -10,7 +10,8 @@ import { APIResponseBuilder } from "../service/utility";
 import AgentService from "../dbservices/agent";
 import ResourceService from "../dbservices/resource";
 import producer from "../config/producer";
-import { generateThreadNameSchema } from "../type/event";
+import { generateThreadNameSchema, updateDiarySchema } from "../type/event";
+const UTILITY_QUEUE = process.env.UTILITY_QUEUE || 'assistant-utility';
 
 export const getThreadMessages = async (req: Request, res: Response, next: NextFunction) => {
     try {
@@ -72,14 +73,21 @@ export const sendMessageToThread = async (req: Request, res: Response, next: Nex
 
         const resourceContext = resources.map((resource, index) => `${index + 1}. Title: ${resource.title} \n\n Description: ${resource?.description}`).join('\n');
         const aiMiddlewareBuilder = new AIMiddlewareBuilder(env.AI_MIDDLEWARE_AUTH_KEY);
+        let diary = agent.publicDiary?.slice(-30).map((data) => data.info).join(",") || "";
+
+        if (agent.createdBy === user._id) {
+            const privateDiary = agent.privateDiary?.slice(-30).map((data) => data.info).join(",") || "";
+            diary += privateDiary;
+        }
         const variables = {
             assistantName: agent.name,
             agentId: agentId,
             agentOwnerId: agent.createdBy,
-            diary: user.prompt,
             user_id: user._id,
             channeUserId: user.channelId,
             username: user.name,
+            diary: diary,
+            instructions: agent.instructions || "",
             availableDocs: resourceContext
         };
 
@@ -91,6 +99,7 @@ export const sendMessageToThread = async (req: Request, res: Response, next: Nex
         const response = await userModel.sendMessage(message, threadId, variables);
 
         if (isNewThread && thread?._id && response) await publishThreadNameEvent(message, response, thread._id);
+        await producer.publishToQueue(UTILITY_QUEUE, updateDiarySchema.parse({ event: "update-diary", data: { message: message, agentId } }));
 
         const data = {
             message: response,
@@ -114,5 +123,5 @@ const publishThreadNameEvent = async (message: string, response: string, threadI
             threadId: threadId.toString()
         }
     };
-    await producer.publishToQueue('assistant-utility', generateThreadNameSchema.parse(generateThreadNameEvent));
+    await producer.publishToQueue(UTILITY_QUEUE, generateThreadNameSchema.parse(generateThreadNameEvent));
 };
