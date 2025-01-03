@@ -11,6 +11,7 @@ import AgentService from "../dbservices/agent";
 import ResourceService from "../dbservices/resource";
 import producer from "../config/producer";
 import { generateThreadNameSchema, updateDiarySchema } from "../type/event";
+const UTILITY_QUEUE = process.env.UTILITY_QUEUE || 'assistant-utility';
 
 export const getThreadMessages = async (req: Request, res: Response, next: NextFunction) => {
     try {
@@ -97,9 +98,8 @@ export const sendMessageToThread = async (req: Request, res: Response, next: Nex
 
         const response = await userModel.sendMessage(message, threadId, variables);
 
-        const QUEUE_NAME = process.env.UTILITY_QUEUE || 'assistant-utility';
-        if (isNewThread && thread?._id && response) await publishThreadNameEvent(message, response, thread._id, QUEUE_NAME);
-        await producer.publishToQueue(QUEUE_NAME, updateDiarySchema.parse({ event: "updateDiary", data: { message: message, agentId } }));
+        if (isNewThread && thread?._id && response) await publishThreadNameEvent(message, response, thread._id);
+        await producer.publishToQueue(UTILITY_QUEUE, updateDiarySchema.parse({ event: "update-diary", data: { message: message, agentId } }));
 
         const data = {
             message: response,
@@ -114,7 +114,7 @@ export const sendMessageToThread = async (req: Request, res: Response, next: Nex
 };
 
 // TODO: Can we move it somewhere else?
-const publishThreadNameEvent = async (message: string, response: string, threadId: string, QUEUE_NAME: string) => {
+const publishThreadNameEvent = async (message: string, response: string, threadId: string) => {
     const generateThreadNameEvent = {
         event: 'generate-thread-name',
         data: {
@@ -123,5 +123,5 @@ const publishThreadNameEvent = async (message: string, response: string, threadI
             threadId: threadId.toString()
         }
     };
-    await producer.publishToQueue(QUEUE_NAME, generateThreadNameSchema.parse(generateThreadNameEvent));
+    await producer.publishToQueue(UTILITY_QUEUE, generateThreadNameSchema.parse(generateThreadNameEvent));
 };

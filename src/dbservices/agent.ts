@@ -153,7 +153,7 @@ class AgentService {
             const updatedAgent = await Agent.findByIdAndUpdate(
                 id,
                 {
-                    $addToSet: { publicDiary : {info:newValue} }
+                    $addToSet: { publicDiary: { info: newValue } }
                 },
                 { new: true }
             )
@@ -172,7 +172,7 @@ class AgentService {
             const updatedAgent = await Agent.findByIdAndUpdate(
                 id,
                 {
-                    $addToSet: { privateDiary: {info:newValue} }
+                    $addToSet: { privateDiary: { info: newValue } }
                 },
                 { new: true }
             )

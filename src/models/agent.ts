@@ -1,16 +1,17 @@
 const mongoose = require('mongoose');
 
 
-const diarySchema = new mongoose.Schema({
-    info: {
-        type: String, // You can change this to the appropriate type
-        required: true
+const diarySchema = new mongoose.Schema(
+    {
+        info: {
+            type: String, // You can change this to the appropriate type
+            required: true
+        }
     },
-    createdAt: {
-        type: Date,
-        default: Date.now
-    }
-});
+    {
+        timestamps: true,
+        versionKey: false,
+    });
 const agentSchema = new mongoose.Schema(
     {
         name: {
@@ -48,16 +49,16 @@ const agentSchema = new mongoose.Schema(
             required: false
         },
         privateDiary: {
-            type: [diarySchema], 
+            type: [diarySchema],
             default: [],
             required: false
         },
         publicDiary: {
-            type: [diarySchema], 
+            type: [diarySchema],
             default: [],
             required: false
         }
-         ,
+        ,
         editors: [
             {
                 type: mongoose.Schema.Types.ObjectId,

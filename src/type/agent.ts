@@ -11,14 +11,14 @@ export const AgentSchema = z.object({
     prompt: z.string().optional(),
     editors: z.array(z.string()).optional(),
     createdBy: z.string(),
-    instructions : z.string().optional(),
+    instructions: z.string().optional(),
     privateDiary: z.array(
         z.object({
             createdAt: z.date(),
             info: z.string()
         })
     ).optional(),
-    publicDiary :z.array(
+    publicDiary: z.array(
         z.object({
             createdAt: z.date(),
             info: z.string()
