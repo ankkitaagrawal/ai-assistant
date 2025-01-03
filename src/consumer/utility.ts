@@ -5,6 +5,8 @@ import rtlayer from '../config/rtlayer';
 import { EventSchema } from '../type/event';
 import { generateThreadName } from '../service/thread';
 import { updateThreadName } from '../dbservices/thread';
+import { checkIfUserGiveAnyPersonalInformation } from '../service/diary';
+import AgentService from '../dbservices/agent';
 
 
 
@@ -26,6 +28,17 @@ async function processMsg(message: any, channel: Channel) {
                     });
                     break;
                 }
+                case 'updateDiary':
+                    {
+                      const response =  await  checkIfUserGiveAnyPersonalInformation( data.message);
+                      if (response.isPersonalInformation.toString() === "true"){
+                        response.isPublic.toString() ==="true" ? 
+                        await AgentService.udpatePublicDiary(data.agentId,response.information) :
+                        await AgentService.updatePrivateDiary(data.agentId,response.information);
+                      }
+
+                        break;
+                    }
             default:
                 logger.error(`[message] Unknown event type: ${event}`);
                 throw new Error(`Unknown event type: ${event}`);

@@ -146,6 +146,44 @@ class AgentService {
             throw new Error(`Failed to update agent: ${error.message}`);
         }
     }
+    static async udpatePublicDiary(id: string, newValue: string) {
+        try {
+            redis.del(agentKey(id));
+            redis.del(agentKey('all'));
+            const updatedAgent = await Agent.findByIdAndUpdate(
+                id,
+                {
+                    $addToSet: { publicDiary : {info:newValue} }
+                },
+                { new: true }
+            )
+            if (!updatedAgent) {
+                throw new Error(`Agent with ID ${id} not found.`);
+            }
+            return updatedAgent;
+        } catch (error: any) {
+            throw new Error(`Failed to update agent: ${error.message}`);
+        }
+    }
+    static async updatePrivateDiary(id: string, newValue: string) {
+        try {
+            redis.del(agentKey(id));
+            redis.del(agentKey('all'));
+            const updatedAgent = await Agent.findByIdAndUpdate(
+                id,
+                {
+                    $addToSet: { privateDiary: {info:newValue} }
+                },
+                { new: true }
+            )
+            if (!updatedAgent) {
+                throw new Error(`Agent with ID ${id} not found.`);
+            }
+            return updatedAgent;
+        } catch (error: any) {
+            throw new Error(`Failed to update agent: ${error.message}`);
+        }
+    }
 }
 
 export default AgentService;
