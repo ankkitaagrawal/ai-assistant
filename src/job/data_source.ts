@@ -195,7 +195,7 @@ class PublishEvent extends Transform {
                 const isUrlChanged = updatedFields.has("url");
                 const isContentChanged = updatedFields.has("content");
                 const isRefreshedAtChanged = updatedFields.has("refreshedAt");
-                if (isUrlChanged || isRefreshedAtChanged) {
+                if (isUrlChanged || (url && isRefreshedAtChanged)) {
                     const loadEvent = {
                         event: "load",
                         data: {
@@ -229,8 +229,8 @@ class PublishEvent extends Transform {
                             content: fullDocument.content,
                             public: fullDocument.public,
                             meta: {
-                                domain: request.metaData.domain,
-                                extension: request.metaData.extension
+                                domain: request?.metaData?.domain,
+                                extension: request?.metaData?.extension
                             },
                             timestamp: Date.now()
                         }
