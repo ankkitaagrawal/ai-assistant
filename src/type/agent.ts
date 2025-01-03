@@ -14,14 +14,14 @@ export const AgentSchema = z.object({
     instructions: z.string().optional(),
     privateDiary: z.array(
         z.object({
-            createdAt: z.date(),
-            info: z.string()
+            name: z.string(),
+            content :z.string()
         })
     ).optional(),
     publicDiary: z.array(
         z.object({
-            createdAt: z.date(),
-            info: z.string()
+            name: z.string(),
+            content :z.string()
         })
     ).optional(),
 });

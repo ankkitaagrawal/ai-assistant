@@ -16,7 +16,9 @@ export const updateDiarySchema = z.object({
     event: z.literal('update-diary'),
     data: z.object({
         agentId: z.string(),
-        message: z.string()
+        message: z.string(),
+        headingId:z.string().optional(),
+        visiblity:z.enum(["public","private"])
     })
 });
 export type updateDiary = z.infer<typeof updateDiarySchema>;

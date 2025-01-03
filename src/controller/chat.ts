@@ -99,7 +99,7 @@ export const sendMessageToThread = async (req: Request, res: Response, next: Nex
         const response = await userModel.sendMessage(message, threadId, variables);
 
         if (isNewThread && thread?._id && response) await publishThreadNameEvent(message, response, thread._id);
-        await producer.publishToQueue(UTILITY_QUEUE, updateDiarySchema.parse({ event: "update-diary", data: { message: message, agentId } }));
+       
 
         const data = {
             message: response,

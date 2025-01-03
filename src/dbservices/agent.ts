@@ -146,14 +146,16 @@ class AgentService {
             throw new Error(`Failed to update agent: ${error.message}`);
         }
     }
-    static async udpatePublicDiary(id: string, newValue: string) {
+    static async updatePublicDiary(id: string, headingId:string,newValue: string) {
         try {
             redis.del(agentKey(id));
             redis.del(agentKey('all'));
             const updatedAgent = await Agent.findByIdAndUpdate(
                 id,
                 {
-                    $addToSet: { publicDiary: { info: newValue } }
+                    $set: {
+                        [`publicDiary.${headingId}.Content`]: newValue 
+                    }
                 },
                 { new: true }
             )
@@ -165,14 +167,16 @@ class AgentService {
             throw new Error(`Failed to update agent: ${error.message}`);
         }
     }
-    static async updatePrivateDiary(id: string, newValue: string) {
+    static async updatePrivateDiary(id: string, headingId:string,newValue: string) {
         try {
             redis.del(agentKey(id));
             redis.del(agentKey('all'));
             const updatedAgent = await Agent.findByIdAndUpdate(
                 id,
                 {
-                    $addToSet: { privateDiary: { info: newValue } }
+                    $set: {
+                        [`privateDiary.${headingId}.Content`]: newValue 
+                    }
                 },
                 { new: true }
             )

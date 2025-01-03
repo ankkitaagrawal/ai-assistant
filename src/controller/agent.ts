@@ -11,6 +11,7 @@ import axios from '../config/axios';
 import ChunkService from '../dbservices/chunk';
 import { getUserByEmailId } from '../utility/channel';
 import { getUserByChannelId } from '../dbservices/user';
+import { updateDiarySchema } from '../type/event';
 
 
 // Create a new agent
@@ -170,4 +171,29 @@ export const removeEditor = async (req: Request, res: Response, next: NextFuncti
 }
 
 
+export const getHeadingDataFromDiary = async (req: Request, res: Response, next: NextFunction) => {
+    const responseBuilder = new APIResponseBuilder();
+    try {
+        const {id , headingId} = req.params
+        const agent = await AgentService.getAgentById(id);
+       const content =  agent?.publicDiary?.[headingId ] ||  agent?.privateDiary?.[headingId]
+        responseBuilder.setSuccess(content);
+        res.status(200).json(responseBuilder.build());
+    } catch (error: any) {
+        next(error);
+    }
+}
+
+export const updateDiary = async (req: Request, res: Response, next: NextFunction) => {
+    const responseBuilder = new APIResponseBuilder();
+    try {
+        const {id} = req.params;
+        const {headingId ,message,visiblity} = req.body;
+        const UTILITY_QUEUE = process.env.UTILITY_QUEUE || 'assistant-utility';
+        await producer.publishToQueue(UTILITY_QUEUE, updateDiarySchema.parse({ event: "update-diary", data: { message: message, agentId:id,headingId:headingId,visiblity } }));
+        res.status(200).json(responseBuilder.build());
+    } catch (error: any) {
+        next(error);
+    }
+}
 
