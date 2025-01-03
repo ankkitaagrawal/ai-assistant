@@ -2,23 +2,22 @@ const mongoose = require('mongoose');
 
 const diarySchema = new mongoose.Schema(
     {
-        headingId: {
-            type: String, 
+        privacy: {
+            type: String,
             required: true,
-            unique: true
+            default: "private"
         },
-        Name: {
-            type: String, 
+        heading: {
+            type: String,
             required: true
         },
-        Content: {
-            type: String, 
+        content: {
+            type: String,
             required: true
         }
     },
     {
-        timestamps: false,
-        versionKey: false,
+        _id: false
     }
 );
 const agentSchema = new mongoose.Schema(
@@ -57,12 +56,7 @@ const agentSchema = new mongoose.Schema(
             type: String,
             required: false
         },
-        privateDiary: {
-            type: Map, // Map for structured key-value pairs
-            of: diarySchema,
-            default: {}
-        },
-        publicDiary: {
+        diary: {
             type: Map, // Map for structured key-value pairs
             of: diarySchema,
             default: {}

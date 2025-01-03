@@ -31,14 +31,16 @@ async function processMsg(message: any, channel: Channel) {
                 }
             case 'update-diary':
                 {
-                    const agent =await AgentService.getAgentById(data.agentId);
-                    const headingId=  data.headingId||  uuidv4();
-                    const heading =  data.visiblity =="public" ? agent.publicDiary?.[headingId] : agent.privateDiary?.[headingId] ;
-                    const response = await updateDiary(data.message,heading.name,heading?.info);
-                    data.visiblity =="public" ?
-                            await AgentService.updatePublicDiary(data.agentId,headingId, response.content) :
-                            await AgentService.updatePrivateDiary(data.agentId,headingId, response.content);
-
+                    const agent = await AgentService.getAgentById(data.agentId);
+                    const pageId = data.pageId;
+                    const page = pageId ? agent.diary?.get(pageId) : { heading: data.heading };
+                    const response = await updateDiary(data.message, page?.heading || "");
+                    let updatedAgent = await AgentService.updateAgentDiary(data.agentId, {
+                        privacy: data.visibility,
+                        content: response.content,
+                        pageId: data.pageId,
+                        heading: page?.heading
+                    });
 
                     break;
                 }

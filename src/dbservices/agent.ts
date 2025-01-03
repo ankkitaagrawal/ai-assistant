@@ -3,6 +3,7 @@ import { Agent as AgentType, AgentSchema } from '../type/agent';
 import redis from '../config/redis';
 import { ApiError } from '../error/api-error';
 import { getDefaultPicture } from '../service/utility';
+import { ObjectId } from 'mongodb';
 
 const agentKey = (agentId: string) => `assistant:agent:${agentId}`;
 class AgentService {
@@ -146,46 +147,30 @@ class AgentService {
             throw new Error(`Failed to update agent: ${error.message}`);
         }
     }
-    static async updatePublicDiary(id: string, headingId:string,newValue: string) {
+
+    static async updateAgentDiary(id: string, diary: { privacy: 'public' | 'private', content: string, pageId?: string, heading?: string }) {
         try {
+            if (!diary.pageId && !diary.heading) throw new Error("New page can't be created without heading");
+            if (!diary?.content) throw new Error("Content is required, page can't be empty");
             redis.del(agentKey(id));
             redis.del(agentKey('all'));
-            const updatedAgent = await Agent.findByIdAndUpdate(
+            const pageId = diary.pageId || new ObjectId();
+            const diaryKey = `diary.${pageId}`;
+            const updatedDiary = await Agent.findByIdAndUpdate(
                 id,
                 {
                     $set: {
-                        [`publicDiary.${headingId}.Content`]: newValue 
-                    }
+                        [`${diaryKey}.content`]: diary.content,
+                        [`${diaryKey}.heading`]: diary.heading,
+                        [`${diaryKey}.privacy`]: diary.privacy
+                    },
+
                 },
                 { new: true }
-            )
-            if (!updatedAgent) {
-                throw new Error(`Agent with ID ${id} not found.`);
-            }
-            return updatedAgent;
+            );
+            return updatedDiary;
         } catch (error: any) {
-            throw new Error(`Failed to update agent: ${error.message}`);
-        }
-    }
-    static async updatePrivateDiary(id: string, headingId:string,newValue: string) {
-        try {
-            redis.del(agentKey(id));
-            redis.del(agentKey('all'));
-            const updatedAgent = await Agent.findByIdAndUpdate(
-                id,
-                {
-                    $set: {
-                        [`privateDiary.${headingId}.Content`]: newValue 
-                    }
-                },
-                { new: true }
-            )
-            if (!updatedAgent) {
-                throw new Error(`Agent with ID ${id} not found.`);
-            }
-            return updatedAgent;
-        } catch (error: any) {
-            throw new Error(`Failed to update agent: ${error.message}`);
+            throw new Error(`Failed to update agent diary: ${error.message}`);
         }
     }
 }

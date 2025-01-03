@@ -170,13 +170,12 @@ export const removeEditor = async (req: Request, res: Response, next: NextFuncti
     }
 }
 
-
 export const getHeadingDataFromDiary = async (req: Request, res: Response, next: NextFunction) => {
     const responseBuilder = new APIResponseBuilder();
     try {
-        const {id , headingId} = req.params
+        const { id, headingId } = req.params
         const agent = await AgentService.getAgentById(id);
-       const content =  agent?.publicDiary?.[headingId ] ||  agent?.privateDiary?.[headingId]
+        const content = agent?.diary?.get(headingId);
         responseBuilder.setSuccess(content);
         res.status(200).json(responseBuilder.build());
     } catch (error: any) {
@@ -187,12 +186,14 @@ export const getHeadingDataFromDiary = async (req: Request, res: Response, next:
 export const updateDiary = async (req: Request, res: Response, next: NextFunction) => {
     const responseBuilder = new APIResponseBuilder();
     try {
-        const {id} = req.params;
-        const {headingId ,message,visiblity} = req.body;
+        const { id } = req.params;
+        const { headingId, message, visibility, heading } = req.body;
         const UTILITY_QUEUE = process.env.UTILITY_QUEUE || 'assistant-utility';
-        await producer.publishToQueue(UTILITY_QUEUE, updateDiarySchema.parse({ event: "update-diary", data: { message: message, agentId:id,headingId:headingId,visiblity } }));
+        await producer.publishToQueue(UTILITY_QUEUE, updateDiarySchema.parse({ event: "update-diary", data: { message: message, agentId: id, pageId: headingId, visibility, heading } }));
+        responseBuilder.setSuccess({ message: "Diary updated successfully" });
         res.status(200).json(responseBuilder.build());
     } catch (error: any) {
+        console.log(error);
         next(error);
     }
 }
