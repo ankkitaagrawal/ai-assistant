@@ -82,10 +82,12 @@ export const sendMessageToThread = async (req: Request, res: Response, next: Nex
             if (page.privacy === 'public') publicDiary.push({ ...page, id: pageId });
             if (page.privacy === 'private') privateDiary.push({ ...page, id: pageId });
         }
+        let systemPrompt = `You are ${agent.name}'s assistant  and user ${user.name} is talking with you.`
         let diary = `Privacy    |   Page Id       |      Heading \n`;
         diary += publicDiary.slice(-30).map((data) => `${data.privacy}   |   ${data.id}    |   ${data.heading}`).join("\n") || "";
         if (agent.createdBy === user._id) {
             diary += privateDiary?.slice(-30).map((data) => `${data.privacy}   |   ${data.id}    |   ${data.heading}`).join("\n") || "";
+            systemPrompt =  `You are ${user.name}'s Personal Assistant `
         }
         const variables = {
             assistantName: agent.name,
@@ -95,6 +97,7 @@ export const sendMessageToThread = async (req: Request, res: Response, next: Nex
             channeUserId: user.channelId,
             username: user.name,
             diary: diary,
+            systemPrompt:systemPrompt,
             instructions: agent.instructions || "",
             availableDocs: resourceContext
         };
