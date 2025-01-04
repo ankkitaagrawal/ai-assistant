@@ -5,9 +5,10 @@ import rtlayer from '../config/rtlayer';
 import { EventSchema } from '../type/event';
 import { generateThreadName } from '../service/thread';
 import { updateThreadName } from '../dbservices/thread';
-import { checkIfUserGiveAnyPersonalInformation } from '../service/diary';
+import { updateDiary } from '../service/diary';
 import AgentService from '../dbservices/agent';
-
+import { v4 as uuidv4 } from 'uuid';
+import { AgentSchema } from '../type/agent';
 
 
 const QUEUE_NAME = process.env.UTILITY_QUEUE || 'assistant-utility';
@@ -30,12 +31,16 @@ async function processMsg(message: any, channel: Channel) {
                 }
             case 'update-diary':
                 {
-                    const response = await checkIfUserGiveAnyPersonalInformation(data.message);
-                    if (response.isPersonalInformation.toString() === "true") {
-                        response.isPublic.toString() === "true" ?
-                            await AgentService.udpatePublicDiary(data.agentId, response.information) :
-                            await AgentService.updatePrivateDiary(data.agentId, response.information);
-                    }
+                    const agent = await AgentService.getAgentById(data.agentId);
+                    const pageId = data.pageId;
+                    const page = pageId ? agent.diary?.get(pageId) : { heading: data.heading, content: "" };
+                    const response = await updateDiary(data.message, page?.heading || "", page?.content);
+                    let updatedAgent = await AgentService.updateAgentDiary(data.agentId, {
+                        privacy: data.visibility,
+                        content: response.content,
+                        pageId: data.pageId,
+                        heading: page?.heading
+                    });
 
                     break;
                 }

@@ -1,17 +1,25 @@
 const mongoose = require('mongoose');
 
-
 const diarySchema = new mongoose.Schema(
     {
-        info: {
-            type: String, // You can change this to the appropriate type
+        privacy: {
+            type: String,
+            required: true,
+            default: "private"
+        },
+        heading: {
+            type: String,
+            required: true
+        },
+        content: {
+            type: String,
             required: true
         }
     },
     {
-        timestamps: true,
-        versionKey: false,
-    });
+        _id: false
+    }
+);
 const agentSchema = new mongoose.Schema(
     {
         name: {
@@ -48,17 +56,11 @@ const agentSchema = new mongoose.Schema(
             type: String,
             required: false
         },
-        privateDiary: {
-            type: [diarySchema],
-            default: [],
-            required: false
+        diary: {
+            type: Map, // Map for structured key-value pairs
+            of: diarySchema,
+            default: {}
         },
-        publicDiary: {
-            type: [diarySchema],
-            default: [],
-            required: false
-        }
-        ,
         editors: [
             {
                 type: mongoose.Schema.Types.ObjectId,
