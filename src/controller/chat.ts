@@ -82,7 +82,7 @@ export const sendMessageToThread = async (req: Request, res: Response, next: Nex
             if (page.privacy === 'public') publicDiary.push({ ...page, id: pageId });
             if (page.privacy === 'private') privateDiary.push({ ...page, id: pageId });
         }
-        let diary = `Privacy    |   Page Id       |      Heading`;
+        let diary = `Privacy    |   Page Id       |      Heading \n`;
         diary += publicDiary.slice(-30).map((data) => `${data.privacy}   |   ${data.id}    |   ${data.heading}`).join("\n") || "";
         if (agent.createdBy === user._id) {
             diary += privateDiary?.slice(-30).map((data) => `${data.privacy}   |   ${data.id}    |   ${data.heading}`).join("\n") || "";
