@@ -74,6 +74,7 @@ export const sendMessageToThread = async (req: Request, res: Response, next: Nex
 
         const resourceContext = resources.map((resource, index) => `${index + 1}. Title: ${resource.title} \n\n Description: ${resource?.description}`).join('\n');
         const aiMiddlewareBuilder = new AIMiddlewareBuilder(env.AI_MIDDLEWARE_AUTH_KEY);
+        
         const publicDiary: Array<Diary> = [];
         const privateDiary: Array<Diary> = [];
         for (const pageId in agent?.diary) {
@@ -81,9 +82,10 @@ export const sendMessageToThread = async (req: Request, res: Response, next: Nex
             if (page.privacy === 'public') publicDiary.push({ ...page, id: pageId });
             if (page.privacy === 'private') privateDiary.push({ ...page, id: pageId });
         }
-        let diary = publicDiary.slice(-30).map((data) => data.content).join(",") || "";
+        let diary = `Privacy    |   Page Id       |      Heading`;
+        diary += publicDiary.slice(-30).map((data) => `${data.privacy}   |   ${data.id}    |   ${data.heading}`).join("\n") || "";
         if (agent.createdBy === user._id) {
-            diary += privateDiary?.slice(-30).map((data) => data.content).join(",") || "";;
+            diary += privateDiary?.slice(-30).map((data) => `${data.privacy}   |   ${data.id}    |   ${data.heading}`).join("\n") || "";
         }
         const variables = {
             assistantName: agent.name,
