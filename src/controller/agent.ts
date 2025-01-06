@@ -1,7 +1,7 @@
 import express, { NextFunction, Request, Response } from 'express';
 import AgentService from '../dbservices/agent';
 import { APIResponseBuilder, getDefaultPicture } from '../service/utility';
-import { Agent as AgentType } from '../type/agent';
+import { Agent as AgentType, Diary } from '../type/agent';
 import { v4 as uuidv4 } from 'uuid';
 import producer from '../config/producer';
 import { queryLangchain } from '../service/langchain';
@@ -173,10 +173,10 @@ export const removeEditor = async (req: Request, res: Response, next: NextFuncti
 export const getHeadingDataFromDiary = async (req: Request, res: Response, next: NextFunction) => {
     const responseBuilder = new APIResponseBuilder();
     try {
-        const { id, headingId } = req.params
+        const { id, pageId } = req.params
         const agent = await AgentService.getAgentById(id);
-        const content = agent?.diary?.get(headingId);
-        responseBuilder.setSuccess(content);
+        const content = (agent?.diary as any)?.[pageId];;
+        responseBuilder.setSuccess({content});
         res.status(200).json(responseBuilder.build());
     } catch (error: any) {
         next(error);

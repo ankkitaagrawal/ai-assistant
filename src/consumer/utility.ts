@@ -33,7 +33,7 @@ async function processMsg(message: any, channel: Channel) {
                 {
                     const agent = await AgentService.getAgentById(data.agentId);
                     const pageId = data.pageId;
-                    const page = pageId ? agent.diary?.get(pageId) : { heading: data.heading, content: "" };
+                    const page = pageId ?  (agent?.diary as any)?.[pageId] : { heading: data.heading, content: "" };
                     const response = await updateDiary(data.message, page?.heading || "", page?.content);
                     let updatedAgent = await AgentService.updateAgentDiary(data.agentId, {
                         privacy: data.visibility,
