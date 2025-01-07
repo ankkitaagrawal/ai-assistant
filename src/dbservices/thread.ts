@@ -8,6 +8,7 @@ const ThreadDataSchema = z.object({
   middleware_id: z.string(),
   agent: z.string(),
   createdBy: z.string(),
+  type: z.enum(['conversation', 'fallback']).default('conversation').optional(),
 });
 
 type ThreadData = z.infer<typeof ThreadDataSchema>;
@@ -53,9 +54,10 @@ export async function updateThreadName(threadId: string, name: string): Promise<
   return thread;
 }
 
-export async function searchThreads(agentId: string, query: string): Promise<ThreadData[]> {
+export async function searchThreads(agentId: string, query: string, options?: { type: 'fallback' | 'conversation' }): Promise<ThreadData[]> {
   if (!query) throw new Error("Query is required");
   const threads = await Thread.find({
+    type: options?.type,
     agent: agentId,
     $text: { $search: query },
   });
