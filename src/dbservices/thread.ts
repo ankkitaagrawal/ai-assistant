@@ -52,3 +52,12 @@ export async function updateThreadName(threadId: string, name: string): Promise<
   redis.del(userAssistantThreadKey(thread.createdBy, thread.agent));
   return thread;
 }
+
+export async function searchThreads(agentId: string, query: string): Promise<ThreadData[]> {
+  if (!query) throw new Error("Query is required");
+  const threads = await Thread.find({
+    agent: agentId,
+    $text: { $search: query },
+  });
+  return threads;
+}
