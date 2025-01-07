@@ -14,6 +14,7 @@ import bodyParser from 'body-parser';
 import errorHandler from './middleware/error-handler';
 import agent from './route/agent';
 import resource from './route/resource';
+import tool from './route/tool';
 const app = express();
 const port = process.env.PORT || 3000;
 connectDB();
@@ -35,6 +36,7 @@ app.use('/thread', thread);
 app.use('/user', user);
 app.use('/agent', agent);
 app.use('/resource', resource);
+app.use('/tool', tool);
 
 // Define a route
 app.get('/', (req: Request, res: Response) => {
