@@ -22,7 +22,7 @@ export const updateDiarySchema = z.object({
         heading: z.string().optional()
     })
 });
-export type updateDiary = z.infer<typeof updateDiarySchema>;
+export type UpdateDiary = z.infer<typeof updateDiarySchema>;
 
 
 
