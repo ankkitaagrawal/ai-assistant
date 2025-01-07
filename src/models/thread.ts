@@ -20,6 +20,10 @@ const threadSchema = new mongoose.Schema(
             ref: 'agent',
             required: true
         },
+        type: {
+            type: String, // Enum, 'conversation', 'fallback'
+            required: false
+        }
     },
     {
         timestamps: true, // Automatically adds `createdAt` and `updatedAt` fields
