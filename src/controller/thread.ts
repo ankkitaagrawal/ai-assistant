@@ -5,6 +5,7 @@ import { ApiError } from "../error/api-error";
 import { NextFunction } from "connect";
 import { APIResponseBuilder } from "../service/utility";
 import AgentService from "../dbservices/agent";
+import logger from '../service/logger';
 
 export const getThreads = async (req: Request, res: Response, next: NextFunction) => {
     const responseBuilder = new APIResponseBuilder();
@@ -41,7 +42,11 @@ export const getFallbackThreads = async (req: Request, res: Response, next: Next
         const user = res.locals?.user;
         const userId = user?._id;
         const { assistantId } = req.params;
-        const agent = await AgentService.getAgentById(assistantId);
+        if (!assistantId) throw new Error("Assistant ID is required");
+        const agent = await AgentService.getAgentById(assistantId).catch((error) => {
+            logger.error(error);
+            throw new Error("Invalid Assistant ID");
+        })
         let isAllowed = false;
         if (agent?.editors) isAllowed = agent.editors.includes(userId?.toString());
         if (agent.createdBy == userId) isAllowed = true;
