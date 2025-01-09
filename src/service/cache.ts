@@ -13,5 +13,5 @@ export function deleteCache(key: string) {
 }
 
 export const getUserKey = (proxyId: string, userEmail: string) => {
-    return `${proxyId}:${userEmail}`;
+    return `assistant:${proxyId}:${userEmail}`;
 }
