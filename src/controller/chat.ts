@@ -2,7 +2,7 @@ import { NextFunction } from "connect";
 import { AIMiddlewareBuilder } from "../utility/aimiddleware";
 import { Response, Request } from 'express';
 import { ApiError } from "../error/api-error";
-import { createThread, getThreadById, updateThreadName } from "../dbservices/thread";
+import ThreadService from "../dbservices/thread";
 import { v4 as uuidv4 } from 'uuid';
 import { isArray, pick } from "lodash";
 import env from '../config/env';
@@ -18,7 +18,7 @@ export const getThreadMessages = async (req: Request, res: Response, next: NextF
     try {
         const threadId = req.params.tid;
         const user = res.locals?.user;
-        const thread = await getThreadById(threadId.toString());
+        const thread = await ThreadService.getThreadById(threadId.toString());
         if (!threadId) throw new ApiError('Thread Id is required', 400);
         if (!thread) throw new ApiError('Thread not found', 404);
         if (thread?.createdBy != user._id) throw new ApiError('Unauthorized', 401);
@@ -59,11 +59,11 @@ export const sendMessageToThread = async (req: Request, res: Response, next: Nex
         if (!threadId) {
             // Create a new thread
             isNewThread = true;
-            const thread = await createThread({ createdBy: user._id?.toString(), name: message?.slice(0, 10), middleware_id: uuidv4(), agent: agentId });
+            const thread = await ThreadService.createThread({ createdBy: user._id?.toString(), name: message?.slice(0, 10), middleware_id: uuidv4(), agent: agentId });
             if (thread?._id) threadId = thread._id;
         }
 
-        const thread = await getThreadById(threadId.toString());
+        const thread = await ThreadService.getThreadById(threadId.toString());
         if (!thread) throw new ApiError('Thread not found', 404);
         if (thread.createdBy != user._id) throw new ApiError('Unauthorized', 401);
 
@@ -74,7 +74,7 @@ export const sendMessageToThread = async (req: Request, res: Response, next: Nex
 
         const resourceContext = resources.map((resource, index) => `${index + 1}. Title: ${resource.title} \n\n Description: ${resource?.description}`).join('\n');
         const aiMiddlewareBuilder = new AIMiddlewareBuilder(env.AI_MIDDLEWARE_AUTH_KEY);
-        
+
         const publicDiary: Array<Diary> = [];
         const privateDiary: Array<Diary> = [];
         for (const pageId in agent?.diary) {
@@ -87,7 +87,7 @@ export const sendMessageToThread = async (req: Request, res: Response, next: Nex
         diary += publicDiary.slice(-30).map((data) => `${data.privacy}   |   ${data.id}    |   ${data.heading}`).join("\n") || "";
         if (agent.createdBy === user._id) {
             diary += privateDiary?.slice(-30).map((data) => `${data.privacy}   |   ${data.id}    |   ${data.heading}`).join("\n") || "";
-            systemPrompt =  `You are ${user.name}'s Personal Assistant `
+            systemPrompt = `You are ${user.name}'s Personal Assistant `
         }
         const variables = {
             assistantName: agent.name,
@@ -97,7 +97,7 @@ export const sendMessageToThread = async (req: Request, res: Response, next: Nex
             channeUserId: user.channelId,
             username: user.name,
             diary: diary,
-            systemPrompt:systemPrompt,
+            systemPrompt: systemPrompt,
             instructions: agent.instructions || "",
             availableDocs: resourceContext
         };
