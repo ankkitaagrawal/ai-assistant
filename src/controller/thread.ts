@@ -11,7 +11,7 @@ export const getThreads = async (req: Request, res: Response, next: NextFunction
         const user = res.locals?.user;
         const userId = user?._id;
         const { assistantId } = req.params;
-        let threads = await getUserThreads(userId?.toString(), assistantId);
+        let threads = (await getUserThreads(userId?.toString(), assistantId))?.filter((thread) => thread.type != "fallback");
         return res.status(200).json(responseBuilder.setSuccess({ threads }).build());
     } catch (err: any) {
         console.log(err.response)
