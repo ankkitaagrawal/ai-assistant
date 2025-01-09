@@ -12,6 +12,7 @@ export const generateThreadNameSchema = z.object({
 export type GenerateThreadName = z.infer<typeof generateThreadNameSchema>;
 
 
+
 export const updateDiarySchema = z.object({
     event: z.literal('update-diary'),
     data: z.object({
@@ -24,6 +25,8 @@ export const updateDiarySchema = z.object({
 });
 export type UpdateDiary = z.infer<typeof updateDiarySchema>;
 
+
+
 export const fallbackSchema = z.object({
     event: z.literal('fallback'),
     data: z.object({
@@ -35,7 +38,21 @@ export const fallbackSchema = z.object({
 })
 export type Fallback = z.infer<typeof fallbackSchema>;
 
+
+
+export const messageSchema = z.object({
+    event: z.literal('message'),
+    data: z.object({
+        to: z.string().describe("Thread ID in which message is to be sent"),
+        from: z.string().describe("Agent Id of the agent sending the message"),
+        message: z.string().describe("The message to be sent"),
+    })
+});
+export type Message = z.infer<typeof messageSchema>;
+
+
+
 export const EventSchema = z.discriminatedUnion('event', [
-    generateThreadNameSchema, updateDiarySchema, fallbackSchema
+    generateThreadNameSchema, updateDiarySchema, fallbackSchema, messageSchema
 ]);
 export type Event = z.infer<typeof EventSchema>;
