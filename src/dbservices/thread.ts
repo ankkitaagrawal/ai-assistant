@@ -14,12 +14,13 @@ const ThreadDataSchema = z.object({
 type ThreadData = z.infer<typeof ThreadDataSchema>;
 
 const userAssistantThreadKey = (userId: string, assistantId: string = "all") => `assistant:thread:user:${userId}:assistant:${assistantId}`;
-
+const assistantFallbackThreadKey = (assistantId: string) => `assistant:thread:fallback:assistant:${assistantId}`;
 const threadKey = (threadId: string) => `assistant:thread:${threadId}`;
 
 export async function createThread(data: ThreadData): Promise<ThreadData> {
   data = ThreadDataSchema.parse(data);
   redis.del(userAssistantThreadKey(data.createdBy, data.agent));
+  redis.del(assistantFallbackThreadKey(data.agent));
   const thread = new Thread(data);
   return await thread.save();
 }
@@ -51,6 +52,7 @@ export async function updateThreadName(threadId: string, name: string): Promise<
   // Clear cache
   redis.del(threadKey(threadId));
   redis.del(userAssistantThreadKey(thread.createdBy, thread.agent));
+  redis.del(assistantFallbackThreadKey(thread.agent));
   return thread;
 }
 
@@ -61,5 +63,14 @@ export async function searchThreads(agentId: string, query: string, options?: { 
     agent: agentId,
     $text: { $search: query },
   });
+  return threads;
+}
+
+export async function getFallbackThreads(agentId: string): Promise<ThreadData[]> {
+  if (!agentId) throw new Error("Agent ID is required");
+  const cachedThreads = await redis.cget(assistantFallbackThreadKey(agentId)).catch((error) => null);
+  if (cachedThreads) return JSON.parse(cachedThreads);
+  const threads = await Thread.find({ agent: agentId, type: 'fallback' }).sort({ createdAt: -1 });
+  redis.cset(assistantFallbackThreadKey(agentId), JSON.stringify(threads));
   return threads;
 }
