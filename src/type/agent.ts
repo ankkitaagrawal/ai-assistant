@@ -5,7 +5,8 @@ export const DiarySchema = z.object({
     id: z.string().optional(),
     heading: z.string().optional(),
     content: z.string().optional(),
-    privacy: z.enum(['public', 'private']).default('private'),
+    privacy: z.enum(['public', 'private', 'thread']).default('private'),
+    threadId: z.string().optional().describe("This id is only available when privacy is `thread`"),
 });
 export const AgentSchema = z.object({
     _id: z.union([z.string(), z.object({})]).optional(),
