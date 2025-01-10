@@ -28,22 +28,31 @@ export const sendFallbackMessage = async (req: Request, res: Response, next: Nex
 export const sendMessage = async (req: Request, res: Response, next: NextFunction) => {
     try {
         const responseBuilder = new APIResponseBuilder();
-        const { message, threadId, agentId } = req.body;
-        const agent = AgentService.getAgentById(agentId);
+        const { messages, agentId } = req.body;
+        const agent = await AgentService.getAgentById(agentId).catch((error) => {
+            logger.error(error);
+            throw new Error("Invalid agentId");
+        })
         if (!agent) throw new Error("Invalid agentId");
-        const messageEvent = {
-            event: 'message',
-            data: {
-                to: threadId,
-                from: agentId,
-                message: message
+        for (const { threadId, message } of messages) {
+            const messageEvent = {
+                event: 'message',
+                data: {
+                    to: threadId,
+                    from: agentId,
+                    message: message
+                }
             }
+            const event = messageSchema.safeParse(messageEvent);
+            if (event?.error) {
+                logger.error(event.error);
+                continue;
+            }
+            producer.publishToQueue('assistant-utility', messageSchema.parse(messageEvent));
         }
-        producer.publishToQueue('assistant-utility', messageSchema.parse(messageEvent));
-        const response = responseBuilder.setSuccess().build();
+        const response = responseBuilder.setSuccess({message: "Message Sent!"}).build();
         res.json(response);
     } catch (error) {
-        logger.error(error);
         next(error);
     }
 }
