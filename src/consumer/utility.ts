@@ -8,7 +8,7 @@ import ThreadService from '../dbservices/thread';
 import { updateDiary } from '../service/diary';
 import AgentService from '../dbservices/agent';
 import { v4 as uuidv4 } from 'uuid';
-import { AgentSchema, Diary } from '../type/agent';
+import { AgentSchema, DiaryPage } from '../type/agent';
 import env from '../config/env';
 import { AIMiddlewareBuilder } from '../utility/aimiddleware';
 
@@ -48,11 +48,7 @@ async function processMsg(message: any, channel: Channel) {
                 }
             case 'fallback':
                 {
-                    const recentFallbackThreads = await ThreadService.getFallbackThreads(data.agentId);
-                    recentFallbackThreads.length = 20;
-                    // const threadName = await generateThreadName(data.threadId, data.message, `Generate thread name for message "${data.message}"`);
-                    // const similarThreads = await searchThreads(data.agentId, threadName, { type: 'fallback' });
-                    // TODO: Create a new bridge to do selection of thread and replace below
+                    const recentFallbackThreads = (await ThreadService.getFallbackThreads(data.agentId).catch(error => [])).slice(-20);
                     const threadSelectorModel = new AIMiddlewareBuilder(env.AI_MIDDLEWARE_AUTH_KEY).useBridge("677ce86bd09d11043dbc8de9").useOpenAI("gpt-4-turbo").build();
                     let selectedThreadId = await threadSelectorModel.sendMessage(`Select the most relevant thread for message "${data.message}" from the following list: ${recentFallbackThreads.map((thread) => `${thread._id?.toString()} | ${thread.name}`).join(", ")}`);
                     const agent = await AgentService.getAgentById(data.agentId);
@@ -73,13 +69,13 @@ async function processMsg(message: any, channel: Channel) {
                     const newPageContent = await diaryModel.sendMessage(`Message from User: ${data.message}`, undefined, variables);
                     let updatedAgent = await AgentService.updateAgentDiary(data.agentId, {
                         privacy: "thread",
-                        threadId: data.threadId,
                         content: newPageContent,
-                        pageId: threadDiary?.id,
+                        pageId: data.threadId,
                         heading: `Thread: ${data.threadId}`
                     });
                     // Send message to owner
-                    await threadSelectorModel.createMessage(selectedThreadId, data.message);
+                    const agentModel = new AIMiddlewareBuilder(env.AI_MIDDLEWARE_AUTH_KEY).useBridge(agent.bridgeId).build();
+                    await agentModel.createMessage(selectedThreadId, data.message);
                     break;
                 }
             case 'message':
@@ -104,7 +100,8 @@ async function processMsg(message: any, channel: Channel) {
 
                     // Create message in user thread
                     const agentModel = new AIMiddlewareBuilder(env.AI_MIDDLEWARE_AUTH_KEY).useBridge(agent.bridgeId).build();
-                    agentModel.createMessage(data.to, data.message);
+                    await agentModel.createMessage(data.to, data.message);
+                    break;
                 }
 
             default:
@@ -133,8 +130,8 @@ function getThreadDiary(diary?: any, threadId?: string) {
     let threadDiary = null;
     if (!diary) return null;
     for (const pageId in diary) {
-        const page = (diary as any)?.[pageId] as Diary;
-        if (page?.threadId == threadId) threadDiary = page;
+        const page = (diary as any)?.[pageId] as DiaryPage;
+        if (page?.id == threadId) threadDiary = page;
     }
     return threadDiary;
 }

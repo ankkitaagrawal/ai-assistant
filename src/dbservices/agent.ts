@@ -163,7 +163,6 @@ class AgentService {
                         [`${diaryKey}.content`]: diary.content,
                         [`${diaryKey}.heading`]: diary.heading,
                         [`${diaryKey}.privacy`]: diary.privacy,
-                        [`${diaryKey}.threadId`]: diary?.threadId
                     },
 
                 },

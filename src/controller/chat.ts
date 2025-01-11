@@ -11,7 +11,7 @@ import AgentService from "../dbservices/agent";
 import ResourceService from "../dbservices/resource";
 import producer from "../config/producer";
 import { generateThreadNameSchema, updateDiarySchema } from "../type/event";
-import { Diary } from "../type/agent";
+import { DiaryPage } from "../type/agent";
 const UTILITY_QUEUE = process.env.UTILITY_QUEUE || 'assistant-utility';
 
 export const getThreadMessages = async (req: Request, res: Response, next: NextFunction) => {
@@ -75,9 +75,9 @@ export const sendMessageToThread = async (req: Request, res: Response, next: Nex
         const resourceContext = resources.map((resource, index) => `${index + 1}. Title: ${resource.title} \n\n Description: ${resource?.description}`).join('\n');
         const aiMiddlewareBuilder = new AIMiddlewareBuilder(env.AI_MIDDLEWARE_AUTH_KEY);
 
-        const publicDiary: Array<Diary> = [];
-        const privateDiary: Array<Diary> = [];
-        const threadDiary: Array<Diary> = [];
+        const publicDiary: Array<DiaryPage> = [];
+        const privateDiary: Array<DiaryPage> = [];
+        const threadDiary: Array<DiaryPage> = [];
         for (const pageId in agent?.diary) {
             const page = (agent?.diary as any)?.[pageId];
             if (page.privacy === 'public') publicDiary.push({ ...page, id: pageId });
