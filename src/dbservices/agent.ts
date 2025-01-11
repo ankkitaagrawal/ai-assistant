@@ -1,5 +1,5 @@
 import { Agent } from '../models/agent';
-import { Agent as AgentType, AgentSchema } from '../type/agent';
+import { Agent as AgentType, AgentSchema, DiaryPage } from '../type/agent';
 import redis from '../config/redis';
 import { ApiError } from '../error/api-error';
 import { getDefaultPicture } from '../service/utility';
@@ -148,13 +148,13 @@ class AgentService {
         }
     }
 
-    static async updateAgentDiary(id: string, diary: { privacy: 'public' | 'private' | "thread", threadId?: string, content: string, pageId?: string, heading?: string }) {
+    static async updateAgentDiary(id: string, diary: DiaryPage) {
         try {
-            if (!diary.pageId && !diary.heading) throw new Error("New page can't be created without heading");
+            if (!diary.id && !diary.heading) throw new Error("New page can't be created without heading");
             if (!diary?.content) throw new Error("Content is required, page can't be empty");
             redis.del(agentKey(id));
             redis.del(agentKey('all'));
-            const pageId = diary.pageId || new ObjectId();
+            const pageId = diary.id || new ObjectId();
             const diaryKey = `diary.${pageId}`;
             const updatedDiary = await Agent.findByIdAndUpdate(
                 id,

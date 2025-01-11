@@ -1,4 +1,5 @@
 import z from 'zod';
+import { DiaryPageSchema } from './agent';
 
 
 export const generateThreadNameSchema = z.object({
@@ -15,12 +16,10 @@ export type GenerateThreadName = z.infer<typeof generateThreadNameSchema>;
 
 export const updateDiarySchema = z.object({
     event: z.literal('update-diary'),
-    data: z.object({
+    data: DiaryPageSchema.pick({ privacy: true, heading: true }).extend({
         agentId: z.string(),
         message: z.string(),
         pageId: z.string().optional(),
-        visibility: z.enum(["public", "private"]).default("private"),
-        heading: z.string().optional()
     })
 });
 export type UpdateDiary = z.infer<typeof updateDiarySchema>;

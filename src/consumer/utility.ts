@@ -38,9 +38,9 @@ async function processMsg(message: any, channel: Channel) {
                     const page = pageId ? (agent?.diary as any)?.[pageId] : { heading: data.heading, content: "" };
                     const response = await updateDiary(data.message, page?.heading || "", page?.content);
                     let updatedAgent = await AgentService.updateAgentDiary(data.agentId, {
-                        privacy: data.visibility,
+                        privacy: data.privacy,
                         content: response.content,
-                        pageId: data.pageId,
+                        id: data.pageId,
                         heading: page?.heading
                     });
 
@@ -70,7 +70,7 @@ async function processMsg(message: any, channel: Channel) {
                     let updatedAgent = await AgentService.updateAgentDiary(data.agentId, {
                         privacy: "thread",
                         content: newPageContent,
-                        pageId: data.threadId,
+                        id: data.threadId,
                         heading: `Thread: ${data.threadId}`
                     });
                     // Send message to owner
@@ -93,9 +93,8 @@ async function processMsg(message: any, channel: Channel) {
                     const newPageContent = await diaryModel.sendMessage(`Message from Owner: ${data.message}`);
                     let updatedAgent = await AgentService.updateAgentDiary(data.from, {
                         privacy: "thread",
-                        threadId: data.to,
                         content: newPageContent,
-                        pageId: threadDiary.id
+                        id: threadDiary.id
                     });
 
                     // Create message in user thread
