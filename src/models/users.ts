@@ -20,13 +20,16 @@ const userSchema = new mongoose.Schema({
     type: String,
     required: false
   },
-
+  email: {
+    type: String,
+    required: false
+  },
   agent: {
     type: mongoose.Schema.Types.ObjectId,
     ref: 'agent',
     required: false
   },
- 
+
 
 }, {
   timestamps: true, // Automatically adds `createdAt` and `updatedAt` fields

@@ -1,6 +1,5 @@
 import { getThreadMessages, sendMessageToThread } from "../controller/chat";
 import { AuthMethod, auth } from "../middleware/auth";
-import { decodeToken } from "../middleware/authentication";
 
 const express = require('express');
 

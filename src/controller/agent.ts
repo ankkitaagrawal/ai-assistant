@@ -9,9 +9,8 @@ import { pick } from 'lodash';
 import { ApiError } from '../error/api-error';
 import axios from '../config/axios';
 import ChunkService from '../dbservices/chunk';
-import { getUserByEmailId } from '../utility/channel';
-import { getUserByChannelId } from '../dbservices/user';
 import { updateDiarySchema } from '../type/event';
+import { getUserByEmailId } from '../dbservices/user';
 
 
 // Create a new agent
@@ -142,8 +141,7 @@ export const addEditor = async (req: Request, res: Response, next: NextFunction)
         if (!isOwner) throw new ApiError('You are not authorized to manage editors', 403);
         const { emails }: { emails: Array<string> } = req.body;
         for (const email of emails) {
-            const channelUser = await getUserByEmailId(email);
-            const user = await getUserByChannelId({ channelId: channelUser?.userId });
+            const user = await getUserByEmailId(email);
             const userId = user?._id?.toString();
             if (!userId) continue;
             const updatedAgent = await AgentService.addEditor(id, userId);
