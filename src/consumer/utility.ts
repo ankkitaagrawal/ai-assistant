@@ -52,7 +52,7 @@ async function processMsg(message: any, channel: Channel) {
                     const threadSelectorModel = new AIMiddlewareBuilder(env.AI_MIDDLEWARE_AUTH_KEY).useBridge("677ce86bd09d11043dbc8de9").useOpenAI("gpt-4-turbo").build();
                     let selectedThreadId = await threadSelectorModel.sendMessage(`Select the most relevant thread for message "${data.message}" from the following list: ${recentFallbackThreads.map((thread) => `${thread._id?.toString()} | ${thread.name}`).join(", ")}`);
                     const agent = await AgentService.getAgentById(data.agentId);
-                    if (!recentFallbackThreads?.some(threadId => threadId === selectedThreadId)) {
+                    if (!recentFallbackThreads?.some((thread) => thread._id?.toString() == selectedThreadId)) {
                         // Create a new thread for owner to answer this query
                         const threadName = await generateThreadName(data.threadId, data.message, `Generate thread name for message "${data.message}"`);
                         const thread = await ThreadService.createThread({ createdBy: agent.createdBy, name: threadName, middleware_id: uuidv4(), agent: data.agentId, type: 'fallback' });
