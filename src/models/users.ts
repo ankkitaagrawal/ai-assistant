@@ -7,11 +7,6 @@ const userSchema = new mongoose.Schema({
     unique: true
 
   },
-  channelId: {
-    type: String,
-    required: true,
-    unique: true
-  },
   name: {
     type: String,
     required: false,
