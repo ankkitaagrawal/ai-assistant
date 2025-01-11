@@ -148,7 +148,7 @@ class AgentService {
         }
     }
 
-    static async updateAgentDiary(id: string, diary: { privacy: 'public' | 'private', content: string, pageId?: string, heading?: string }) {
+    static async updateAgentDiary(id: string, diary: { privacy: 'public' | 'private' | "thread", threadId?: string, content: string, pageId?: string, heading?: string }) {
         try {
             if (!diary.pageId && !diary.heading) throw new Error("New page can't be created without heading");
             if (!diary?.content) throw new Error("Content is required, page can't be empty");
@@ -162,7 +162,8 @@ class AgentService {
                     $set: {
                         [`${diaryKey}.content`]: diary.content,
                         [`${diaryKey}.heading`]: diary.heading,
-                        [`${diaryKey}.privacy`]: diary.privacy
+                        [`${diaryKey}.privacy`]: diary.privacy,
+                        [`${diaryKey}.threadId`]: diary?.threadId
                     },
 
                 },
