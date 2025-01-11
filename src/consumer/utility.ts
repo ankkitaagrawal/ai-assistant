@@ -52,7 +52,7 @@ async function processMsg(message: any, channel: Channel) {
                     const threadSelectorModel = new AIMiddlewareBuilder(env.AI_MIDDLEWARE_AUTH_KEY).useBridge("677ce86bd09d11043dbc8de9").useOpenAI("gpt-4-turbo").build();
                     let selectedThreadId = await threadSelectorModel.sendMessage(`Select the most relevant thread for message "${data.message}" from the following list: ${recentFallbackThreads.map((thread) => `${thread._id?.toString()} | ${thread.name}`).join(", ")}`);
                     const agent = await AgentService.getAgentById(data.agentId);
-                    if (!recentFallbackThreads.some(selectedThreadId)) {
+                    if (!recentFallbackThreads?.some(threadId => threadId === selectedThreadId)) {
                         // Create a new thread for owner to answer this query
                         const threadName = await generateThreadName(data.threadId, data.message, `Generate thread name for message "${data.message}"`);
                         const thread = await ThreadService.createThread({ createdBy: agent.createdBy, name: threadName, middleware_id: uuidv4(), agent: data.agentId, type: 'fallback' });
@@ -66,7 +66,7 @@ async function processMsg(message: any, channel: Channel) {
                         "threadId": data?.threadId,
                         "userId": data?.userId
                     }
-                    const newPageContent = await diaryModel.sendMessage(`Message from User: ${data.message}`, undefined, variables);
+                    const newPageContent = await diaryModel.sendMessage(`Message from User: ${data.message} ;with userId  (${data?.userId}) , threadId (${data?.threadId}) `, undefined, variables);
                     let updatedAgent = await AgentService.updateAgentDiary(data.agentId, {
                         privacy: "thread",
                         content: newPageContent,

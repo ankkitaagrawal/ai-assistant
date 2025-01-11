@@ -6,17 +6,18 @@ import AgentService from '../dbservices/agent';
 import { fallbackSchema, messageSchema } from '../type/event';
 import producer from '../config/producer';
 import logger from '../service/logger';
-
+const UTILITY_QUEUE = process.env.UTILITY_QUEUE || 'assistant-utility';
 export const sendFallbackMessage = async (req: Request, res: Response, next: NextFunction) => {
     try {
         const responseBuilder = new APIResponseBuilder();
-        const fallbackMessage = fallbackSchema.parse(req.body);
         const fallbackEvent = {
-            ...fallbackMessage,
+            data : {...req.body},
             event: 'fallback',
         }
-        producer.publishToQueue('assistant-utility', fallbackEvent);
-        const response = responseBuilder.setSuccess().build();
+        const fallbackMessage = fallbackSchema.parse(fallbackEvent);
+        
+        producer.publishToQueue(UTILITY_QUEUE, fallbackMessage);
+        const response = responseBuilder.setSuccess({ message: "Successfully send message to owner" }).build();
         res.json(response);
     } catch (error) {
         logger.error(error);

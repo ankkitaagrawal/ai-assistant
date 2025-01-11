@@ -103,7 +103,8 @@ export const sendMessageToThread = async (req: Request, res: Response, next: Nex
             threadDiary: threadDiaryContext,
             systemPrompt: systemPrompt,
             instructions: agent.instructions || "",
-            availableDocs: resourceContext
+            availableDocs: resourceContext,
+            threadId: thread._id
         };
 
         const userModel = aiMiddlewareBuilder
