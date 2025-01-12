@@ -14,8 +14,10 @@ import bodyParser from 'body-parser';
 import errorHandler from './middleware/error-handler';
 import agent from './route/agent';
 import resource from './route/resource';
+import responseTime from 'response-time';
 import * as amplitude from '@amplitude/analytics-node';
 import env from './config/env';
+import logger from './service/logger';
 amplitude.init(env.AMPLITUDE_API_KEY || "");
 const app = express();
 const port = process.env.PORT || 3000;
@@ -29,7 +31,6 @@ app.use(cors({
 app.use(bodyParser.json({ limit: '8mb' }));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
-
 app.use('/plugin', plugin);
 app.use('/chat', chat);
 app.use('/utility', utility);
@@ -43,6 +44,24 @@ app.use('/resource', resource);
 app.get('/', (req: Request, res: Response) => {
   res.send('Welcome to AI Assistant!');
 });
+app.use(responseTime(function (req: Request, res: Response, time) {
+  try {
+
+    const method = req.method?.toLowerCase()?.replace(/[:.]/g, '').replace(/\//g, '_');
+    const url = req.originalUrl?.toLowerCase()?.replace(/[:.]/g, '').replace(/\//g, '_');
+    const user = res.locals?.user;
+
+    amplitude.track('request', {
+      method,
+      url,
+      time
+    }, {
+      user_id: user?.locals?._id
+    })
+  } catch (error) {
+    logger.error(error);
+  }
+}));
 app.use(errorHandler as any);
 // Start the server
 app.listen(port, () => {
