@@ -44,24 +44,7 @@ app.use('/resource', resource);
 app.get('/', (req: Request, res: Response) => {
   res.send('Welcome to AI Assistant!');
 });
-app.use(responseTime(function (req: Request, res: Response, time) {
-  try {
 
-    const method = req.method?.toLowerCase()?.replace(/[:.]/g, '').replace(/\//g, '_');
-    const url = req.originalUrl?.toLowerCase()?.replace(/[:.]/g, '').replace(/\//g, '_');
-    const user = res.locals?.user;
-
-    amplitude.track('request', {
-      method,
-      url,
-      time
-    }, {
-      user_id: user?.locals?._id
-    })
-  } catch (error) {
-    logger.error(error);
-  }
-}));
 app.use(errorHandler as any);
 // Start the server
 app.listen(port, () => {
