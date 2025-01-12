@@ -7,11 +7,6 @@ const userSchema = new mongoose.Schema({
     unique: true
 
   },
-  channelId: {
-    type: String,
-    required: true,
-    unique: true
-  },
   name: {
     type: String,
     required: false,
@@ -20,13 +15,16 @@ const userSchema = new mongoose.Schema({
     type: String,
     required: false
   },
-
+  email: {
+    type: String,
+    required: false
+  },
   agent: {
     type: mongoose.Schema.Types.ObjectId,
     ref: 'agent',
     required: false
   },
- 
+
 
 }, {
   timestamps: true, // Automatically adds `createdAt` and `updatedAt` fields

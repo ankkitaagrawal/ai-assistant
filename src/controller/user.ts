@@ -18,7 +18,7 @@ export const updateAIService = async (req: Request, res: Response, next: NextFun
         const newAIModel = req.body.model;
         const newAIService = req.body.service;
         ModelSchema.parse({ service: newAIService, model: newAIModel });
-        const updatedAgent =   AgentService.updateAgent(user.agent, { llm: { model: newAIModel, service: newAIService } }); 
+        const updatedAgent = AgentService.updateAgent(user.agent, { llm: { model: newAIModel, service: newAIService } });
         const response = responseBuilder.setSuccess(updatedAgent as any).build();
         return res.status(200).json(response);
 

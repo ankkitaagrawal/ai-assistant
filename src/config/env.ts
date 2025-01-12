@@ -28,7 +28,9 @@ const env = {
     // Redis
     REDIS_CONNECTION_STRING: process.env.REDIS_CONNECTION_STRING,
     // Amplitude
-    AMPLITUDE_API_KEY: process.env.AMPLITUDE_API_KEY
+    AMPLITUDE_API_KEY: process.env.AMPLITUDE_API_KEY,
+    // Proxy
+    PROXY_API_KEY: process.env.PROXY_API_KEY,
 }
 
 export default env;

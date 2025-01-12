@@ -4,7 +4,6 @@ import logger from '../service/logger';
 import { ApiError } from '../error/api-error';
 import { getUserDetail } from '../utility';
 import { User } from '../type/user';
-import { getCache, getUserKey, setCache } from '../service/cache';
 export enum AuthMethod {
     TOKEN = "token",
     API_KEY = "apiKey",
@@ -87,9 +86,7 @@ export async function tokenAuth(req: Request, res: Response, next: NextFunction)
             const proxyId = tokenData.user.id;
             const userEmail = tokenData.user.email;
             // Populate user details in res.locals
-            const userKey = getUserKey(proxyId, userEmail);
-            const user = getCache(userKey) || await getUserDetail(proxyId, userEmail);
-            setCache(userKey, user);
+            const user = await getUserDetail(proxyId, userEmail);
 
             res.locals.user = {
                 ...user,
