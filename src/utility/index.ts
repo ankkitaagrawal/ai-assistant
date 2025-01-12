@@ -1,3 +1,4 @@
+import { track } from "@amplitude/analytics-node";
 import AgentService from "../dbservices/agent";
 import { createUser, getUserDetailsByProxyId, updateUserAgent, updateUserDetails } from "../dbservices/user";
 import { User } from "../type/user";
@@ -24,6 +25,13 @@ export async function getUserDetail(proxyId: string, email: string): Promise<Use
             return null;
         });
         user = await updateUserAgent({ userId: user._id as any, agentId: agent?._id as any }) as User;
+        track('sign up', {
+            email: user.email,
+            name: user.name,
+            agent: user.agent
+        }, {
+            user_id: user?._id?.toString()
+        })
     }
     if (user?._id && !user?.email) {
         const proxyUser = await getProxyUser(proxyId);
