@@ -27,6 +27,8 @@ const env = {
     PINECONE_INDEX_NAME: process.env.PINECONE_INDEX_NAME,
     // Redis
     REDIS_CONNECTION_STRING: process.env.REDIS_CONNECTION_STRING,
+    // Amplitude
+    AMPLITUDE_API_KEY: process.env.AMPLITUDE_API_KEY
 }
 
 export default env;
