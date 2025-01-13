@@ -65,12 +65,17 @@ export const sendMessageToThread = async (req: Request, res: Response, next: Nex
 
         const thread = await ThreadService.getThreadById(threadId.toString());
         if (!thread) throw new ApiError('Thread not found', 404);
-        if (thread.createdBy != user._id) throw new ApiError('Unauthorized', 401);
 
         const [agent, resources] = await Promise.all([
             AgentService.getAgentById(thread.agent),
             ResourceService.getResourcesByAgent(thread.agent)
         ]);
+        // Permission Check
+        let isAllowed = false;
+        if (thread.createdBy != user._id) isAllowed = true;
+        // Allow editors to access fallback threads
+        if (thread.type == 'fallback' && agent?.editors) isAllowed = agent.editors.includes(user?._id?.toString());
+        if (!isAllowed) throw new ApiError('Unauthorized', 401);
 
         const resourceContext = resources.map((resource, index) => `${index + 1}. Title: ${resource.title} \n\n Description: ${resource?.description}`).join('\n');
         const aiMiddlewareBuilder = new AIMiddlewareBuilder(env.AI_MIDDLEWARE_AUTH_KEY);
@@ -105,7 +110,7 @@ export const sendMessageToThread = async (req: Request, res: Response, next: Nex
             instructions: agent.instructions || "",
             availableDocs: resourceContext,
             threadId: thread._id,
-            currentTimeAndDate : new Date()
+            currentTimeAndDate: new Date()
         };
 
         const userModel = aiMiddlewareBuilder
