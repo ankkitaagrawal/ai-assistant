@@ -15,6 +15,11 @@ import errorHandler from './middleware/error-handler';
 import agent from './route/agent';
 import resource from './route/resource';
 import tool from './route/tool';
+import responseTime from 'response-time';
+import * as amplitude from '@amplitude/analytics-node';
+import env from './config/env';
+import logger from './service/logger';
+amplitude.init(env.AMPLITUDE_API_KEY || "");
 const app = express();
 const port = process.env.PORT || 3000;
 connectDB();
@@ -27,7 +32,6 @@ app.use(cors({
 app.use(bodyParser.json({ limit: '8mb' }));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
-
 app.use('/plugin', plugin);
 app.use('/chat', chat);
 app.use('/utility', utility);
@@ -42,6 +46,7 @@ app.use('/tool', tool);
 app.get('/', (req: Request, res: Response) => {
   res.send('Welcome to AI Assistant!');
 });
+
 app.use(errorHandler as any);
 // Start the server
 app.listen(port, () => {

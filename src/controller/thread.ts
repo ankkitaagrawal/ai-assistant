@@ -1,6 +1,5 @@
 import ThreadService from '../dbservices/thread';
 import { Response, Request } from 'express';
-import { getUser } from "../utility/channel";
 import { ApiError } from "../error/api-error";
 import { NextFunction } from "connect";
 import { APIResponseBuilder } from "../service/utility";

@@ -4,7 +4,6 @@ import producer from '../config/producer';
 import env from '../config/env';
 import { deleteCronFromFlow, getCronDetailsById } from '../dbservices/cron';
 import { AIMiddlewareBuilder } from '../utility/aimiddleware';
-import { getUserByChannelId } from '../dbservices/user';
 
 const QUEUE_NAME = process.env.WEBHOOK_QUEUE || 'webhook';
 async function processWebhook(message: any, channel: Channel) {

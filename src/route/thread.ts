@@ -2,7 +2,6 @@ import { getPluginDetails, perfromAction } from "../controller/plugin";
 import { getThreads, searchThread } from "../controller/thread";
 import { getFallbackThreads } from "../controller/thread";
 import { AuthMethod, auth } from "../middleware/auth";
-import { decodeToken } from "../middleware/authentication";
 
 const express = require('express');
 
