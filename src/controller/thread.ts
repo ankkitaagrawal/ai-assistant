@@ -48,7 +48,7 @@ export const getFallbackThreads = async (req: Request, res: Response, next: Next
             throw new Error("Invalid Assistant ID");
         })
         let isAllowed = false;
-        if (agent?.editors) isAllowed = agent.editors.includes(userId?.toString());
+        if (agent?.editors) isAllowed = isAllowed = agent.editors.some((editor: any) => editor._id?.toString() === user?._id?.toString());
         if (agent.createdBy == userId) isAllowed = true;
         if (!isAllowed) return next(new ApiError("You are not allowed to view this assistant's fallback threads", 403));
         let threads = await ThreadService.getFallbackThreads(assistantId)

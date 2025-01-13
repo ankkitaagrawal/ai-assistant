@@ -70,8 +70,8 @@ async function processMsg(message: any, channel: Channel) {
                     let updatedAgent = await AgentService.updateAgentDiary(data.agentId, {
                         privacy: "thread",
                         content: newPageContent,
-                        id: data.threadId,
-                        heading: `Thread: ${data.threadId}`
+                        id: selectedThreadId,
+                        heading: `Thread: ${selectedThreadId}`
                     });
                     // Send message to owner
                     const agentModel = new AIMiddlewareBuilder(env.AI_MIDDLEWARE_AUTH_KEY).useBridge(agent.bridgeId).build();
@@ -80,6 +80,7 @@ async function processMsg(message: any, channel: Channel) {
                 }
             case 'message':
                 {
+                    
                     const agent = await AgentService.getAgentById(data.from);
                     const thread = await ThreadService.getThreadById(data.to);
                     if (!thread) {

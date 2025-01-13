@@ -21,8 +21,15 @@ export const getThreadMessages = async (req: Request, res: Response, next: NextF
         const thread = await ThreadService.getThreadById(threadId.toString());
         if (!threadId) throw new ApiError('Thread Id is required', 400);
         if (!thread) throw new ApiError('Thread not found', 404);
-        if (thread?.createdBy != user._id) throw new ApiError('Unauthorized', 401);
+      
         const agent = await AgentService.getAgentById(thread.agent);
+
+        let isAllowed = false;
+        if (thread.createdBy == user._id) isAllowed = true;
+        // Allow editors to access fallback threads
+        if (thread.type == 'fallback' && agent?.editors) isAllowed = agent.editors.some((editor: any) => editor._id?.toString() === user?._id?.toString());
+        if (!isAllowed) throw new ApiError('Unauthorized', 401);
+        
         const aiMiddlewareBuilder = new AIMiddlewareBuilder(env.AI_MIDDLEWARE_AUTH_KEY);
         const middleware = aiMiddlewareBuilder.useBridge(agent.bridgeId).useService(agent.llm.service, agent.llm.model).build();
         const response = await middleware.getMessages(threadId);
@@ -72,9 +79,9 @@ export const sendMessageToThread = async (req: Request, res: Response, next: Nex
         ]);
         // Permission Check
         let isAllowed = false;
-        if (thread.createdBy != user._id) isAllowed = true;
+        if (thread.createdBy == user._id) isAllowed = true;
         // Allow editors to access fallback threads
-        if (thread.type == 'fallback' && agent?.editors) isAllowed = agent.editors.includes(user?._id?.toString());
+        if (thread.type == 'fallback' && agent?.editors) isAllowed = agent.editors.some((editor: any) => editor._id?.toString() === user?._id?.toString());
         if (!isAllowed) throw new ApiError('Unauthorized', 401);
 
         const resourceContext = resources.map((resource, index) => `${index + 1}. Title: ${resource.title} \n\n Description: ${resource?.description}`).join('\n');
@@ -87,7 +94,7 @@ export const sendMessageToThread = async (req: Request, res: Response, next: Nex
             const page = (agent?.diary as any)?.[pageId];
             if (page.privacy === 'public') publicDiary.push({ ...page, id: pageId });
             if (page.privacy === 'private') privateDiary.push({ ...page, id: pageId });
-            if (page.privacy === 'thread' && page.threadId == threadId?.toString()) threadDiary.push({ ...page, id: pageId });
+            if (page.privacy === 'thread' && pageId == threadId?.toString()) threadDiary.push({ ...page, id: pageId });
         }
         let systemPrompt = `You are ${agent.name}'s assistant  and user ${user.name} is talking with you.`
         let diary = `Privacy    |   Page Id       |      Heading \n`;
@@ -116,8 +123,7 @@ export const sendMessageToThread = async (req: Request, res: Response, next: Nex
         const userModel = aiMiddlewareBuilder
             .useBridge(agent.bridgeId)
             .useService(agent.llm.service, agent.llm.model)
-            .build();
-
+            .build(); 
         const response = await userModel.sendMessage(message, threadId, variables);
 
         if (isNewThread && thread?._id && response) await publishThreadNameEvent(message, response, thread._id);
@@ -147,3 +153,9 @@ const publishThreadNameEvent = async (message: string, response: string, threadI
     };
     await producer.publishToQueue(UTILITY_QUEUE, generateThreadNameSchema.parse(generateThreadNameEvent));
 };
+
+
+
+
+// bulider pattern 
+
