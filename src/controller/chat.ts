@@ -120,11 +120,18 @@ export const sendMessageToThread = async (req: Request, res: Response, next: Nex
             currentTimeAndDate: new Date()
         };
 
-        const userModel = aiMiddlewareBuilder
-            .useBridge(agent.bridgeId)
-            .useService(agent.llm.service, agent.llm.model)
-            .build(); 
-        const response = await userModel.sendMessage(message, threadId, variables);
+        let userModel = aiMiddlewareBuilder
+        .useBridge(agent.bridgeId)
+        .useService(agent.llm.service, agent.llm.model);
+      
+      // Add tool based on the thread type
+      if (thread.type === 'fallback') {
+        userModel = userModel.addTool("sendmessage"); // Assuming sendmessage is a valid tool name
+      } else {
+        userModel = userModel.addTool("pingowner"); // Assuming pingowner is a valid tool name
+      }
+        const builtUserModel = userModel.build();
+        const response = await builtUserModel.sendMessage(message, threadId, variables);
 
         if (isNewThread && thread?._id && response) await publishThreadNameEvent(message, response, thread._id);
 

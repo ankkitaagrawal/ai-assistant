@@ -3,6 +3,7 @@ import axios from "../config/axios";
 import { z } from 'zod';
 import env from "../config/env";
 import { AnthropicModel, GroqModel, ModelSchema, OpenAIModel, Service } from "../type/ai_middleware";
+import { getTool, Tool, ToolName } from "../type/tools";
 
 class AIMiddleware {
   private authKey: string;
@@ -12,7 +13,8 @@ class AIMiddleware {
   private model: string;
   private service: string;
   private apiKey: string;
-  constructor(authKey: string, bridgeId: string, responseType: string, model: string, service: string, rtlayer: boolean = false, apiKey: string) {
+  private tools: Tool[];
+  constructor(authKey: string, bridgeId: string, responseType: string, model: string, service: string, rtlayer: boolean = false, apiKey: string, tools:Tool[]) {
     this.authKey = authKey;
     this.rtlayer = rtlayer;
     this.bridgeId = bridgeId;
@@ -20,6 +22,7 @@ class AIMiddleware {
     this.model = model;
     this.service = service;
     this.apiKey = apiKey; // TODO: Temporary
+    this.tools =  tools;
   }
 
   async getMessages(threadId: string) {
@@ -49,7 +52,8 @@ class AIMiddleware {
             "model": this.model,
           },
           "service": this.service,
-          "apikey": this.apiKey
+          "apikey": this.apiKey,
+          "extra_tools" :this.tools
         },
         {
           headers: {
@@ -88,6 +92,7 @@ export class AIMiddlewareBuilder {
   private responseType: string;
   private model: string;
   private service: Service;
+  private tools: Tool[];
 
   constructor(authKey: string) {
     if (!authKey) throw new Error("Auth Key is required");
@@ -97,6 +102,7 @@ export class AIMiddlewareBuilder {
     this.responseType = 'text';
     this.model = 'gpt-4o';
     this.service = 'openai';
+    this.tools = [];
   }
   useService(service: Service, model: OpenAIModel | GroqModel | AnthropicModel) {
     if (!service || !model) return this;
@@ -131,6 +137,15 @@ export class AIMiddlewareBuilder {
     this.responseType = responseType;
     return this;
   }
+  addTool(toolName: ToolName) {
+    const tool = getTool(toolName);
+    if (!tool) {
+      throw new Error(`Tool "${toolName}" not found in the predefined tools.`);
+    }
+    this.tools.push(tool);
+    return this; 
+  }
+
   build() {
     ModelSchema.parse({ service: this.service, model: this.model });
     // TODO: Temporary Start
@@ -147,6 +162,6 @@ export class AIMiddlewareBuilder {
         break;
     }
     // TODO: Temporary End
-    return new AIMiddleware(this.authKey, this.bridgeId, this.responseType, this.model, this.service, this.rtlayer, apiKey);
+    return new AIMiddleware(this.authKey, this.bridgeId, this.responseType, this.model, this.service, this.rtlayer, apiKey,this.tools);
   }
 }
