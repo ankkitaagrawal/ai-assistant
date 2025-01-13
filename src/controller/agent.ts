@@ -1,7 +1,7 @@
 import express, { NextFunction, Request, Response } from 'express';
 import AgentService from '../dbservices/agent';
 import { APIResponseBuilder, getDefaultPicture } from '../service/utility';
-import { Agent as AgentType, Diary } from '../type/agent';
+import { Agent as AgentType, DiaryPage } from '../type/agent';
 import { v4 as uuidv4 } from 'uuid';
 import producer from '../config/producer';
 import { queryLangchain } from '../service/langchain';
@@ -174,7 +174,7 @@ export const getHeadingDataFromDiary = async (req: Request, res: Response, next:
         const { id, pageId } = req.params
         const agent = await AgentService.getAgentById(id);
         const content = (agent?.diary as any)?.[pageId];;
-        responseBuilder.setSuccess({content});
+        responseBuilder.setSuccess({ content });
         res.status(200).json(responseBuilder.build());
     } catch (error: any) {
         next(error);
@@ -185,9 +185,9 @@ export const updateDiary = async (req: Request, res: Response, next: NextFunctio
     const responseBuilder = new APIResponseBuilder();
     try {
         const { id } = req.params;
-        const { headingId, message, visibility, heading } = req.body;
+        const { headingId, message, privacy, heading } = req.body;
         const UTILITY_QUEUE = process.env.UTILITY_QUEUE || 'assistant-utility';
-        await producer.publishToQueue(UTILITY_QUEUE, updateDiarySchema.parse({ event: "update-diary", data: { message: message, agentId: id, pageId: headingId, visibility, heading } }));
+        await producer.publishToQueue(UTILITY_QUEUE, updateDiarySchema.parse({ event: "update-diary", data: { message: message, agentId: id, pageId: headingId, privacy, heading } }));
         responseBuilder.setSuccess({ message: "Diary updated successfully" });
         res.status(200).json(responseBuilder.build());
     } catch (error: any) {

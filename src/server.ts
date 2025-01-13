@@ -14,6 +14,7 @@ import bodyParser from 'body-parser';
 import errorHandler from './middleware/error-handler';
 import agent from './route/agent';
 import resource from './route/resource';
+import tool from './route/tool';
 import responseTime from 'response-time';
 import * as amplitude from '@amplitude/analytics-node';
 import env from './config/env';
@@ -39,6 +40,7 @@ app.use('/thread', thread);
 app.use('/user', user);
 app.use('/agent', agent);
 app.use('/resource', resource);
+app.use('/tool', tool);
 
 // Define a route
 app.get('/', (req: Request, res: Response) => {
