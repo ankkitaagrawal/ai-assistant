@@ -130,7 +130,7 @@ function getThreadDiary(diary?: any, threadId?: string) {
     if (!diary) return null;
     for (const pageId in diary) {
         const page = (diary as any)?.[pageId] as DiaryPage;
-        if (page?.id == threadId) threadDiary = page;
+        if (pageId == threadId) threadDiary = page;
     }
     return threadDiary;
 }
