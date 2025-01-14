@@ -30,6 +30,18 @@ const specificTools = {
 
         }
       },
+      "threadId": {
+        "description": "",
+        "type": "string",
+        "enum": [
+        ],
+        "required_params": [
+
+        ],
+        "parameter": {
+
+        }
+      },
       "messages_and_threads": {
         "type": "array",
         "enum": [
@@ -60,7 +72,8 @@ const specificTools = {
     },
     "required": [
       "agentId",
-      "messages"
+      "messages",
+      "threadId"
     ]
   },
   "pingowner": {
