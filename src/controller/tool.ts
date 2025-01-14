@@ -29,13 +29,13 @@ export const sendFallbackMessage = async (req: Request, res: Response, next: Nex
 export const sendMessage = async (req: Request, res: Response, next: NextFunction) => {
     try {
         const responseBuilder = new APIResponseBuilder();
-        const { messages, agentId } = req.body;
+        const { messages, agentId, ownerThreadId } = req.body;
         const agent = await AgentService.getAgentById(agentId).catch((error) => {
             logger.error(error);
             throw new Error("Invalid agentId");
         })
         if (!agent) throw new Error("Invalid agentId");
-        for (const { threadId, message, ownerThreadId } of messages) {
+        for (const { threadId, message } of messages) {
             const messageEvent = {
                 event: 'message',
                 data: {
