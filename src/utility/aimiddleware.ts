@@ -53,7 +53,7 @@ class AIMiddleware {
           },
           "service": this.service,
           "apikey": this.apiKey,
-          "extra_tools" :this.tools
+          // "extra_tools" :this.tools
         },
         {
           headers: {
