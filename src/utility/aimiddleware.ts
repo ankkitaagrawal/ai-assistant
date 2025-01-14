@@ -4,6 +4,7 @@ import { z } from 'zod';
 import env from "../config/env";
 import { AnthropicModel, GroqModel, ModelSchema, OpenAIModel, Service } from "../type/ai_middleware";
 import { getTool, Tool, ToolName } from "../type/tools";
+import { sendAlert } from "./alert";
 
 class AIMiddleware {
   private authKey: string;
@@ -63,6 +64,7 @@ class AIMiddleware {
       );
       return response.data?.response?.data?.content || null;
     } catch (error: any) {
+      sendAlert({error :error?.response?.data ,threadId } );
       throw new Error(error?.response?.data?.detail?.error || error?.message);
     }
 

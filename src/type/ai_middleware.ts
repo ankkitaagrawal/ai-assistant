@@ -27,11 +27,12 @@ export const OpenAIModelSchema = z.enum([
 export type OpenAIModel = z.infer<typeof OpenAIModelSchema>;
 
 export const AnthropicModelSchema = z.enum([
-    'claude-3-5-sonnet-20240620',
-    'claude-3-5-sonnet-20240620',
-    'claude-3-opus-20240229',
-    'claude-3-sonnet-20240229',
-    'claude-3-haiku-20240307'
+    "claude-3-5-haiku-20241022",
+    "claude-3-haiku-20240307",
+    "claude-3-sonnet-20240229",
+    "claude-3-opus-latest",
+    "claude-3-opus-20240229",
+    "claude-3-5-sonnet-latest",
 ]);
 export type AnthropicModel = z.infer<typeof AnthropicModelSchema>;
 
