@@ -15,7 +15,7 @@ class AIMiddleware {
   private service: string;
   private apiKey: string;
   private tools: Tool[];
-  constructor(authKey: string, bridgeId: string, responseType: string, model: string, service: string, rtlayer: boolean = false, apiKey: string, tools:Tool[]) {
+  constructor(authKey: string, bridgeId: string, responseType: string, model: string, service: string, rtlayer: boolean = false, apiKey: string, tools: Tool[]) {
     this.authKey = authKey;
     this.rtlayer = rtlayer;
     this.bridgeId = bridgeId;
@@ -23,7 +23,7 @@ class AIMiddleware {
     this.model = model;
     this.service = service;
     this.apiKey = apiKey; // TODO: Temporary
-    this.tools =  tools;
+    this.tools = tools;
   }
 
   async getMessages(threadId: string) {
@@ -54,7 +54,7 @@ class AIMiddleware {
           },
           "service": this.service,
           "apikey": this.apiKey,
-          "extra_tools" :this.tools
+          "extra_tools": this.tools
         },
         {
           headers: {
@@ -65,7 +65,7 @@ class AIMiddleware {
       return response.data?.response?.data?.content || null;
     } catch (error: any) {
       console.log(error)
-      sendAlert({error :error?.response?.data ,threadId } );
+      sendAlert({ error: error?.response?.data, threadId });
       throw new Error(error?.response?.data?.detail?.error || error?.message);
     }
 
@@ -140,13 +140,13 @@ export class AIMiddlewareBuilder {
     this.responseType = responseType;
     return this;
   }
-  addTool(toolName: ToolName , dynamicEnums?: { agentId?: string; userId?: string , threadId?:string}) {
-    const tool = getTool(toolName,dynamicEnums);
+  addTool(toolName: ToolName, dynamicEnums?: { agentId?: string; userId?: string, threadId?: string }) {
+    const tool = getTool(toolName, dynamicEnums);
     if (!tool) {
       throw new Error(`Tool "${toolName}" not found in the predefined tools.`);
     }
     this.tools.push(tool);
-    return this; 
+    return this;
   }
 
   build() {
@@ -165,6 +165,6 @@ export class AIMiddlewareBuilder {
         break;
     }
     // TODO: Temporary End
-    return new AIMiddleware(this.authKey, this.bridgeId, this.responseType, this.model, this.service, this.rtlayer, apiKey,this.tools);
+    return new AIMiddleware(this.authKey, this.bridgeId, this.responseType, this.model, this.service, this.rtlayer, apiKey, this.tools);
   }
 }

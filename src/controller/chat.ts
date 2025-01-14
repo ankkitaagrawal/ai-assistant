@@ -21,7 +21,7 @@ export const getThreadMessages = async (req: Request, res: Response, next: NextF
         const thread = await ThreadService.getThreadById(threadId.toString());
         if (!threadId) throw new ApiError('Thread Id is required', 400);
         if (!thread) throw new ApiError('Thread not found', 404);
-      
+
         const agent = await AgentService.getAgentById(thread.agent);
 
         let isAllowed = false;
@@ -29,7 +29,7 @@ export const getThreadMessages = async (req: Request, res: Response, next: NextF
         // Allow editors to access fallback threads
         if (thread.type == 'fallback' && agent?.editors) isAllowed = agent.editors.some((editor: any) => editor._id?.toString() === user?._id?.toString());
         if (!isAllowed) throw new ApiError('Unauthorized', 401);
-        
+
         const aiMiddlewareBuilder = new AIMiddlewareBuilder(env.AI_MIDDLEWARE_AUTH_KEY);
         const middleware = aiMiddlewareBuilder.useBridge(agent.bridgeId).useService(agent.llm.service, agent.llm.model).build();
         const response = await middleware.getMessages(threadId);
@@ -121,15 +121,15 @@ export const sendMessageToThread = async (req: Request, res: Response, next: Nex
         };
 
         let userModel = aiMiddlewareBuilder
-        .useBridge(agent.bridgeId)
-        .useService(agent.llm.service, agent.llm.model);
-      
-      // Add tool based on the thread type
-      if (thread.type === 'fallback') {
-        userModel = userModel.addTool("sendmessage");
-      } else {
-        userModel = userModel.addTool("pingowner"); 
-      }
+            .useBridge(agent.bridgeId)
+            .useService(agent.llm.service, agent.llm.model);
+
+        // Add tool based on the thread type
+        if (thread.type === 'fallback') {
+            userModel = userModel.addTool("sendmessage", { agentId });
+        } else {
+            userModel = userModel.addTool("pingowner", { agentId, threadId, userId: user?._id });
+        }
         const builtUserModel = userModel.build();
         const response = await builtUserModel.sendMessage(message, threadId, variables);
 
@@ -160,9 +160,3 @@ const publishThreadNameEvent = async (message: string, response: string, threadI
     };
     await producer.publishToQueue(UTILITY_QUEUE, generateThreadNameSchema.parse(generateThreadNameEvent));
 };
-
-
-
-
-// bulider pattern 
-
