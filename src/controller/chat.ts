@@ -126,9 +126,9 @@ export const sendMessageToThread = async (req: Request, res: Response, next: Nex
       
       // Add tool based on the thread type
       if (thread.type === 'fallback') {
-        userModel = userModel.addTool("sendmessage"); // Assuming sendmessage is a valid tool name
+        userModel = userModel.addTool("sendmessage");
       } else {
-        userModel = userModel.addTool("pingowner"); // Assuming pingowner is a valid tool name
+        userModel = userModel.addTool("pingowner"); 
       }
         const builtUserModel = userModel.build();
         const response = await builtUserModel.sendMessage(message, threadId, variables);
