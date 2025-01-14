@@ -140,8 +140,8 @@ export class AIMiddlewareBuilder {
     this.responseType = responseType;
     return this;
   }
-  addTool(toolName: ToolName) {
-    const tool = getTool(toolName);
+  addTool(toolName: ToolName , dynamicEnums?: { agentId?: string; userId?: string , threadId?:string}) {
+    const tool = getTool(toolName,dynamicEnums);
     if (!tool) {
       throw new Error(`Tool "${toolName}" not found in the predefined tools.`);
     }

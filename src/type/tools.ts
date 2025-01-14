@@ -12,7 +12,6 @@ export type Tool =
 
 const specificTools = {
   "sendmessage":
-  
   {
     "type":"function",
     "name":"scrixpv2O2yR",
@@ -73,7 +72,6 @@ const specificTools = {
       "description":"",
       "type":"string",
       "enum":[
-        
       ],
       "required_params":[
         
@@ -112,7 +110,6 @@ const specificTools = {
       "description":"",
       "type":"string",
       "enum":[
-        
       ],
       "required_params":[
         
@@ -133,8 +130,29 @@ const specificTools = {
 
 export type ToolName = keyof typeof specificTools;
 
-export function getTool(toolName: ToolName): Tool {
-  const tool = specificTools[toolName];
+export function getTool(toolName: ToolName ,   dynamicEnums?: { agentId?: string; userId?: string ,threadId:string }): Tool {
+{
+  const tool = { ...specificTools[toolName] }; // Clone the tool to avoid mutating the original
+  if (!tool) {
+    throw new Error(`Tool "${toolName}" not found in the predefined tools.`);
+  }
+  if (dynamicEnums) {
+    switch (toolName) {
+      case "sendmessage":
+        if (tool.properties.agentId && dynamicEnums.agentId) {
+          tool.properties.agentId.enum= [dynamicEnums];
+        }
+        break;
+      case "pingowner":
+        if (tool.properties.userId && dynamicEnums.userId) {
+          tool.properties.userId.enum.push(dynamicEnums.userId);
+        }
+        break;
+      // Add cases for other tools as needed
+      default:
+        break;
+    }
+  }
+
   return tool;
 }
-
