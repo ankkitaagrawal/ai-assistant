@@ -42,6 +42,7 @@ export type Fallback = z.infer<typeof fallbackSchema>;
 export const messageSchema = z.object({
     event: z.literal('message'),
     data: z.object({
+        ownerThreadId: z.string().describe("Thread ID of owner"),
         to: z.string().describe("Thread ID in which message is to be sent"),
         from: z.string().describe("Agent Id of the agent sending the message"),
         message: z.string().describe("The message to be sent"),

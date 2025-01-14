@@ -142,6 +142,9 @@ export function getTool(toolName: ToolName, dynamicEnums?: any): Tool {
           if (tool.properties.agentId && dynamicEnums.agentId) {
             (tool.properties.agentId.enum as Array<string>).push(dynamicEnums.agentId);
           }
+          if ((tool.properties as any).threadId && dynamicEnums.threadId) {
+            (tool.properties as any).threadId.enum.push(dynamicEnums.threadId);
+          }
           break;
         case "pingowner":
           if ((tool.properties as any).userId && dynamicEnums.userId) {

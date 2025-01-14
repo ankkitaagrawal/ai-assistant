@@ -128,7 +128,7 @@ export const sendMessageToThread = async (req: Request, res: Response, next: Nex
 
         // Add tool based on the thread type
         if (thread.type === 'fallback') {
-            userModel = userModel.addTool("sendmessage", { agentId });
+            userModel = userModel.addTool("sendmessage", { agentId, threadId });
         } else {
             userModel = userModel.addTool("pingowner", { agentId, threadId, userId: user?._id });
         }

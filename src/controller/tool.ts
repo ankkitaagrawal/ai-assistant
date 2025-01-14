@@ -11,11 +11,11 @@ export const sendFallbackMessage = async (req: Request, res: Response, next: Nex
     try {
         const responseBuilder = new APIResponseBuilder();
         const fallbackEvent = {
-            data : {...req.body},
+            data: { ...req.body },
             event: 'fallback',
         }
         const fallbackMessage = fallbackSchema.parse(fallbackEvent);
-        
+
         producer.publishToQueue(UTILITY_QUEUE, fallbackMessage);
         const response = responseBuilder.setSuccess({ message: "Successfully send message to owner" }).build();
         res.json(response);
@@ -35,13 +35,14 @@ export const sendMessage = async (req: Request, res: Response, next: NextFunctio
             throw new Error("Invalid agentId");
         })
         if (!agent) throw new Error("Invalid agentId");
-        for (const { threadId, message } of messages) {
+        for (const { threadId, message, ownerThreadId } of messages) {
             const messageEvent = {
                 event: 'message',
                 data: {
                     to: threadId,
                     from: agentId,
-                    message: message
+                    message: message,
+                    ownerThreadId: ownerThreadId
                 }
             }
             const event = messageSchema.safeParse(messageEvent);
@@ -51,7 +52,7 @@ export const sendMessage = async (req: Request, res: Response, next: NextFunctio
             }
             producer.publishToQueue('assistant-utility', messageSchema.parse(messageEvent));
         }
-        const response = responseBuilder.setSuccess({message: "Message Sent!"}).build();
+        const response = responseBuilder.setSuccess({ message: "Message Sent!" }).build();
         res.json(response);
     } catch (error) {
         next(error);

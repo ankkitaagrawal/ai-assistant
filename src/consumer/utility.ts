@@ -80,7 +80,7 @@ async function processMsg(message: any, channel: Channel) {
                 }
             case 'message':
                 {
-                    
+
                     const agent = await AgentService.getAgentById(data.from);
                     const thread = await ThreadService.getThreadById(data.to);
                     if (!thread) {
@@ -88,10 +88,13 @@ async function processMsg(message: any, channel: Channel) {
                         throw new Error(`Thread not found: ${data.to}`);
                     }
                     // Update diary
-                    const threadDiary = getThreadDiary(agent.diary, data.to);
+                    const threadDiary = getThreadDiary(agent.diary, data.ownerThreadId);
                     if (!threadDiary) throw new Error("Thread diary is not found");
                     const diaryModel = new AIMiddlewareBuilder(env.AI_MIDDLEWARE_AUTH_KEY).useBridge("67820feb25ab50089db7273b").useOpenAI("gpt-4-turbo").build();
-                    const newPageContent = await diaryModel.sendMessage(`Message from Owner: ${data.message}`);
+                    const variables = {
+                        "content": threadDiary?.content
+                    }
+                    const newPageContent = await diaryModel.sendMessage(`Message from Owner: ${data.message}`, undefined, variables);
                     let updatedAgent = await AgentService.updateAgentDiary(data.from, {
                         privacy: "thread",
                         content: newPageContent,
@@ -131,7 +134,7 @@ function getThreadDiary(diary?: any, threadId?: string) {
     if (!diary) return null;
     for (const pageId in diary) {
         const page = (diary as any)?.[pageId] as DiaryPage;
-        if (pageId == threadId) threadDiary = page;
+        if (pageId == threadId) threadDiary = { ...page, id: pageId };
     }
     return threadDiary;
 }
