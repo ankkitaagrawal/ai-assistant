@@ -26,7 +26,7 @@ async function processMsg(message: any, channel: Channel) {
                     // Update the thread name in the database
                     await ThreadService.updateThreadName(data.threadId, name);
                     // Send the thread name to the UI
-                    rtlayer.message(JSON.stringify({ name: name }), {
+                    rtlayer.message(JSON.stringify({ name: name , event:'thread-name-update' }), {
                         channel: data.threadId
                     });
                     break;
@@ -57,6 +57,9 @@ async function processMsg(message: any, channel: Channel) {
                         const threadName = await generateThreadName(data.threadId, data.message, `Generate thread name for message "${data.message}"`);
                         const thread = await ThreadService.createThread({ createdBy: agent.createdBy, name: threadName, middleware_id: uuidv4(), agent: data.agentId, type: 'fallback' });
                         selectedThreadId = thread._id?.toString();
+                        rtlayer.message( JSON.stringify({ threadName: threadName , event:"new-thread", threadId : selectedThreadId } ) ,{
+                             channel : `${data.agentId}:owner`
+                        });
                     }
                     // Update the diary
                     const threadDiary = getThreadDiary(agent?.diary, data.threadId);
@@ -76,12 +79,17 @@ async function processMsg(message: any, channel: Channel) {
                     // Send message to owner
                     const agentModel = new AIMiddlewareBuilder(env.AI_MIDDLEWARE_AUTH_KEY).useBridge(agent.bridgeId).build();
                     await agentModel.createMessage(selectedThreadId, data.message);
+                    rtlayer.message( JSON.stringify({ message :  data.message  , event:"new-message", threadId : selectedThreadId } ) ,{
+                        channel : `${data.agentId}:owner`
+                    });
+
+
                     break;
                 }
             case 'message':
                 {
 
-                    const agent = await AgentService.getAgentById(data.from);
+                    const agent = await AgentService.getAgentById(data.from); // todo change from to agentId 
                     const thread = await ThreadService.getThreadById(data.to);
                     if (!thread) {
                         logger.error(`[message] Thread not found: ${data.to}`);
@@ -104,6 +112,9 @@ async function processMsg(message: any, channel: Channel) {
                     // Create message in user thread
                     const agentModel = new AIMiddlewareBuilder(env.AI_MIDDLEWARE_AUTH_KEY).useBridge(agent.bridgeId).build();
                     await agentModel.createMessage(data.to, data.message);
+                    rtlayer.message( JSON.stringify({ message :  data.message  , threadId : data.to } ) ,{
+                                channel : `${data.from}:user`
+                    });
                     break;
                 }
 
