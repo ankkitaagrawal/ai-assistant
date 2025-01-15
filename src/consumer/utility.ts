@@ -58,7 +58,7 @@ async function processMsg(message: any, channel: Channel) {
                         const thread = await ThreadService.createThread({ createdBy: agent.createdBy, name: threadName, middleware_id: uuidv4(), agent: data.agentId, type: 'fallback' });
                         selectedThreadId = thread._id?.toString();
                         rtlayer.message( JSON.stringify({ threadName: threadName , event:"new-thread", threadId : selectedThreadId } ) ,{
-                             channel : `${data.agentId}:owner`
+                             channel : `${data.agentId}-owner`
                         });
                     }
                     // Update the diary
@@ -80,7 +80,7 @@ async function processMsg(message: any, channel: Channel) {
                     const agentModel = new AIMiddlewareBuilder(env.AI_MIDDLEWARE_AUTH_KEY).useBridge(agent.bridgeId).build();
                     await agentModel.createMessage(selectedThreadId, data.message);
                     rtlayer.message( JSON.stringify({ message :  data.message  , event:"new-message", threadId : selectedThreadId } ) ,{
-                        channel : `${data.agentId}:owner`
+                        channel : `${data.agentId}-owner`
                     });
 
 
