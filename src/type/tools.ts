@@ -144,21 +144,21 @@ export function getTool(toolName: ToolName, dynamicEnums?: any): Tool {
       switch (toolName) {
         case "sendmessage":
           if (tool.properties.agentId && dynamicEnums.agentId) {
-            (tool.properties.agentId.enum as Array<string>).push(dynamicEnums.agentId);
+            (tool.properties.agentId.enum as Array<string>)= [dynamicEnums.agentId];
           }
           if ((tool.properties as any).ownerThreadId && dynamicEnums.threadId) {
-            (tool.properties as any).ownerThreadId.enum.push(dynamicEnums.threadId);
+            (tool.properties as any).ownerThreadId.enum= [dynamicEnums.threadId];
           }
           break;
         case "pingowner":
           if ((tool.properties as any).userId && dynamicEnums.userId) {
-            (tool.properties as any).userId.enum.push(dynamicEnums.userId);
+            (tool.properties as any).userId.enum= [dynamicEnums.userId];
           }
           if ((tool.properties as any).threadId && dynamicEnums.threadId) {
-            (tool.properties as any).threadId.enum.push(dynamicEnums.threadId);
+            (tool.properties as any).threadId.enum= [dynamicEnums.threadId];
           }
           if ((tool.properties as any).agentId && dynamicEnums.agentId) {
-            (tool.properties as any).agentId.enum.push(dynamicEnums.agentId);
+            (tool.properties as any).agentId.enum= [dynamicEnums.agentId];
           }
           break;
         // Add cases for other tools as needed
