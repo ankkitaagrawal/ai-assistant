@@ -9,7 +9,6 @@ export type Tool =
 
 
 
-
 const specificTools = {
   "sendmessage":
   {
@@ -21,17 +20,14 @@ const specificTools = {
         "description": "",
         "type": "string",
         "enum": [
-
         ],
         "required_params": [
-
         ],
         "parameter": {
-
         }
       },
-      "threadId": {
-        "description": "",
+      "ownerThreadId": {
+        "description": "owner thread id pick from enum",
         "type": "string",
         "enum": [
         ],
@@ -44,16 +40,14 @@ const specificTools = {
       },
       "messages_and_threads": {
         "type": "array",
-        "enum": [
-
-        ],
+        "enum": [ ],
         "description": " contains the threadId and messages.",
         "items": {
           "type": "object",
           "properties": {
             "threadId": {
               "type": "string",
-              "description": "thread id "
+              "description": "thread id provided in the thread context "
             },
             "message": {
               "type": "string",
@@ -64,16 +58,13 @@ const specificTools = {
             "threadId",
             "message"
           ],
-          "message": {
-            "description": ""
-          }
         }
       }
     },
     "required": [
       "agentId",
-      "messages",
-      "threadId"
+      "messages_and_threads",
+      "ownerThreadId"
     ]
   },
   "pingowner": {
@@ -155,8 +146,8 @@ export function getTool(toolName: ToolName, dynamicEnums?: any): Tool {
           if (tool.properties.agentId && dynamicEnums.agentId) {
             (tool.properties.agentId.enum as Array<string>).push(dynamicEnums.agentId);
           }
-          if ((tool.properties as any).threadId && dynamicEnums.threadId) {
-            (tool.properties as any).threadId.enum.push(dynamicEnums.threadId);
+          if ((tool.properties as any).ownerThreadId && dynamicEnums.threadId) {
+            (tool.properties as any).ownerThreadId.enum.push(dynamicEnums.threadId);
           }
           break;
         case "pingowner":
